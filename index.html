@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>قهوجي ماهر | القهوة العربية الأصيلة</title>
+    <meta name="description" content="اطلب قهوتك المفضلة من قهوجي ماهر. قهوة عربية أصيلة بنكهات فريدة وتوصيل سريع ومباشر عبر الواتساب.">
+    <!-- Google Fonts: Cairo -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Header / Navbar -->
+    <header class="main-header">
+        <div class="container header-container">
+            <div class="logo-area">
+                <img src="5960730354593238429.jpg" alt="شعار قهوجي ماهر" class="header-logo">
+                <span class="brand-name">قهوجي <span class="gold-text">ماهر</span></span>
+            </div>
+            
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="#home" class="active">الرئيسية</a></li>
+                    <li><a href="#menu">قائمة القهوة</a></li>
+                    <li><a href="#about">قهوة في قلبك</a></li>
+                </ul>
+            </nav>
+
+            <div class="cart-trigger" id="cart-toggle">
+                <i class="fa-solid fa-bag-shopping"></i>
+                <span class="cart-count" id="cart-count">0</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero-section">
+        <div class="hero-overlay"></div>
+        <div class="container hero-content">
+            <div class="hero-badge">تأسس عام 2024</div>
+            <h1 class="hero-title">القهوة العربية <span class="gold-text">الأصيلة</span></h1>
+            <p class="hero-subtitle">نقدم لكم أجود أنواع البن اليمني والهرري المحمّص والمحضّر بأيدي خبراء القهوة العربية. طعمٌ يعيد تعريف الأصالة والفخامة.</p>
+            <div class="hero-buttons">
+                <a href="#menu" class="btn btn-primary">اطلب الآن</a>
+                <a href="#about" class="btn btn-secondary">اكتشف المزيد</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features / Highlights -->
+    <section class="features-section">
+        <div class="container features-grid">
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fa-solid fa-mug-hot"></i></div>
+                <h3>جودة ممتازة</h3>
+                <p>بن فاخر ومختار بعناية فائقة لضمان طعم عربي أصيل غني بالنكهة.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                <h3>إضافات مخصصة</h3>
+                <p>اختر مستوى الهيل، الزعفران، الزنجبيل، والسكر المناسب لمزاجك.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fa-brands fa-whatsapp"></i></div>
+                <h3>طلب سريع</h3>
+                <p>أتمم طلبك بضغطة زر واحدة لتنتقل الفاتورة مباشرة للواتساب.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Menu Section -->
+    <section id="menu" class="menu-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>أصناف القهوة المميزة</h2>
+                <div class="header-line"></div>
+                <p>اختر ما يناسبك من باقاتنا الفاخرة للقهوة العربية الأصيلة</p>
+            </div>
+
+            <div class="menu-grid">
+                <!-- Product 1: Classic (Free) -->
+                <div class="product-card" data-id="classic">
+                    <div class="product-image-container">
+                        <img src="5960730354593238429.jpg" alt="قهوجي ماهر العادي" class="product-image">
+                        <span class="product-tag tag-free">العادي</span>
+                    </div>
+                    <div class="product-info">
+                        <h3>قهوجي ماهر العادي</h3>
+                        <div class="product-price">مجاناً <span class="old-price">1.5 ر.س</span></div>
+                        
+                        <!-- Customization Accordion -->
+                        <div class="customization-section">
+                            <h4 class="custom-title"><i class="fa-solid fa-sliders"></i> خصص كوبك:</h4>
+                            
+                            <div class="custom-options">
+                                <!-- Size -->
+                                <div class="option-group">
+                                    <label>الحجم:</label>
+                                    <div class="radio-buttons">
+                                        <label class="radio-label">
+                                            <input type="radio" name="size-classic" value="وسط" checked>
+                                            <span>وسط</span>
+                                        </label>
+                                        <label class="radio-label">
+                                            <input type="radio" name="size-classic" value="كبير">
+                                            <span>كبير</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+
+
+                                <!-- Sugar -->
+                                <div class="option-group">
+                                    <label>السكر:</label>
+                                    <select name="sugar-classic" class="form-select">
+                                        <option value="بدون سكر" selected>بدون سكر (سادة)</option>
+                                        <option value="سكر خفيف">سكر خفيف</option>
+                                        <option value="سكر وسط">سكر وسط</option>
+                                        <option value="سكر زيادة">سكر زيادة</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-add-cart" onclick="addToCart('classic', 'قهوجي ماهر العادي', 0, '5960730354593238429.jpg')">
+                            <i class="fa-solid fa-cart-plus"></i> إضافة للسلة
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product 2: Pro (3 SAR) -->
+                <div class="product-card premium" data-id="pro">
+                    <div class="product-image-container">
+                        <img src="5960730354593238428.jpg" alt="قهوجي ماهر برو" class="product-image">
+                        <span class="product-tag tag-pro">PRO برو</span>
+                    </div>
+                    <div class="product-info">
+                        <h3>قهوجي ماهر برو</h3>
+                        <div class="product-price">3 ر.س <span class="price-suffix">/ كوب</span></div>
+                        
+                        <!-- Customization Accordion -->
+                        <div class="customization-section">
+                            <h4 class="custom-title"><i class="fa-solid fa-sliders"></i> خصص كوبك:</h4>
+                            
+                            <div class="custom-options">
+                                <!-- Size -->
+                                <div class="option-group">
+                                    <label>الحجم:</label>
+                                    <div class="radio-buttons">
+                                        <label class="radio-label">
+                                            <input type="radio" name="size-pro" value="وسط" checked>
+                                            <span>وسط</span>
+                                        </label>
+                                        <label class="radio-label">
+                                            <input type="radio" name="size-pro" value="كبير">
+                                            <span>كبير</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+
+
+                                <!-- Sugar -->
+                                <div class="option-group">
+                                    <label>السكر:</label>
+                                    <select name="sugar-pro" class="form-select">
+                                        <option value="بدون سكر" selected>بدون سكر (سادة)</option>
+                                        <option value="سكر خفيف">سكر خفيف</option>
+                                        <option value="سكر وسط">سكر وسط</option>
+                                        <option value="سكر زيادة">سكر زيادة</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-add-cart" onclick="addToCart('pro', 'قهوجي ماهر برو', 3, '5960730354593238428.jpg')">
+                            <i class="fa-solid fa-cart-plus"></i> إضافة للسلة
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product 3: Super Pro (5 SAR) -->
+                <div class="product-card luxury" data-id="superpro">
+                    <div class="product-image-container">
+                        <img src="5960730354593238427.jpg" alt="قهوجي ماهر سوبر برو" class="product-image">
+                        <span class="product-tag tag-super">SUPER PRO سوبر برو</span>
+                    </div>
+                    <div class="product-info">
+                        <h3>قهوجي ماهر سوبر برو</h3>
+                        <div class="product-price">5 ر.س <span class="price-suffix">/ كوب</span></div>
+                        
+                        <!-- Customization Accordion -->
+                        <div class="customization-section">
+                            <h4 class="custom-title"><i class="fa-solid fa-sliders"></i> خصص كوبك:</h4>
+                            
+                            <div class="custom-options">
+                                <!-- Size -->
+                                <div class="option-group">
+                                    <label>الحجم:</label>
+                                    <div class="radio-buttons">
+                                        <label class="radio-label">
+                                            <input type="radio" name="size-superpro" value="وسط" checked>
+                                            <span>وسط</span>
+                                        </label>
+                                        <label class="radio-label">
+                                            <input type="radio" name="size-superpro" value="كبير">
+                                            <span>كبير</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+
+
+                                <!-- Sugar -->
+                                <div class="option-group">
+                                    <label>السكر:</label>
+                                    <select name="sugar-superpro" class="form-select">
+                                        <option value="بدون سكر" selected>بدون سكر (سادة)</option>
+                                        <option value="سكر خفيف">سكر خفيف</option>
+                                        <option value="سكر وسط">سكر وسط</option>
+                                        <option value="سكر زيادة">سكر زيادة</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-add-cart" onclick="addToCart('superpro', 'قهوجي ماهر سوبر برو', 5, '5960730354593238427.jpg')">
+                            <i class="fa-solid fa-cart-plus"></i> إضافة للسلة
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about-section">
+        <div class="container about-grid">
+            <div class="about-text" style="display: flex; flex-direction: column; justify-content: center;">
+                <h2 style="font-size: 3.5rem; font-weight: 800; line-height: 1.4; margin: 0;">
+                    <span class="gold-text">قهوة</span> في قلبك
+                </h2>
+            </div>
+            <div class="about-img-container">
+                <img src="5960730354593238429.jpg" alt="عن قهوجي ماهر" class="about-img">
+            </div>
+        </div>
+    </section>
+
+    <!-- Cart Drawer -->
+    <div class="cart-drawer" id="cart-drawer">
+        <div class="cart-header">
+            <h3><i class="fa-solid fa-bag-shopping gold-text"></i> سلة الطلبات</h3>
+            <button class="close-cart" id="close-cart"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="cart-items" id="cart-items">
+            <!-- Dynamically populated -->
+            <div class="empty-cart-message">
+                <i class="fa-solid fa-mug-hot"></i>
+                <p>سلتك فارغة حالياً. أضف بعض القهوة لمزاجك!</p>
+            </div>
+        </div>
+        <div class="cart-footer">
+            <div class="total-row">
+                <span>المجموع الكلي:</span>
+                <span class="total-price" id="cart-total">0 ر.س</span>
+            </div>
+            <button class="btn btn-checkout btn-block" id="btn-checkout" disabled>إتمام الطلب</button>
+        </div>
+    </div>
+    <div class="cart-overlay" id="cart-overlay"></div>
+
+    <!-- Checkout Modal -->
+    <div class="modal" id="checkout-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>إتمام الطلب وإرسال الفاتورة</h3>
+                <button class="close-modal" id="close-modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="checkout-form" onsubmit="submitOrder(event)">
+                <div class="form-group">
+                    <label for="customer-name">الاسم الثنائي <span class="required">*</span></label>
+                    <div class="input-wrapper">
+                        <i class="fa-regular fa-user"></i>
+                        <input type="text" id="customer-name" placeholder="مثال: محمد العتيبي" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="customer-phone">رقم الجوال (اختياري)</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-phone"></i>
+                        <input type="tel" id="customer-phone" placeholder="مثال: 050XXXXXXX">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="customer-address">العنوان وموقع التوصيل <span class="required">*</span></label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <input type="text" id="customer-address" placeholder="الحي، اسم الشارع، رقم المنزل أو اسم المحل" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="customer-notes">ملاحظات إضافية (اختياري)</label>
+                    <textarea id="customer-notes" rows="3" placeholder="أي تفاصيل أخرى ترغب في إعلامنا بها..."></textarea>
+                </div>
+                
+                <div class="modal-summary">
+                    <h4>تفاصيل الطلب:</h4>
+                    <div id="modal-summary-items"></div>
+                    <div class="summary-total">
+                        <span>الإجمالي النهائي:</span>
+                        <span id="modal-summary-total">0 ر.س</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block btn-submit">
+                    <i class="fa-brands fa-whatsapp"></i> تأكيد وإرسال الفاتورة عبر الواتساب
+                </button>
+            </form>
+        </div>
+    </div>
+    <div class="modal-overlay" id="modal-overlay"></div>
+
+    <!-- Notification Toast -->
+    <div class="toast" id="toast">
+        <i class="fa-solid fa-check-circle"></i>
+        <span id="toast-message">تمت إضافة القهوة للسلة بنجاح!</span>
+    </div>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container footer-grid">
+            <div class="footer-col brand-col">
+                <img src="5960730354593238429.jpg" alt="شعار قهوجي ماهر" class="footer-logo">
+                <p>قهوجي ماهر، خيارك الأول لتذوق فخامة القهوة العربية الأصيلة المحضرة بعناية وحرفية تامة.</p>
+            </div>
+            <div class="footer-col links-col">
+                <h4>روابط سريعة</h4>
+                <ul>
+                    <li><a href="#home">الرئيسية</a></li>
+                    <li><a href="#menu">قائمة القهوة</a></li>
+                    <li><a href="#about">قهوة في قلبك</a></li>
+                </ul>
+            </div>
+            <div class="footer-col contact-col">
+                <h4>تواصل معنا</h4>
+                <p><i class="fa-solid fa-phone gold-text"></i> 966 55 453 7001</p>
+                <p><i class="fa-solid fa-location-dot gold-text"></i> المملكة العربية السعودية</p>
+                <div class="social-links">
+                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#"><i class="fa-brands fa-twitter"></i></a>
+                    <a href="https://wa.me/966554537001"><i class="fa-brands fa-whatsapp"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 قهوجي ماهر. جميع الحقوق محفوظة. تم التطوير بلمسة حب وأصالة.</p>
+        </div>
+    </footer>
+
+    <!-- Script file -->
+    <script src="app.js"></script>
+</body>
+</html>
