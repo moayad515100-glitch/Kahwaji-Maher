@@ -71,38 +71,29 @@ function showToast(message) {
 // Add Item to Cart
 function addToCart(productId, name, price, image) {
     // Get custom options based on product ID
-    let size, sugar, comment = '';
+    let size, sugar;
     
     if (productId === 'classic') {
         size = document.querySelector('input[name="size-classic"]:checked').value;
         sugar = document.querySelector('select[name="sugar-classic"]').value;
-        const commentEl = document.querySelector('input[name="comment-classic"]');
-        comment = commentEl ? commentEl.value.trim() : '';
     } else if (productId === 'pro') {
         size = document.querySelector('input[name="size-pro"]:checked').value;
         sugar = document.querySelector('select[name="sugar-pro"]').value;
-        const commentEl = document.querySelector('input[name="comment-pro"]');
-        comment = commentEl ? commentEl.value.trim() : '';
     } else if (productId === 'superpro') {
         size = document.querySelector('input[name="size-superpro"]:checked').value;
         sugar = document.querySelector('select[name="sugar-superpro"]').value;
-        const commentEl = document.querySelector('input[name="comment-superpro"]');
-        comment = commentEl ? commentEl.value.trim() : '';
     } else if (productId === 'juice') {
         size = document.querySelector('input[name="size-juice"]:checked').value;
         sugar = document.querySelector('select[name="sugar-juice"]').value;
-        const commentEl = document.querySelector('input[name="comment-juice"]');
-        comment = commentEl ? commentEl.value.trim() : '';
     }
 
     const options = {
         size,
-        sugar,
-        comment
+        sugar
     };
 
     // Create unique key for item + options combination
-    const cartItemId = `${productId}-${size}-${sugar}-${comment}`;
+    const cartItemId = `${productId}-${size}-${sugar}`;
 
     // Check total limit (max 5 cups)
     const currentTotalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -136,16 +127,7 @@ function addToCart(productId, name, price, image) {
         animateFlyToCart(cardElement, image, productId);
     }
     
-    // Clear comment input after adding
-    if (productId === 'classic') {
-        document.querySelector('input[name="comment-classic"]').value = '';
-    } else if (productId === 'pro') {
-        document.querySelector('input[name="comment-pro"]').value = '';
-    } else if (productId === 'superpro') {
-        document.querySelector('input[name="comment-superpro"]').value = '';
-    } else if (productId === 'juice') {
-        document.querySelector('input[name="comment-juice"]').value = '';
-    }
+
 
     showToast(`تمت إضافة ${name} إلى السلة!`);
     
@@ -182,10 +164,7 @@ function updateCartUI() {
         itemElement.className = 'cart-item';
         
         // Construct readable options text
-        let optionsText = `حجم ${item.options.size} • سكر: ${item.options.sugar}`;
-        if (item.options.comment) {
-            optionsText += `<br><span style="color: var(--primary-color); font-size: 0.78rem; display: inline-block; margin-top: 3px;"><i class="fa-regular fa-comment"></i> ملاحظة: ${item.options.comment}</span>`;
-        }
+        const optionsText = `حجم ${item.options.size} • سكر: ${item.options.sugar}`;
         
         const priceDisplay = item.price === 0 ? 'مجاناً' : `${item.price * item.quantity} ر.س`;
 
@@ -251,16 +230,8 @@ function populateModalSummary() {
         row.className = 'summary-item-row';
         const itemPriceTotal = item.price === 0 ? 'مجاناً' : `${item.price * item.quantity} ر.س`;
         
-        let commentText = '';
-        if (item.options.comment) {
-            commentText = `<div style="font-size: 0.8rem; color: var(--primary-color); margin-top: 2px;">💬 ملاحظة: ${item.options.comment}</div>`;
-        }
-        
         row.innerHTML = `
-            <div>
-                <span>${item.name} (×${item.quantity})</span>
-                ${commentText}
-            </div>
+            <span>${item.name} (×${item.quantity})</span>
             <span>${itemPriceTotal}</span>
         `;
         modalSummaryItems.appendChild(row);
@@ -302,9 +273,7 @@ function submitOrder(event) {
         message += `*${index + 1}. ${item.name}* (الكمية: ${item.quantity})\n`;
         message += `  🏷️ *الحجم:* ${item.options.size}\n`;
         message += `  🍬 *السكر:* ${item.options.sugar}\n`;
-        if (item.options.comment) {
-            message += `  💬 *ملاحظة:* ${item.options.comment}\n`;
-        }
+
         const itemTotal = item.price === 0 ? 'مجاناً' : `${item.price * item.quantity} ر.س`;
         message += `  💵 *السعر:* ${itemTotal}\n\n`;
     });
@@ -557,109 +526,4 @@ function spawnJuiceParticles(startX, startY) {
     }
 }
 
-// ==========================================
-// CUSTOMER REVIEWS/COMMENTS SYSTEM
-// ==========================================
 
-
-
-function initReviews() {
-    if (!localStorage.getItem('maher_reviews')) {
-        localStorage.setItem('maher_reviews', JSON.stringify(defaultReviews));
-    }
-    renderReviews();
-    setupStarsInput();
-}
-
-function renderReviews() {
-    const reviewsList = document.getElementById('reviews-list');
-    if (!reviewsList) return;
-    const reviews = JSON.parse(localStorage.getItem('maher_reviews')) || [];
-    
-    reviewsList.innerHTML = '';
-    
-    // Render in reverse order (newest first)
-    reviews.slice().reverse().forEach(review => {
-        const item = document.createElement('div');
-        item.className = 'review-item';
-        
-        let starsHTML = '';
-        for (let i = 1; i <= 5; i++) {
-            if (i <= review.rating) {
-                starsHTML += '<i class="fa-solid fa-star"></i> ';
-            } else {
-                starsHTML += '<i class="fa-regular fa-star"></i> ';
-            }
-        }
-        
-        item.innerHTML = `
-            <div class="review-header">
-                <span class="review-author">${review.author}</span>
-                <div style="display: flex; flex-direction: column; align-items: flex-end;">
-                    <div class="review-stars">${starsHTML}</div>
-                    <span class="review-date">${review.date}</span>
-                </div>
-            </div>
-            <p class="review-text">${review.text}</p>
-        `;
-        reviewsList.appendChild(item);
-    });
-}
-
-function setupStarsInput() {
-    const stars = document.querySelectorAll('.star-input');
-    const ratingInput = document.getElementById('review-rating');
-    
-    stars.forEach(star => {
-        star.addEventListener('click', () => {
-            const val = star.getAttribute('data-value');
-            ratingInput.value = val;
-            
-            stars.forEach(s => {
-                if (parseInt(s.getAttribute('data-value')) <= parseInt(val)) {
-                    s.classList.add('active');
-                } else {
-                    s.classList.remove('active');
-                }
-            });
-        });
-    });
-    
-    // Default to 5 stars active
-    stars.forEach(s => s.classList.add('active'));
-}
-
-function submitReview(event) {
-    event.preventDefault();
-    const author = document.getElementById('review-author').value.trim();
-    const rating = parseInt(document.getElementById('review-rating').value);
-    const text = document.getElementById('review-text').value.trim();
-    
-    if (!author || !text) return;
-    
-    const newReview = {
-        author,
-        rating,
-        text,
-        date: "الآن"
-    };
-    
-    const reviews = JSON.parse(localStorage.getItem('maher_reviews')) || [];
-    reviews.push(newReview);
-    localStorage.setItem('maher_reviews', JSON.stringify(reviews));
-    
-    renderReviews();
-    document.getElementById('review-form').reset();
-    
-    // Reset stars active classes
-    const stars = document.querySelectorAll('.star-input');
-    stars.forEach(s => s.classList.add('active'));
-    document.getElementById('review-rating').value = 5;
-    
-    // Play success sound chime to celebrate
-    playSuccessSound();
-    showToast('شكراً لك! تم نشر تعليقك بنجاح.');
-}
-
-// Initialize on script load
-initReviews();

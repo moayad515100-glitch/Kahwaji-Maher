@@ -30,7 +30,6 @@
                     <li><a href="#menu">قائمة القهوة</a></li>
                     <li><a href="#about">قهوة في قلبك</a></li>
                     <li><a href="#suggestions">اقتراحاتكم</a></li>
-                    <li><a href="#reviews">تعليقات العملاء</a></li>
                 </ul>
             </nav>
 
@@ -108,10 +107,6 @@
                                         <option value="سكر زيادة">سكر زيادة</option>
                                     </select>
                                 </div>
-                                <div class="option-group" style="grid-column: span 2; margin-top: 8px;">
-                                    <label>ملاحظة على الكوب (اختياري):</label>
-                                    <input type="text" name="comment-classic" placeholder="مثال: بدون رغوة، لفلان..." style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid rgba(197, 168, 128, 0.15); background-color: rgba(0, 0, 0, 0.2); color: #fff; font-family: var(--font-arabic); font-size: 0.85rem; outline: none; transition: var(--transition);">
-                                </div>
                             </div>
                         </div>
 
@@ -162,10 +157,6 @@
                                         <option value="سكر وسط">سكر وسط</option>
                                         <option value="سكر زيادة">سكر زيادة</option>
                                     </select>
-                                </div>
-                                <div class="option-group" style="grid-column: span 2; margin-top: 8px;">
-                                    <label>ملاحظة على الكوب (اختياري):</label>
-                                    <input type="text" name="comment-pro" placeholder="مثال: دبل شوت، لفلان..." style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid rgba(197, 168, 128, 0.15); background-color: rgba(0, 0, 0, 0.2); color: #fff; font-family: var(--font-arabic); font-size: 0.85rem; outline: none; transition: var(--transition);">
                                 </div>
                             </div>
                         </div>
@@ -218,10 +209,6 @@
                                         <option value="سكر زيادة">سكر زيادة</option>
                                     </select>
                                 </div>
-                                <div class="option-group" style="grid-column: span 2; margin-top: 8px;">
-                                    <label>ملاحظة على الكوب (اختياري):</label>
-                                    <input type="text" name="comment-superpro" placeholder="مثال: إضافات خاصة، لفلان..." style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid rgba(197, 168, 128, 0.15); background-color: rgba(0, 0, 0, 0.2); color: #fff; font-family: var(--font-arabic); font-size: 0.85rem; outline: none; transition: var(--transition);">
-                                </div>
                             </div>
                         </div>
 
@@ -270,10 +257,6 @@
                                         <option value="سكر خفيف">سكر خفيف</option>
                                         <option value="سكر زيادة">سكر زيادة</option>
                                     </select>
-                                </div>
-                                <div class="option-group" style="grid-column: span 2; margin-top: 8px;">
-                                    <label>ملاحظة على الكوب (اختياري):</label>
-                                    <input type="text" name="comment-juice" placeholder="مثال: بدون ثلج، لفلان..." style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid rgba(197, 168, 128, 0.15); background-color: rgba(0, 0, 0, 0.2); color: #fff; font-family: var(--font-arabic); font-size: 0.85rem; outline: none; transition: var(--transition);">
                                 </div>
                             </div>
                         </div>
@@ -407,58 +390,7 @@
         </div>
     </section>
 
-    <!-- Reviews / Comments Section -->
-    <section id="reviews" class="reviews-section">
-        <div class="container">
-            <div class="section-header">
-                <h2>آراء وتعليقات العملاء</h2>
-                <div class="header-line"></div>
-                <p>شاركونا تجربتكم وتقييمكم لقهوتنا الماهرة</p>
-            </div>
-            
-            <div class="reviews-layout">
-                <!-- Add Comment Form -->
-                <div class="add-review-card">
-                    <h3>أضف تعليقك وتقييمك</h3>
-                    <form id="review-form" onsubmit="submitReview(event)">
-                        <div class="form-group">
-                            <label for="review-author">الاسم:</label>
-                            <input type="text" id="review-author" placeholder="اكتب اسمك الكريم..." required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>التقييم:</label>
-                            <div class="rating-stars-input" id="rating-stars-input">
-                                <span class="star-input" data-value="5"><i class="fa-solid fa-star"></i></span>
-                                <span class="star-input" data-value="4"><i class="fa-solid fa-star"></i></span>
-                                <span class="star-input" data-value="3"><i class="fa-solid fa-star"></i></span>
-                                <span class="star-input" data-value="2"><i class="fa-solid fa-star"></i></span>
-                                <span class="star-input" data-value="1"><i class="fa-solid fa-star"></i></span>
-                            </div>
-                            <input type="hidden" id="review-rating" value="5">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="review-text">التعليق:</label>
-                            <textarea id="review-text" rows="3" placeholder="شاركونا رأيكم بصدق..." required></textarea>
-                        </div>
-                        
-                        <button type="submit" class="btn btn-primary btn-block">
-                            <i class="fa-solid fa-paper-plane"></i> نشر التعليق
-                        </button>
-                    </form>
-                </div>
-                
-                <!-- Comments List -->
-                <div class="reviews-list-container">
-                    <h3>التعليقات الأخيرة</h3>
-                    <div class="reviews-list" id="reviews-list">
-                        <!-- Dynamically populated or loaded from localStorage -->
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+
 
     <!-- Footer -->
     <footer class="main-footer">
@@ -474,7 +406,6 @@
                     <li><a href="#menu">قائمة القهوة</a></li>
                     <li><a href="#about">قهوة في قلبك</a></li>
                     <li><a href="#suggestions">اقتراحاتكم</a></li>
-                    <li><a href="#reviews">تعليقات العملاء</a></li>
                 </ul>
             </div>
             <div class="footer-col contact-col">
