@@ -561,11 +561,7 @@ function spawnJuiceParticles(startX, startY) {
 // CUSTOMER REVIEWS/COMMENTS SYSTEM
 // ==========================================
 
-const defaultReviews = [
-    { author: "أبو فهد العتيبي", rating: 5, text: "ما شاء الله، قهوة برو تعدل المزاج وتستحق كل ريال. التوصيل سريع والتعامل راقي جداً.", date: "منذ يومين" },
-    { author: "أميرة خالد", rating: 5, text: "عصير اليوم لذيذ ومنعش بشكل لا يوصف! والتوصيل لعند الباب، تجربة ممتازة وسأكررها بالتأكيد.", date: "منذ 4 أيام" },
-    { author: "ماجد الدوسري", rating: 4, text: "القهوة الماهرة العادية ممتازة ومجانية! شيء رائع، وجربت البرو أيضاً ونالت إعجابي.", date: "منذ أسبوع" }
-];
+
 
 function initReviews() {
     if (!localStorage.getItem('maher_reviews')) {
