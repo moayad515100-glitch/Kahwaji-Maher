@@ -21,6 +21,9 @@ const modalSummaryTotal = document.getElementById('modal-summary-total');
 const toast = document.getElementById('toast');
 const toastMessage = document.getElementById('toast-message');
 
+const limitAlarm = document.getElementById('limit-alarm');
+const alarmScreenFlash = document.getElementById('alarm-screen-flash');
+
 // Target WhatsApp Number
 const whatsappNumber = '966554537001';
 
@@ -79,6 +82,9 @@ function addToCart(productId, name, price, image) {
     } else if (productId === 'superpro') {
         size = document.querySelector('input[name="size-superpro"]:checked').value;
         sugar = document.querySelector('select[name="sugar-superpro"]').value;
+    } else if (productId === 'juice') {
+        size = document.querySelector('input[name="size-juice"]:checked').value;
+        sugar = document.querySelector('select[name="sugar-juice"]').value;
     }
 
     const options = {
@@ -88,6 +94,13 @@ function addToCart(productId, name, price, image) {
 
     // Create unique key for item + options combination
     const cartItemId = `${productId}-${size}-${sugar}`;
+
+    // Check total limit (max 5 cups)
+    const currentTotalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+    if (currentTotalCount >= 5) {
+        triggerAlarm();
+        return;
+    }
 
     // Check if item already exists in cart with EXACT options
     const existingItemIndex = cart.findIndex(item => item.id === cartItemId);
@@ -107,10 +120,17 @@ function addToCart(productId, name, price, image) {
     }
 
     updateCartUI();
+    
+    // Trigger premium fly-to-cart animation
+    const cardElement = document.querySelector(`.product-card[data-id="${productId}"]`);
+    if (cardElement) {
+        animateFlyToCart(cardElement, image, productId);
+    }
+    
     showToast(`تمت إضافة ${name} إلى السلة!`);
     
     // Auto open cart drawer to show customer it was added
-    setTimeout(openCartDrawer, 400);
+    setTimeout(openCartDrawer, 900); // slightly longer to let the flying animation finish first!
 }
 
 // Update Cart UI
@@ -177,6 +197,13 @@ function updateCartUI() {
 function changeQuantity(itemId, change) {
     const itemIndex = cart.findIndex(item => item.id === itemId);
     if (itemIndex > -1) {
+        if (change > 0) {
+            const currentTotalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+            if (currentTotalCount >= 5) {
+                triggerAlarm();
+                return;
+            }
+        }
         cart[itemIndex].quantity += change;
         if (cart[itemIndex].quantity <= 0) {
             cart.splice(itemIndex, 1);
@@ -259,6 +286,9 @@ function submitOrder(event) {
     // Construct WhatsApp Link
     const waLink = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
 
+    // Play success chime
+    playSuccessSound();
+
     // Open WhatsApp
     window.open(waLink, '_blank');
     
@@ -268,4 +298,227 @@ function submitOrder(event) {
     closeCheckoutModal();
     checkoutForm.reset();
     showToast('تم إرسال الطلب بنجاح! شكراً لك.');
+}
+
+// Play Custom Alarm Audio (Double Beep Siren via Web Audio API)
+function playAlarmSound() {
+    try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        const ctx = new AudioContext();
+        
+        const playBeep = (delay) => {
+            setTimeout(() => {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(800, ctx.currentTime);
+                osc.frequency.linearRampToValueAtTime(1300, ctx.currentTime + 0.12);
+                osc.frequency.linearRampToValueAtTime(800, ctx.currentTime + 0.25);
+                
+                gain.gain.setValueAtTime(0.25, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.25);
+                
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                
+                osc.start();
+                osc.stop(ctx.currentTime + 0.3);
+            }, delay);
+        };
+        
+        playBeep(0);
+        playBeep(280);
+    } catch (e) {
+        console.error("Audio Context block", e);
+    }
+}
+
+// Trigger Alarm Warning Modal
+function triggerAlarm() {
+    playAlarmSound();
+    limitAlarm.classList.add('show');
+    alarmScreenFlash.classList.add('active');
+    setTimeout(() => {
+        limitAlarm.classList.remove('show');
+        alarmScreenFlash.classList.remove('active');
+    }, 2000); // alarm goes away after 2 seconds
+}
+
+// Submit Suggestion (Send to WhatsApp)
+function submitSuggestion(event) {
+    event.preventDefault();
+    const suggestionText = document.getElementById('suggestion-text').value.trim();
+    if (!suggestionText) return;
+    
+    let message = `💡 *اقتراح جديد من عميل قهوجي ماهر* 💡\n\n`;
+    message += `${suggestionText}\n\n`;
+    message += `-----------------------------------`;
+    
+    const encodedMessage = encodeURIComponent(message);
+    const waLink = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+    
+    window.open(waLink, '_blank');
+    document.getElementById('suggestion-form').reset();
+    showToast('تم إرسال اقتراحك بنجاح! شكراً لك.');
+}
+
+// Play Success Chime Audio (Ascending Sweet Arpeggio via Web Audio API)
+function playSuccessSound() {
+    try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        const ctx = new AudioContext();
+        
+        const playTone = (freq, delay, duration) => {
+            setTimeout(() => {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                
+                osc.type = 'triangle'; // Sweet flute/music-box sound
+                osc.frequency.setValueAtTime(freq, ctx.currentTime);
+                
+                gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+                
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                
+                osc.start();
+                osc.stop(ctx.currentTime + duration + 0.05);
+            }, delay);
+        };
+        
+        // Ascending major arpeggio chime (C major)
+        playTone(523.25, 0, 0.4);   // C5
+        playTone(659.25, 80, 0.4);  // E5
+        playTone(783.99, 160, 0.4); // G5
+        playTone(1046.50, 240, 0.6); // C6
+    } catch (e) {
+        console.error("Audio Context success sound blocked", e);
+    }
+}
+
+// Premium Fly-to-Cart Animation
+function animateFlyToCart(cardElement, imageSrc, productId) {
+    let trailInterval;
+    
+    // 1. If it is Juice of the Day, flash the card and trigger popping bubble particles!
+    if (productId === 'juice') {
+        cardElement.classList.add('orange-glow-flash');
+        setTimeout(() => cardElement.classList.remove('orange-glow-flash'), 1000);
+        
+        // Find add button position to spawn particles from
+        const addBtn = cardElement.querySelector('.btn-add-cart');
+        if (addBtn) {
+            const btnRect = addBtn.getBoundingClientRect();
+            spawnJuiceParticles(btnRect.left + btnRect.width / 2, btnRect.top + btnRect.height / 2);
+        }
+    }
+    
+    // 2. Perform flying clone animation
+    const cartToggleBtn = document.getElementById('cart-toggle');
+    if (!cartToggleBtn) return;
+    
+    const rect = cardElement.getBoundingClientRect();
+    const cartRect = cartToggleBtn.getBoundingClientRect();
+    
+    // Create image clone
+    const clone = document.createElement('img');
+    clone.src = imageSrc;
+    clone.style.position = 'fixed';
+    clone.style.top = `${rect.top + rect.height/2 - 40}px`;
+    clone.style.left = `${rect.left + rect.width/2 - 40}px`;
+    clone.style.width = '80px';
+    clone.style.height = '80px';
+    clone.style.borderRadius = '50%';
+    clone.style.objectFit = 'cover';
+    clone.style.zIndex = '9999';
+    clone.style.transition = 'all 0.8s cubic-bezier(0.25, 1, 0.5, 1)';
+    clone.style.pointerEvents = 'none';
+    
+    // Color trail based on product ID (Orange glow for juice, gold for coffee)
+    if (productId === 'juice') {
+        clone.style.boxShadow = '0 0 20px rgba(255, 140, 0, 0.8)';
+        clone.style.border = '2px solid #ff8c00';
+        
+        // Trail particles interval
+        trailInterval = setInterval(() => {
+            const cloneRect = clone.getBoundingClientRect();
+            const trail = document.createElement('div');
+            trail.className = 'juice-particle';
+            const size = Math.random() * 5 + 4; // 4px to 9px
+            trail.style.width = `${size}px`;
+            trail.style.height = `${size}px`;
+            trail.style.backgroundColor = '#ffa500';
+            trail.style.left = `${cloneRect.left + cloneRect.width/2}px`;
+            trail.style.top = `${cloneRect.top + cloneRect.height/2}px`;
+            
+            // disperse slightly
+            const dX = (Math.random() - 0.5) * 15;
+            const dY = (Math.random() - 0.5) * 15;
+            trail.style.setProperty('--x', `${dX}px`);
+            trail.style.setProperty('--y', `${dY}px`);
+            
+            document.body.appendChild(trail);
+            setTimeout(() => trail.remove(), 600);
+        }, 35);
+    } else {
+        clone.style.boxShadow = '0 0 20px rgba(197, 168, 128, 0.8)';
+        clone.style.border = '2px solid #c5a880';
+    }
+    
+    document.body.appendChild(clone);
+    
+    // Trigger transition
+    setTimeout(() => {
+        clone.style.top = `${cartRect.top + cartRect.height/2 - 10}px`;
+        clone.style.left = `${cartRect.left + cartRect.width/2 - 10}px`;
+        clone.style.width = '20px';
+        clone.style.height = '20px';
+        clone.style.opacity = '0.2';
+    }, 50);
+    
+    // Cleanup clone and wiggle cart icon
+    setTimeout(() => {
+        clone.remove();
+        if (trailInterval) clearInterval(trailInterval);
+        
+        cartToggleBtn.classList.add('wiggle');
+        setTimeout(() => cartToggleBtn.classList.remove('wiggle'), 500);
+    }, 850);
+}
+
+// Spawn Popping Citrus/Juice Bubble Particles
+function spawnJuiceParticles(startX, startY) {
+    const particleCount = 15;
+    const colors = ['#ff8c00', '#ffa500', '#ffd700', '#ff4500', '#ffffff'];
+    
+    for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'juice-particle';
+        
+        const size = Math.random() * 8 + 6; // 6px to 14px
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        
+        particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        particle.style.left = `${startX}px`;
+        particle.style.top = `${startY}px`;
+        
+        const angle = Math.random() * Math.PI * 2;
+        const distance = Math.random() * 110 + 40; // 40px to 150px
+        const destX = Math.cos(angle) * distance;
+        const destY = Math.sin(angle) * distance + 30; // slightly downwards for gravity feel
+        
+        particle.style.setProperty('--x', `${destX}px`);
+        particle.style.setProperty('--y', `${destY}px`);
+        
+        document.body.appendChild(particle);
+        
+        setTimeout(() => {
+            particle.remove();
+        }, 800);
+    }
 }

@@ -29,6 +29,7 @@
                     <li><a href="#home" class="active">الرئيسية</a></li>
                     <li><a href="#menu">قائمة القهوة</a></li>
                     <li><a href="#about">قهوة في قلبك</a></li>
+                    <li><a href="#suggestions">اقتراحاتكم</a></li>
                 </ul>
             </nav>
 
@@ -216,6 +217,55 @@
                         </button>
                     </div>
                 </div>
+
+                <!-- Product 4: Juice of the Day (3 SAR) -->
+                <div class="product-card premium" data-id="juice">
+                    <div class="product-image-container">
+                        <img src="5963013000862043793.jpg" alt="عصير اليوم" class="product-image">
+                        <span class="product-tag tag-pro">عصير اليوم</span>
+                    </div>
+                    <div class="product-info">
+                        <h3>عصير اليوم</h3>
+                        <div class="product-price">3 ر.س <span class="price-suffix">/ كوب</span></div>
+                        
+                        <!-- Customization Accordion -->
+                        <div class="customization-section">
+                            <h4 class="custom-title"><i class="fa-solid fa-sliders"></i> خصص كوبك:</h4>
+                            
+                            <div class="custom-options">
+                                <!-- Size -->
+                                <div class="option-group">
+                                    <label>الحجم:</label>
+                                    <div class="radio-buttons">
+                                        <label class="radio-label">
+                                            <input type="radio" name="size-juice" value="وسط" checked>
+                                            <span>وسط</span>
+                                        </label>
+                                        <label class="radio-label">
+                                            <input type="radio" name="size-juice" value="كبير">
+                                            <span>كبير</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Sugar -->
+                                <div class="option-group">
+                                    <label>السكر:</label>
+                                    <select name="sugar-juice" class="form-select">
+                                        <option value="سكر وسط" selected>سكر وسط</option>
+                                        <option value="بدون سكر">بدون سكر (سادة)</option>
+                                        <option value="سكر خفيف">سكر خفيف</option>
+                                        <option value="سكر زيادة">سكر زيادة</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-add-cart" onclick="addToCart('juice', 'عصير اليوم', 3, '5963013000862043793.jpg')">
+                            <i class="fa-solid fa-cart-plus"></i> إضافة للسلة
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -253,6 +303,9 @@
                 <span class="total-price" id="cart-total">0 ر.س</span>
             </div>
             <button class="btn btn-checkout btn-block" id="btn-checkout" disabled>إتمام الطلب</button>
+            <div style="font-size: 0.75rem; color: var(--text-muted); text-align: center; margin-top: 10px;">
+                <i class="fa-solid fa-circle-info gold-text"></i> الحد الأقصى للطلب هو 5 أكواب فقط.
+            </div>
         </div>
     </div>
     <div class="cart-overlay" id="cart-overlay"></div>
@@ -314,6 +367,29 @@
         <span id="toast-message">تمت إضافة القهوة للسلة بنجاح!</span>
     </div>
 
+    <!-- Suggestions Section -->
+    <section id="suggestions" class="suggestions-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>يسعدنا سماع اقتراحاتكم</h2>
+                <div class="header-line"></div>
+                <p>شاركونا أفكاركم وملاحظاتكم لتطوير خدماتنا، وسنقوم باستلامها مباشرة عبر الواتساب</p>
+            </div>
+            
+            <div class="suggestion-form-container">
+                <form id="suggestion-form" onsubmit="submitSuggestion(event)">
+                    <div class="form-group">
+                        <label for="suggestion-text">اقتراحك أو ملاحظتك:</label>
+                        <textarea id="suggestion-text" rows="4" placeholder="اكتب اقتراحك هنا بكل حب وأريحية..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-submit-suggestion">
+                        <i class="fa-brands fa-whatsapp"></i> إرسال الاقتراح عبر الواتساب
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
     <!-- Footer -->
     <footer class="main-footer">
         <div class="container footer-grid">
@@ -327,6 +403,7 @@
                     <li><a href="#home">الرئيسية</a></li>
                     <li><a href="#menu">قائمة القهوة</a></li>
                     <li><a href="#about">قهوة في قلبك</a></li>
+                    <li><a href="#suggestions">اقتراحاتكم</a></li>
                 </ul>
             </div>
             <div class="footer-col contact-col">
@@ -344,6 +421,13 @@
             <p>&copy; 2026 قهوجي ماهر. جميع الحقوق محفوظة. تم التطوير بلمسة حب وأصالة.</p>
         </div>
     </footer>
+
+    <!-- Alarm Warning Modal & Flash Overlay -->
+    <div class="alarm-overlay-screen" id="alarm-screen-flash"></div>
+    <div class="alarm-modal" id="limit-alarm">
+        <div class="alarm-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+        <div class="alarm-text" id="alarm-text">يكفي يا حبيبي خلاص أنت ما بتشرب هذه الكمية كلها</div>
+    </div>
 
     <!-- Script file -->
     <script src="app.js"></script>
