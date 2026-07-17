@@ -1,9 +1,3 @@
-// ==========================================
-// MAHER MOOD SYSTEM
-// Options: 'angry' (غاضب) | 'moderate' (متوسط) | 'happy' (سعيد)
-// ==========================================
-const MAHER_MOOD = 'angry'; 
-
 // Cart State
 let cart = [];
 
@@ -30,14 +24,20 @@ const toastMessage = document.getElementById('toast-message');
 const limitAlarm = document.getElementById('limit-alarm');
 const alarmScreenFlash = document.getElementById('alarm-screen-flash');
 
-// Retro Event Elements
+// Retro Event Elements (Lucky Wheel Game)
 const retroCompBtn = document.getElementById('retro-computer-btn');
 const retroEventModal = document.getElementById('retro-event-modal');
 const retroModalOverlay = document.getElementById('retro-modal-overlay');
 const closeRetroModal = document.getElementById('close-retro-modal');
-const retroBtnOk = document.getElementById('retro-btn-ok');
 const moodHeaderBanner = document.getElementById('mood-header-banner');
-const moodDescBox = document.getElementById('mood-desc-box');
+
+const retroGameContainer = document.getElementById('retro-game-container');
+const retroLockContainer = document.getElementById('retro-lock-container');
+const spinBtn = document.getElementById('spin-btn');
+const cooldownTimer = document.getElementById('cooldown-timer');
+const retroLockClose = document.getElementById('retro-lock-close');
+const wheelElement = document.getElementById('wheel-element');
+const gameStatusBox = document.getElementById('game-status-box');
 
 // Target WhatsApp Number
 const whatsappNumber = '966554537001';
@@ -63,11 +63,6 @@ closeModal.addEventListener('click', closeCheckoutModal);
 modalOverlay.addEventListener('click', closeCheckoutModal);
 
 function openCheckoutModal() {
-    if (MAHER_MOOD === 'angry') {
-        closeCartDrawer();
-        triggerAlarm("عذراً! لا يمكنك إتمام الطلب الآن لأن قهوجي ماهر غاضب! 😡");
-        return;
-    }
     closeCartDrawer();
     populateModalSummary();
     checkoutModal.classList.add('open');
@@ -90,16 +85,6 @@ function showToast(message) {
 
 // Add Item to Cart
 function addToCart(productId, name, price, image) {
-    // Check mood restrictions
-    if (MAHER_MOOD === 'angry') {
-        triggerAlarm("عذراً! لا يمكنك الطلب الآن لأن قهوجي ماهر غاضب! 😡");
-        return;
-    }
-    if (MAHER_MOOD === 'moderate' && productId === 'classic') {
-        triggerAlarm("عذراً! القهوة المجانية غير متاحة حالياً لأن مزاج قهوجي ماهر متوسط! 😐");
-        return;
-    }
-
     // Get custom options based on product ID
     let size, sugar;
     
@@ -546,7 +531,7 @@ function spawnJuiceParticles(startX, startY) {
         particle.style.width = `${size}px`;
         particle.style.height = `${size}px`;
         
-        particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
         particle.style.left = `${startX}px`;
         particle.style.top = `${startY}px`;
         
@@ -567,86 +552,272 @@ function spawnJuiceParticles(startX, startY) {
 }
 
 // ==========================================================================
-// Retro Computer Widget & Mood Setup
+// Retro Computer 'You & Your Luck' Wheel Game
 // ==========================================================================
 
-function initMaherMood() {
-    // Reset all card states and texts
-    document.querySelectorAll('.product-card').forEach(card => {
-        card.classList.remove('disabled-mood');
-        const btn = card.querySelector('.btn-add-cart');
-        if (btn) btn.innerHTML = '<i class="fa-solid fa-cart-plus"></i> إضافة للسلة';
-    });
-    
-    // Remove active state from LEDs
-    const ledBars = ['led-happy', 'led-moderate', 'led-angry'];
-    ledBars.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.classList.remove('active');
-    });
+const WEDGE_PRIZES = [
+    { type: 'item', id: 'superpro', name: 'قهوجي ماهر سوبر برو (هدية الحدث)', price: 0, image: '5960730354593238427.jpg' },
+    { type: 'nothing', name: 'ما أخذت شي' },
+    { type: 'item', id: 'pro', name: 'قهوجي ماهر برو (هدية الحدث)', price: 0, image: '5960730354593238428.jpg' },
+    { type: 'retry', name: 'فرصة ثانية' },
+    { type: 'item', id: 'juice', name: 'عصير اليوم (هدية الحدث)', price: 0, image: '5963013000862043793.jpg' },
+    { type: 'nothing', name: 'ما أخذت شي' }
+];
 
-    const ledHappy = document.getElementById('led-happy');
-    const ledModerate = document.getElementById('led-moderate');
-    const ledAngry = document.getElementById('led-angry');
-    
-    if (MAHER_MOOD === 'angry') {
-        if (ledAngry) ledAngry.classList.add('active');
-        if (moodDescBox) {
-            moodDescBox.innerHTML = `
-                <div style="color: #ff3333; font-weight: bold; margin-bottom: 5px;"><i class="fa-solid fa-circle-exclamation"></i> غضب عارم 😡</div>
-                <div>قهوجي ماهر غاضب جداً اليوم لأن في شخص سوى قهوة للبيت غيره! جميع أزرار الطلب معطلة حالياً.</div>
-            `;
-        }
-        if (moodHeaderBanner) {
-            moodHeaderBanner.className = 'mood-header-banner mood-angry';
-            moodHeaderBanner.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> تنبيه: جميع الطلبات معطلة لأن في شخص سوى قهوة للبيت غير ماهر! 😡';
-        }
+let isSpinning = false;
+let currentRotation = 0;
+let countdownInterval = null;
+
+// Sound effects using Web Audio API
+function playTickSound() {
+    try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        const ctx = new AudioContext();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(600, ctx.currentTime);
+        gain.gain.setValueAtTime(0.08, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.04);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.05);
+    } catch(e) {}
+}
+
+function playSadChime() {
+    try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        const ctx = new AudioContext();
+        const playTone = (freq, delay, duration) => {
+            setTimeout(() => {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(freq, ctx.currentTime);
+                gain.gain.setValueAtTime(0.12, ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + duration + 0.05);
+            }, delay);
+        };
+        playTone(392.00, 0, 0.35);  // G4
+        playTone(349.23, 200, 0.35); // F4
+        playTone(311.13, 400, 0.5);  // Eb4
+    } catch(e) {}
+}
+
+// Confetti generator
+function triggerConfetti() {
+    const colors = ['#f56565', '#ed8936', '#ecc94b', '#48bb78', '#38b2ac', '#4299e1', '#9f7aea', '#ed64a6'];
+    const container = document.body;
+    for (let i = 0; i < 80; i++) {
+        const p = document.createElement('div');
+        p.className = 'confetti-particle';
+        p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
         
-        // Disable all product cards visually
-        document.querySelectorAll('.product-card').forEach(card => {
-            card.classList.add('disabled-mood');
-            const btn = card.querySelector('.btn-add-cart');
-            if (btn) btn.innerHTML = '<i class="fa-solid fa-ban"></i> الطلبات معطلة حالياً';
-        });
-    } else if (MAHER_MOOD === 'moderate') {
-        if (ledModerate) ledModerate.classList.add('active');
-        if (moodDescBox) {
-            moodDescBox.innerHTML = `
-                <div style="color: #d47a00; font-weight: bold; margin-bottom: 5px;"><i class="fa-solid fa-circle-info"></i> مزاج متوسط 😐</div>
-                <div>قهوجي ماهر في مزاج متوسط. يسمح بطلب المشروبات المدفوعة كالمعتاد، ولكن القهوة المجانية (العادي) مغلقة حالياً.</div>
-            `;
-        }
-        if (moodHeaderBanner) {
-            moodHeaderBanner.className = 'mood-header-banner mood-moderate';
-            moodHeaderBanner.innerHTML = '<i class="fa-solid fa-circle-info"></i> تنبيه: قهوجي ماهر في مزاج متوسط. القهوة المجانية غير متاحة حالياً 😐';
-        }
+        const w = Math.random() * 8 + 6;
+        p.style.width = `${w}px`;
+        p.style.height = `${Math.random() * 4 + 8}px`;
+        p.style.left = `${Math.random() * 100}vw`;
+        p.style.top = `-20px`;
         
-        // Disable only classic (free) card
-        const classicCard = document.querySelector('.product-card[data-id="classic"]');
-        if (classicCard) {
-            classicCard.classList.add('disabled-mood');
-            const btn = classicCard.querySelector('.btn-add-cart');
-            if (btn) btn.innerHTML = '<i class="fa-solid fa-ban"></i> غير متاح حالياً';
-        }
-    } else {
-        // Happy
-        if (ledHappy) ledHappy.classList.add('active');
-        if (moodDescBox) {
-            moodDescBox.innerHTML = `
-                <div style="color: #28a745; font-weight: bold; margin-bottom: 5px;"><i class="fa-solid fa-circle-check"></i> سعيد ومروّق 😊</div>
-                <div>قهوجي ماهر سعيد اليوم ويرحب بجميع طلباتكم كالمعتاد. القهوة المجانية متاحة للجميع بالصحة والعافية!</div>
-            `;
-        }
-        if (moodHeaderBanner) {
-            moodHeaderBanner.className = 'mood-header-banner mood-happy';
-            moodHeaderBanner.innerHTML = '<i class="fa-solid fa-circle-check"></i> بشرى سارة: قهوجي ماهر سعيد اليوم! المتجر يعمل بشكل طبيعي والقهوة المجانية متاحة 😊';
-        }
+        p.style.animationDelay = `${Math.random() * 0.5}s`;
+        p.style.animationDuration = `${Math.random() * 1.5 + 1.5}s`;
+        
+        container.appendChild(p);
+        setTimeout(() => p.remove(), 3000);
     }
 }
 
-// Retro Modal Events
+// Tick tracking synchronization during spinning
+let lastWedgeCrossed = -1;
+function trackTicks(startTime, duration, startAngle, totalSpinAngle) {
+    if (!isSpinning) return;
+    const now = Date.now();
+    const elapsed = now - startTime;
+    if (elapsed >= duration) return;
+    
+    // Cubic ease-out progress
+    const t = elapsed / duration;
+    const progress = 1 - Math.pow(1 - t, 3);
+    const currentAngle = startAngle + totalSpinAngle * progress;
+    
+    const wedgeIdx = Math.floor((currentAngle + 30) / 60);
+    if (wedgeIdx !== lastWedgeCrossed) {
+        playTickSound();
+        lastWedgeCrossed = wedgeIdx;
+    }
+    
+    requestAnimationFrame(() => trackTicks(startTime, duration, startAngle, totalSpinAngle));
+}
+
+// Check cooldown state and manage views
+function checkCooldownState() {
+    let nextSpinTime = localStorage.getItem('maher_next_spin_time');
+    
+    // Auto-clear old cooldowns if they exceed our 2-hour cooldown limit
+    if (nextSpinTime && parseInt(nextSpinTime) - Date.now() > 2 * 60 * 60 * 1000) {
+        localStorage.removeItem('maher_next_spin_time');
+        nextSpinTime = null;
+    }
+    
+    if (nextSpinTime && Date.now() < parseInt(nextSpinTime)) {
+        // Cooldown active
+        if (retroGameContainer) retroGameContainer.style.display = 'none';
+        if (retroLockContainer) retroLockContainer.style.display = 'block';
+        startCountdown(parseInt(nextSpinTime));
+        return true;
+    } else {
+        // Cooldown inactive
+        if (retroGameContainer) retroGameContainer.style.display = 'block';
+        if (retroLockContainer) retroLockContainer.style.display = 'none';
+        stopCountdown();
+        return false;
+    }
+}
+
+function startCountdown(endTime) {
+    if (countdownInterval) clearInterval(countdownInterval);
+    
+    const updateTimer = () => {
+        const remaining = endTime - Date.now();
+        if (remaining <= 0) {
+            clearInterval(countdownInterval);
+            checkCooldownState();
+            return;
+        }
+        
+        const hours = Math.floor(remaining / (1000 * 60 * 60));
+        const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
+        
+        const pad = (num) => String(num).padStart(2, '0');
+        if (cooldownTimer) {
+            cooldownTimer.textContent = `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+        }
+    };
+    
+    updateTimer();
+    countdownInterval = setInterval(updateTimer, 1000);
+}
+
+function stopCountdown() {
+    if (countdownInterval) {
+        clearInterval(countdownInterval);
+        countdownInterval = null;
+    }
+}
+
+// Spin trigger
+function spinWheel() {
+    if (isSpinning) return;
+    if (checkCooldownState()) return; // Prevent spinning if locked
+    
+    isSpinning = true;
+    if (spinBtn) spinBtn.disabled = true;
+    if (gameStatusBox) gameStatusBox.innerHTML = '<span class="blink-cursor">></span> جاري تدوير عجلة الحظ...';
+    
+    // Choose random prize (index 0 to 5)
+    // Probabilities: Super Pro (0) = 10%, Pro (2) = 15%, Juice (4) = 20%, Retry (3) = 25%, Nothing (1, 5) = 30%
+    const rand = Math.random();
+    let winnerIndex = 1; // Default Got Nothing
+    if (rand < 0.1) {
+        winnerIndex = 0; // Super Pro
+    } else if (rand < 0.25) {
+        winnerIndex = 2; // Pro
+    } else if (rand < 0.45) {
+        winnerIndex = 4; // Juice
+    } else if (rand < 0.7) {
+        winnerIndex = 3; // Retry (second chance)
+    } else {
+        winnerIndex = Math.random() < 0.5 ? 1 : 5; // Got Nothing
+    }
+    
+    const spins = 6;
+    const baseAngle = spins * 360;
+    const currentRelativeAngle = currentRotation % 360;
+    
+    let targetDiff = (360 - winnerIndex * 60) - currentRelativeAngle;
+    if (targetDiff <= 0) targetDiff += 360;
+    
+    const randomOffset = (Math.random() - 0.5) * 36; // +/- 18deg offset within wedge
+    const spinDegrees = baseAngle + targetDiff + randomOffset;
+    
+    const startRotation = currentRotation;
+    currentRotation += spinDegrees;
+    
+    // Trigger transition
+    if (wheelElement) {
+        wheelElement.style.transform = `rotate(${currentRotation}deg)`;
+    }
+    
+    // Play tick sounds
+    const startTime = Date.now();
+    const duration = 4000; // matches transition in CSS
+    lastWedgeCrossed = -1;
+    trackTicks(startTime, duration, startRotation, spinDegrees);
+    
+    // Handle deceleration completion
+    setTimeout(() => {
+        isSpinning = false;
+        if (spinBtn) spinBtn.disabled = false;
+        
+        const prize = WEDGE_PRIZES[winnerIndex];
+        
+        if (prize.type === 'item') {
+            // Win coffee or juice
+            if (gameStatusBox) {
+                gameStatusBox.innerHTML = `🎉 مبروك! ربحت: ${prize.name.split(' (')[0]} مجاناً! تم إضافتها لسلتك.`;
+            }
+            // Add item to cart automatically at 0 SAR
+            cart.push({
+                id: `${prize.id}-gift-${Date.now()}`, // unique gift id
+                productId: prize.id,
+                name: prize.name,
+                price: 0,
+                image: prize.image,
+                options: { size: 'كبير', sugar: 'سكر وسط' },
+                quantity: 1
+            });
+            updateCartUI();
+            playSuccessSound();
+            triggerConfetti();
+            
+            // Lock wheel for 2 hours
+            localStorage.setItem('maher_next_spin_time', String(Date.now() + 2 * 60 * 60 * 1000));
+            setTimeout(checkCooldownState, 2000);
+            
+        } else if (prize.type === 'nothing') {
+            // Loss
+            if (gameStatusBox) {
+                gameStatusBox.innerHTML = `😢 حظاً أوفر! لم تربح شيئاً هذه المرة. جرب مجدداً لاحقاً!`;
+            }
+            playSadChime();
+            
+            // Lock wheel for 2 hours
+            localStorage.setItem('maher_next_spin_time', String(Date.now() + 2 * 60 * 60 * 1000));
+            setTimeout(checkCooldownState, 2000);
+            
+        } else {
+            // Retry / Second chance
+            if (gameStatusBox) {
+                gameStatusBox.innerHTML = `🔄 فرصة ثانية! لم يذهب حظك هباءً، دوّر العجلة مجدداً مجاناً!`;
+            }
+            playAlarmSound(); // neutral alert sound
+        }
+    }, duration + 200);
+}
+
+// Setup Event listeners
 if (retroCompBtn) {
     retroCompBtn.addEventListener('click', () => {
+        checkCooldownState();
         if (retroEventModal) retroEventModal.classList.add('open');
         if (retroModalOverlay) retroModalOverlay.classList.add('open');
     });
@@ -655,22 +826,28 @@ if (retroCompBtn) {
 function closeRetroModalFn() {
     if (retroEventModal) retroEventModal.classList.remove('open');
     if (retroModalOverlay) retroModalOverlay.classList.remove('open');
+    stopCountdown();
 }
 
 if (closeRetroModal) closeRetroModal.addEventListener('click', closeRetroModalFn);
-if (retroBtnOk) retroBtnOk.addEventListener('click', closeRetroModalFn);
 if (retroModalOverlay) retroModalOverlay.addEventListener('click', closeRetroModalFn);
+if (retroLockClose) retroLockClose.addEventListener('click', closeRetroModalFn);
 
-// Initialize Mood System
-initMaherMood();
-
-// Clean existing cart if mood is restrictive
-if (MAHER_MOOD === 'angry') {
-    cart = [];
-    updateCartUI();
-} else if (MAHER_MOOD === 'moderate') {
-    cart = cart.filter(item => item.productId !== 'classic');
-    updateCartUI();
+if (spinBtn) {
+    spinBtn.addEventListener('click', spinWheel);
 }
+
+// Initial Setup
+if (moodHeaderBanner) {
+    moodHeaderBanner.className = 'mood-header-banner';
+    moodHeaderBanner.innerHTML = '<i class="fa-solid fa-circle-check"></i> بشرى سارة: قهوجي ماهر قبل الاعتذار ورجّع لكم الموقع طبيعي! جرب حظك الآن عبر الكمبيوتر القديم 🎰';
+}
+
+// Make sure no leftover disabled styles exist on cards
+document.querySelectorAll('.product-card').forEach(card => {
+    card.classList.remove('disabled-mood');
+    const btn = card.querySelector('.btn-add-cart');
+    if (btn) btn.innerHTML = '<i class="fa-solid fa-cart-plus"></i> إضافة للسلة';
+});
 
 

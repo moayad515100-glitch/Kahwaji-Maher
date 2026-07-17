@@ -74,7 +74,7 @@
                     </div>
                     <div class="product-info">
                         <h3>قهوجي ماهر العادي</h3>
-                        <div class="product-price">2 ر.س <span class="old-price">1.5 ر.س</span></div>
+                        <div class="product-price">مجانا <span class="old-price">1.5 ر.س</span></div>
                         
                         <!-- Customization Accordion -->
                         <div class="customization-section">
@@ -450,42 +450,55 @@
     <div class="retro-modal" id="retro-event-modal">
         <div class="win95-window">
             <div class="win95-title-bar">
-                <div class="win95-title-text"><i class="fa-solid fa-computer"></i> لوحة الفعاليات النشطة v1.0</div>
+                <div class="win95-title-text"><i class="fa-solid fa-gamepad"></i> حدث أنت وحظك! v2.0</div>
                 <button class="win95-close-btn" id="close-retro-modal">×</button>
             </div>
-            <div class="win95-body">
-                <div class="retro-crt-box">
-                    <div class="crt-overlay-noise"></div>
-                    <div class="crt-content">
-                        <div class="crt-event-title">الحدث النشط: <span class="event-name-highlight">غضب قهوجي ماهر</span></div>
-                        <p class="crt-event-desc">المعلم ماهر غاضب اليوم لأن في شخص سوى قهوة للبيت غيره! وقرر إيقاف جميع الطلبات مؤقتاً.</p>
-                    </div>
+            
+            <!-- 1. Active Game Container -->
+            <div class="win95-body" id="retro-game-container">
+                <div class="game-instruction">
+                    <i class="fa-solid fa-circle-check" style="color: #28a745;"></i> بشرى سارة: قهوجي ماهر قبل الاعتذار ورجّع لكم الموقع طبيعي! جرب حظك الآن واربح كوباً مجانياً 🎰
                 </div>
                 
-                <div class="gauge-section">
-                    <div class="gauge-title"><i class="fa-solid fa-gauge-high"></i> مقياس مزاج قهوجي ماهر:</div>
-                    <div class="led-gauge">
-                        <div class="led-bar led-happy" id="led-happy">
-                            <span class="led-bulb"></span>
-                            <span class="led-label">سعيد 😊</span>
-                        </div>
-                        <div class="led-bar led-moderate" id="led-moderate">
-                            <span class="led-bulb"></span>
-                            <span class="led-label">متوسط 😐</span>
-                        </div>
-                        <div class="led-bar led-angry" id="led-angry">
-                            <span class="led-bulb"></span>
-                            <span class="led-label">غاضب 😡</span>
+                <div class="wheel-wrapper">
+                    <div class="wheel-pointer"></div>
+                    <div class="wheel" id="wheel-element">
+                        <!-- Slices (6 wedges) -->
+                        <div class="slice" style="--angle: 0deg; --bg: #d4af37;"><div class="slice-content">🏆 سوبر برو</div></div>
+                        <div class="slice" style="--angle: 60deg; --bg: #2d3748;"><div class="slice-content">💨 ما أخذت شي</div></div>
+                        <div class="slice" style="--angle: 120deg; --bg: #c5a880;"><div class="slice-content">🥈 برو</div></div>
+                        <div class="slice" style="--angle: 180deg; --bg: #e28743;"><div class="slice-content">🔄 فرصة ثانية</div></div>
+                        <div class="slice" style="--angle: 240deg; --bg: #e65c00;"><div class="slice-content">🍹 عصير اليوم</div></div>
+                        <div class="slice" style="--angle: 300deg; --bg: #2d3748;"><div class="slice-content">💨 ما أخذت شي</div></div>
+                        
+                        <div class="wheel-center">
+                            <button class="spin-btn-core" id="spin-btn">دوّر!</button>
                         </div>
                     </div>
                 </div>
 
-                <div class="mood-desc-box" id="mood-desc-box">
-                    <!-- Loaded dynamically from JS -->
+                <div class="game-status-box" id="game-status-box">
+                    انقر على الزر بالمنتصف لبدء التدوير!
                 </div>
+            </div>
 
+            <!-- 2. Lock Container (5-hour Cooldown screen) -->
+            <div class="win95-body" id="retro-lock-container" style="display: none;">
+                <div class="bsod-screen">
+                    <div class="bsod-title">*** خطأ في النظام: الوصول مقيد ***</div>
+                    <p class="bsod-text">عذراً! لقد قمت بتجربة حظك بالفعل. تنص القوانين على إمكانية اللعب مرة واحدة كل 5 ساعات لمنع استهلاك القهوة بالكامل.</p>
+                    
+                    <div class="countdown-display">
+                        <div class="countdown-label">الوقت المتبقي للمحاولة القادمة:</div>
+                        <div class="countdown-timer" id="cooldown-timer">05:00:00</div>
+                    </div>
+                    
+                    <div class="bsod-footer">
+                        الرجاء التحقق لاحقاً... <span class="blink-cursor">_</span>
+                    </div>
+                </div>
                 <div class="win95-actions">
-                    <button class="win95-btn" id="retro-btn-ok">موافق</button>
+                    <button class="win95-btn" id="retro-lock-close">إغلاق</button>
                 </div>
             </div>
         </div>
