@@ -1,3 +1,9 @@
+// ==========================================
+// MAHER MOOD SYSTEM
+// Options: 'angry' (غاضب) | 'moderate' (متوسط) | 'happy' (سعيد)
+// ==========================================
+const MAHER_MOOD = 'angry'; 
+
 // Cart State
 let cart = [];
 
@@ -24,6 +30,15 @@ const toastMessage = document.getElementById('toast-message');
 const limitAlarm = document.getElementById('limit-alarm');
 const alarmScreenFlash = document.getElementById('alarm-screen-flash');
 
+// Retro Event Elements
+const retroCompBtn = document.getElementById('retro-computer-btn');
+const retroEventModal = document.getElementById('retro-event-modal');
+const retroModalOverlay = document.getElementById('retro-modal-overlay');
+const closeRetroModal = document.getElementById('close-retro-modal');
+const retroBtnOk = document.getElementById('retro-btn-ok');
+const moodHeaderBanner = document.getElementById('mood-header-banner');
+const moodDescBox = document.getElementById('mood-desc-box');
+
 // Target WhatsApp Number
 const whatsappNumber = '966554537001';
 
@@ -48,6 +63,11 @@ closeModal.addEventListener('click', closeCheckoutModal);
 modalOverlay.addEventListener('click', closeCheckoutModal);
 
 function openCheckoutModal() {
+    if (MAHER_MOOD === 'angry') {
+        closeCartDrawer();
+        triggerAlarm("عذراً! لا يمكنك إتمام الطلب الآن لأن قهوجي ماهر غاضب! 😡");
+        return;
+    }
     closeCartDrawer();
     populateModalSummary();
     checkoutModal.classList.add('open');
@@ -70,6 +90,16 @@ function showToast(message) {
 
 // Add Item to Cart
 function addToCart(productId, name, price, image) {
+    // Check mood restrictions
+    if (MAHER_MOOD === 'angry') {
+        triggerAlarm("عذراً! لا يمكنك الطلب الآن لأن قهوجي ماهر غاضب! 😡");
+        return;
+    }
+    if (MAHER_MOOD === 'moderate' && productId === 'classic') {
+        triggerAlarm("عذراً! القهوة المجانية غير متاحة حالياً لأن مزاج قهوجي ماهر متوسط! 😐");
+        return;
+    }
+
     // Get custom options based on product ID
     let size, sugar;
     
@@ -339,14 +369,24 @@ function playAlarmSound() {
 }
 
 // Trigger Alarm Warning Modal
-function triggerAlarm() {
+function triggerAlarm(message) {
     playAlarmSound();
+    if (message) {
+        document.getElementById('alarm-text').textContent = message;
+    } else {
+        document.getElementById('alarm-text').textContent = "يكفي يا حبيبي خلاص أنت ما بتشرب هذه الكمية كلها";
+    }
     limitAlarm.classList.add('show');
     alarmScreenFlash.classList.add('active');
+    
+    // Add site-wide shake effect
+    document.body.classList.add('maher-angry-shake');
+    
     setTimeout(() => {
         limitAlarm.classList.remove('show');
         alarmScreenFlash.classList.remove('active');
-    }, 2000); // alarm goes away after 2 seconds
+        document.body.classList.remove('maher-angry-shake');
+    }, 2500); // alarm goes away after 2.5 seconds
 }
 
 // Submit Suggestion (Send to WhatsApp)
@@ -524,6 +564,113 @@ function spawnJuiceParticles(startX, startY) {
             particle.remove();
         }, 800);
     }
+}
+
+// ==========================================================================
+// Retro Computer Widget & Mood Setup
+// ==========================================================================
+
+function initMaherMood() {
+    // Reset all card states and texts
+    document.querySelectorAll('.product-card').forEach(card => {
+        card.classList.remove('disabled-mood');
+        const btn = card.querySelector('.btn-add-cart');
+        if (btn) btn.innerHTML = '<i class="fa-solid fa-cart-plus"></i> إضافة للسلة';
+    });
+    
+    // Remove active state from LEDs
+    const ledBars = ['led-happy', 'led-moderate', 'led-angry'];
+    ledBars.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove('active');
+    });
+
+    const ledHappy = document.getElementById('led-happy');
+    const ledModerate = document.getElementById('led-moderate');
+    const ledAngry = document.getElementById('led-angry');
+    
+    if (MAHER_MOOD === 'angry') {
+        if (ledAngry) ledAngry.classList.add('active');
+        if (moodDescBox) {
+            moodDescBox.innerHTML = `
+                <div style="color: #ff3333; font-weight: bold; margin-bottom: 5px;"><i class="fa-solid fa-circle-exclamation"></i> غضب عارم 😡</div>
+                <div>قهوجي ماهر غاضب جداً اليوم لأن في شخص سوى قهوة للبيت غيره! جميع أزرار الطلب معطلة حالياً.</div>
+            `;
+        }
+        if (moodHeaderBanner) {
+            moodHeaderBanner.className = 'mood-header-banner mood-angry';
+            moodHeaderBanner.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> تنبيه: جميع الطلبات معطلة لأن في شخص سوى قهوة للبيت غير ماهر! 😡';
+        }
+        
+        // Disable all product cards visually
+        document.querySelectorAll('.product-card').forEach(card => {
+            card.classList.add('disabled-mood');
+            const btn = card.querySelector('.btn-add-cart');
+            if (btn) btn.innerHTML = '<i class="fa-solid fa-ban"></i> الطلبات معطلة حالياً';
+        });
+    } else if (MAHER_MOOD === 'moderate') {
+        if (ledModerate) ledModerate.classList.add('active');
+        if (moodDescBox) {
+            moodDescBox.innerHTML = `
+                <div style="color: #d47a00; font-weight: bold; margin-bottom: 5px;"><i class="fa-solid fa-circle-info"></i> مزاج متوسط 😐</div>
+                <div>قهوجي ماهر في مزاج متوسط. يسمح بطلب المشروبات المدفوعة كالمعتاد، ولكن القهوة المجانية (العادي) مغلقة حالياً.</div>
+            `;
+        }
+        if (moodHeaderBanner) {
+            moodHeaderBanner.className = 'mood-header-banner mood-moderate';
+            moodHeaderBanner.innerHTML = '<i class="fa-solid fa-circle-info"></i> تنبيه: قهوجي ماهر في مزاج متوسط. القهوة المجانية غير متاحة حالياً 😐';
+        }
+        
+        // Disable only classic (free) card
+        const classicCard = document.querySelector('.product-card[data-id="classic"]');
+        if (classicCard) {
+            classicCard.classList.add('disabled-mood');
+            const btn = classicCard.querySelector('.btn-add-cart');
+            if (btn) btn.innerHTML = '<i class="fa-solid fa-ban"></i> غير متاح حالياً';
+        }
+    } else {
+        // Happy
+        if (ledHappy) ledHappy.classList.add('active');
+        if (moodDescBox) {
+            moodDescBox.innerHTML = `
+                <div style="color: #28a745; font-weight: bold; margin-bottom: 5px;"><i class="fa-solid fa-circle-check"></i> سعيد ومروّق 😊</div>
+                <div>قهوجي ماهر سعيد اليوم ويرحب بجميع طلباتكم كالمعتاد. القهوة المجانية متاحة للجميع بالصحة والعافية!</div>
+            `;
+        }
+        if (moodHeaderBanner) {
+            moodHeaderBanner.className = 'mood-header-banner mood-happy';
+            moodHeaderBanner.innerHTML = '<i class="fa-solid fa-circle-check"></i> بشرى سارة: قهوجي ماهر سعيد اليوم! المتجر يعمل بشكل طبيعي والقهوة المجانية متاحة 😊';
+        }
+    }
+}
+
+// Retro Modal Events
+if (retroCompBtn) {
+    retroCompBtn.addEventListener('click', () => {
+        if (retroEventModal) retroEventModal.classList.add('open');
+        if (retroModalOverlay) retroModalOverlay.classList.add('open');
+    });
+}
+
+function closeRetroModalFn() {
+    if (retroEventModal) retroEventModal.classList.remove('open');
+    if (retroModalOverlay) retroModalOverlay.classList.remove('open');
+}
+
+if (closeRetroModal) closeRetroModal.addEventListener('click', closeRetroModalFn);
+if (retroBtnOk) retroBtnOk.addEventListener('click', closeRetroModalFn);
+if (retroModalOverlay) retroModalOverlay.addEventListener('click', closeRetroModalFn);
+
+// Initialize Mood System
+initMaherMood();
+
+// Clean existing cart if mood is restrictive
+if (MAHER_MOOD === 'angry') {
+    cart = [];
+    updateCartUI();
+} else if (MAHER_MOOD === 'moderate') {
+    cart = cart.filter(item => item.productId !== 'classic');
+    updateCartUI();
 }
 
 

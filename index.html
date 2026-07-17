@@ -18,6 +18,7 @@
 
     <!-- Header / Navbar -->
     <header class="main-header">
+        <div id="mood-header-banner" class="mood-header-banner"></div>
         <div class="container header-container">
             <div class="logo-area">
                 <img src="5960730354593238429.jpg" alt="شعار قهوجي ماهر" class="header-logo">
@@ -28,8 +29,8 @@
                 <ul>
                     <li><a href="#home" class="active">الرئيسية</a></li>
                     <li><a href="#menu">قائمة القهوة</a></li>
-                    <li><a href="#about">قهوة في قلبك</a></li>
-                    <li><a href="#suggestions">اقتراحاتكم</a></li>
+                    <li><a href="#about">قهوة بس  </a></li>
+                    <li><a href="#suggestions">اقتراحاتكم الي مارح اقراها</a></li>
                 </ul>
             </nav>
 
@@ -44,7 +45,7 @@
     <section id="home" class="hero-section">
         <div class="hero-overlay"></div>
         <div class="container hero-content">
-            <div class="hero-badge">تأسس عام 2024</div>
+            <div class="hero-badge">تأسس عام 2030</div>
             <h1 class="hero-title">القهوة الماهرة <span class="gold-text">الأصيلة</span></h1>
             <div class="hero-buttons">
                 <a href="#menu" class="btn btn-primary">اطلب الآن</a>
@@ -73,7 +74,7 @@
                     </div>
                     <div class="product-info">
                         <h3>قهوجي ماهر العادي</h3>
-                        <div class="product-price">مجاناً <span class="old-price">1.5 ر.س</span></div>
+                        <div class="product-price">2 ر.س <span class="old-price">1.5 ر.س</span></div>
                         
                         <!-- Customization Accordion -->
                         <div class="customization-section">
@@ -430,6 +431,66 @@
         <div class="alarm-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
         <div class="alarm-text" id="alarm-text">يكفي يا حبيبي خلاص أنت ما بتشرب هذه الكمية كلها</div>
     </div>
+
+    <!-- Retro Computer Button Widget -->
+    <div class="retro-comp-btn" id="retro-computer-btn">
+        <div class="crt-monitor">
+            <div class="crt-screen">
+                <div class="screen-glow"></div>
+                <div class="retro-face">📟</div>
+            </div>
+            <div class="monitor-stand"></div>
+            <div class="monitor-base"></div>
+        </div>
+        <div class="ping-dot"></div>
+        <div class="comp-tooltip">شاشة الفعاليات</div>
+    </div>
+
+    <!-- Retro Event Modal -->
+    <div class="retro-modal" id="retro-event-modal">
+        <div class="win95-window">
+            <div class="win95-title-bar">
+                <div class="win95-title-text"><i class="fa-solid fa-computer"></i> لوحة الفعاليات النشطة v1.0</div>
+                <button class="win95-close-btn" id="close-retro-modal">×</button>
+            </div>
+            <div class="win95-body">
+                <div class="retro-crt-box">
+                    <div class="crt-overlay-noise"></div>
+                    <div class="crt-content">
+                        <div class="crt-event-title">الحدث النشط: <span class="event-name-highlight">غضب قهوجي ماهر</span></div>
+                        <p class="crt-event-desc">المعلم ماهر غاضب اليوم لأن في شخص سوى قهوة للبيت غيره! وقرر إيقاف جميع الطلبات مؤقتاً.</p>
+                    </div>
+                </div>
+                
+                <div class="gauge-section">
+                    <div class="gauge-title"><i class="fa-solid fa-gauge-high"></i> مقياس مزاج قهوجي ماهر:</div>
+                    <div class="led-gauge">
+                        <div class="led-bar led-happy" id="led-happy">
+                            <span class="led-bulb"></span>
+                            <span class="led-label">سعيد 😊</span>
+                        </div>
+                        <div class="led-bar led-moderate" id="led-moderate">
+                            <span class="led-bulb"></span>
+                            <span class="led-label">متوسط 😐</span>
+                        </div>
+                        <div class="led-bar led-angry" id="led-angry">
+                            <span class="led-bulb"></span>
+                            <span class="led-label">غاضب 😡</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mood-desc-box" id="mood-desc-box">
+                    <!-- Loaded dynamically from JS -->
+                </div>
+
+                <div class="win95-actions">
+                    <button class="win95-btn" id="retro-btn-ok">موافق</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="retro-overlay" id="retro-modal-overlay"></div>
 
     <!-- Script file -->
     <script src="app.js?v=1.2"></script>
