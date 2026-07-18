@@ -15,6 +15,14 @@ const ACTIVE_EVENT = 'matcha';
 
 // Cart State
 let cart = [];
+try {
+    const savedCart = localStorage.getItem('maher_cart');
+    if (savedCart) {
+        cart = JSON.parse(savedCart);
+    }
+} catch (e) {
+    cart = [];
+}
 
 // DOM Elements
 const cartToggle = document.getElementById('cart-toggle');
@@ -263,6 +271,9 @@ function updateCartUI() {
     // Calculate & Display Total
     const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     cartTotal.textContent = `${total} ر.س`;
+    
+    // Persist cart to localStorage
+    localStorage.setItem('maher_cart', JSON.stringify(cart));
 }
 
 // Change Quantity of Item
@@ -1867,5 +1878,11 @@ if (retroModalOverlay) retroModalOverlay.addEventListener('click', closeRetroMod
 
 // Initialize Active Event system on load
 initActiveEventHooks();
+
+// Reset Matcha free redemption flag once to allow claiming again as requested
+localStorage.removeItem('maher_matcha_redeemed');
+
+// Populate the cart drawer UI from persistent storage on load
+updateCartUI();
 
 
