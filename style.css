@@ -1930,6 +1930,481 @@ textarea:focus {
     100% { opacity: 0.95; }
 }
 
+/* ==========================================================
+   Events Engine Styles (New 5 Events)
+   ========================================================== */
+
+/* 1. Button fleeing transition in Cup Strike */
+.btn-add-cart {
+    transition: transform 0.18s cubic-bezier(0.25, 0.8, 0.25, 1), background-color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Bribe Game Styles */
+.bribe-game-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    padding: 10px;
+}
+
+.bribe-visual {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    background: rgba(255,255,255,0.05);
+    border: 2px solid;
+    border-color: #808080 #fff #fff #808080;
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cup-sprite {
+    font-size: 3rem;
+    z-index: 2;
+}
+
+.sugar-falling {
+    position: absolute;
+    top: -20px;
+    font-size: 1.2rem;
+    animation: sugarFallAnimation 0.5s linear forwards;
+    z-index: 1;
+}
+
+@keyframes sugarFallAnimation {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(80px) rotate(360deg); opacity: 0; }
+}
+
+.win95-progress-wrapper {
+    width: 100%;
+    background: #b5b1a9;
+    border: 2px solid;
+    border-color: #808080 #fff #fff #808080;
+    padding: 3px;
+    box-sizing: border-box;
+}
+
+.win95-progress-bar {
+    height: 16px;
+    background: #000080;
+    width: 0%;
+    transition: width 0.2s ease;
+}
+
+/* 2. Coffee Lie Detector Styles */
+.detector-terminal {
+    background: #020a02;
+    border: 2px solid;
+    border-color: #808080 #fff #fff #808080;
+    padding: 15px;
+    border-radius: 4px;
+    color: #33ff33;
+    font-family: monospace, var(--font-arabic);
+    text-shadow: 0 0 3px rgba(51,255,51,0.4);
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.detector-choices {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 15px;
+}
+
+.win95-choice-btn {
+    background: #d4d0c8;
+    border: 2px solid;
+    border-color: #fff #808080 #808080 #fff;
+    color: #000;
+    font-family: var(--font-arabic);
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 8px 12px;
+    cursor: pointer;
+    outline: none;
+    text-align: right;
+    width: 100%;
+    box-shadow: inset 1px 1px 0 #fff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.win95-choice-btn:active {
+    border-color: #808080 #fff #fff #808080;
+    box-shadow: none;
+    padding-top: 9px;
+    padding-bottom: 7px;
+}
+
+.detector-indicator {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid #555;
+    background: #808080;
+}
+
+.win95-choice-btn:hover .detector-indicator {
+    background: #ffff00;
+    box-shadow: 0 0 5px #ffff00;
+}
+
+/* 3. Maher's Vacation / Stock Market Styles */
+.stock-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.stock-item {
+    background: #b5b1a9;
+    border: 2px solid;
+    border-color: #808080 #fff #fff #808080;
+    padding: 8px 12px;
+    border-radius: 2px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.stock-name {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #111;
+}
+
+.stock-value-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.stock-price {
+    font-size: 1.1rem;
+    font-weight: bold;
+    font-family: monospace;
+    color: #000;
+}
+
+.stock-trend {
+    font-size: 0.9rem;
+    font-weight: bold;
+    animation: trendPulse 0.5s infinite alternate;
+}
+
+.trend-up {
+    color: #28a745;
+}
+
+.trend-down {
+    color: #dc3545;
+}
+
+@keyframes trendPulse {
+    from { opacity: 0.7; }
+    to { opacity: 1; }
+}
+
+.stock-graph-retro {
+    background: #020a02;
+    border: 2px solid;
+    border-color: #808080 #fff #fff #808080;
+    height: 90px;
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+}
+
+.stock-graph-retro::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(rgba(51,255,51,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(51,255,51,0.07) 1px, transparent 1px);
+    background-size: 10px 10px;
+}
+
+.stock-graph-line {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: #33ff33;
+    box-shadow: 0 0 8px #33ff33;
+    animation: graphSway 4s infinite ease-in-out;
+}
+
+@keyframes graphSway {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-40px); }
+}
+
+/* 4. Coffee Grind challenge clicker styles */
+.grind-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    padding: 10px;
+}
+
+.grind-handle-area {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.grind-grinder {
+    font-size: 4rem;
+    transition: transform 0.05s ease;
+}
+
+.grind-grinder.active {
+    transform: rotate(45deg) scale(0.95);
+}
+
+.grind-stats {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #111;
+}
+
+.grind-timer {
+    color: #d9534f;
+    font-family: monospace;
+    font-size: 1rem;
+}
+
+/* 5. Neon Magic mode overrides */
+.neon-magic-active {
+    --bg-main: #020205 !important;
+    --bg-card: #090912 !important;
+    --bg-header: rgba(2, 2, 5, 0.9) !important;
+    --gold: #b259ff !important; /* neon purple override! */
+    --gold-hover: #d29dff !important;
+    --gold-glow: rgba(178, 89, 255, 0.4) !important;
+    --text-main: #c4d0ff !important;
+    --text-muted: #7986b6 !important;
+    --white: #ffffff !important;
+}
+
+.neon-magic-active body {
+    background-color: var(--bg-main);
+}
+
+.neon-magic-active .product-card {
+    border: 1px solid var(--gold) !important;
+    box-shadow: 0 0 15px rgba(178, 89, 255, 0.25) !important;
+    animation: neonBorderPulse 3s infinite alternate;
+}
+
+.neon-magic-active .btn-primary {
+    background: linear-gradient(135deg, var(--gold) 0%, #7d1cff 100%) !important;
+    box-shadow: 0 0 12px rgba(178, 89, 255, 0.5) !important;
+    color: #fff !important;
+}
+
+.neon-magic-active .btn-primary:hover {
+    box-shadow: 0 0 20px rgba(178, 89, 255, 0.8) !important;
+}
+
+.neon-magic-active .gold-text {
+    color: var(--gold) !important;
+    background: linear-gradient(135deg, #d29dff 0%, #b259ff 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    text-shadow: 0 0 8px rgba(178, 89, 255, 0.4);
+}
+
+.neon-magic-active .main-header {
+    border-bottom: 1px solid rgba(178, 89, 255, 0.3) !important;
+}
+
+.neon-magic-active .cart-trigger {
+    text-shadow: 0 0 8px var(--gold);
+}
+
+@keyframes neonBorderPulse {
+    from {
+        border-color: rgba(178, 89, 255, 0.5);
+        box-shadow: 0 0 10px rgba(178, 89, 255, 0.2);
+    }
+    to {
+        border-color: rgba(178, 89, 255, 1);
+        box-shadow: 0 0 20px rgba(178, 89, 255, 0.4);
+    }
+}
+
+/* Mouse trail particle styling for Neon Magic */
+.neon-particle {
+    position: fixed;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 10000;
+    background: #b259ff;
+    box-shadow: 0 0 10px #b259ff, 0 0 20px #b259ff;
+    animation: neonParticleFade 1.2s ease-out forwards;
+}
+
+@keyframes neonParticleFade {
+    0% { transform: scale(1) translateY(0); opacity: 1; }
+    100% { transform: scale(0.1) translateY(-30px); opacity: 0; }
+}
+
+/* ==========================================================
+   Coffee Thief Car Chase Game Styles
+   ========================================================== */
+
+.chase-game-container {
+    position: relative;
+    width: 100%;
+    height: 230px;
+    background-color: #2b2b2b;
+    background-image: linear-gradient(90deg, transparent 50%, #fff 50%);
+    background-size: 6px 40px; /* dashed line in center */
+    background-repeat: repeat-y;
+    background-position: center;
+    border: 2px solid;
+    border-color: #808080 #fff #fff #808080;
+    overflow: hidden;
+    margin-bottom: 10px;
+    border-radius: 2px;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8);
+}
+
+/* Scroll road effect when active */
+.chase-game-container.active {
+    animation: scrollRoad 0.25s linear infinite;
+}
+
+@keyframes scrollRoad {
+    0% { background-position-y: 0; }
+    100% { background-position-y: 40px; }
+}
+
+/* Sides of the road (grass shoulders) */
+.chase-game-container::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 12px; height: 100%;
+    background: #2e7d32; /* green grass left shoulder */
+    border-right: 2px solid #ecc94b; /* yellow shoulder line */
+    z-index: 5;
+}
+
+.chase-game-container::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0; width: 12px; height: 100%;
+    background: #2e7d32; /* green grass right shoulder */
+    border-left: 2px solid #ecc94b; /* yellow shoulder line */
+    z-index: 5;
+}
+
+.chase-player-car {
+    position: absolute;
+    bottom: 12px;
+    width: 32px;
+    height: 32px;
+    font-size: 2rem;
+    text-align: center;
+    z-index: 10;
+    transition: left 0.12s cubic-bezier(0.25, 0.8, 0.25, 1);
+    transform: translateX(-50%); /* center car on its coordinate */
+}
+
+.chase-thief-item {
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    font-size: 2rem;
+    text-align: center;
+    z-index: 8;
+    transform: translateX(-50%);
+}
+
+.chase-obstacle-item {
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    font-size: 1.8rem;
+    text-align: center;
+    z-index: 8;
+    transform: translateX(-50%);
+}
+
+.chase-stats-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #d4d0c8;
+    border: 2px solid;
+    border-color: #fff #808080 #808080 #fff;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: #000;
+    margin-bottom: 10px;
+}
+
+.chase-stats-bar span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.chase-mobile-controls {
+    display: flex;
+    justify-content: space-around;
+    gap: 15px;
+    margin-top: 10px;
+    width: 100%;
+}
+
+.chase-ctrl-btn {
+    flex: 1;
+    background: #d4d0c8;
+    border: 2px solid;
+    border-color: #fff #808080 #808080 #fff;
+    color: #000;
+    font-size: 1.6rem;
+    font-weight: bold;
+    padding: 12px;
+    cursor: pointer;
+    outline: none;
+    box-shadow: inset 1px 1px 0 #fff;
+    user-select: none;
+    touch-action: manipulation;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.chase-ctrl-btn:active {
+    border-color: #808080 #fff #fff #808080;
+    box-shadow: none;
+}
+
 
 
 
