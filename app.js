@@ -1040,6 +1040,7 @@ function renderActiveEventTemplate() {
         `;
         document.getElementById('btn-start-chase').addEventListener('click', startCarChaseGame);
     } else if (ACTIVE_EVENT === 'matcha') {
+        const redeemed = localStorage.getItem('maher_matcha_redeemed') === 'true';
         retroEventDynamicBody.innerHTML = `
             <div class="win95-body" style="padding: 20px; text-align: center; font-family: var(--font-arabic); background: #f0fff0;">
                 <i class="fa-solid fa-leaf" style="font-size: 3rem; color: #2e7d32; margin-bottom: 15px; text-shadow: 0 0 10px rgba(46,125,50,0.3);"></i>
@@ -1047,13 +1048,54 @@ function renderActiveEventTemplate() {
                 <p style="font-size: 0.9rem; color: #333; line-height: 1.5; text-align: right;">
                     مرحباً بكم في نظام المعلم ماهر الخاص. احتفالاً بتدشين <strong>ماتشا ماهرة 🍵</strong> بـ 6 ريال فقط، قمنا بتفعيل خصم 60% على <strong>قهوجي ماهر سوبر برو</strong> لتصبح بـ 2 ريال فقط بدلاً من 5 ريال!
                 </p>
-                <div style="background: #fff; border: 2px inset #808080; padding: 10px; margin-top: 10px; font-size: 0.8rem; text-align: right; color: #555;">
-                    💡 العرض ساري طوال فترة أسبوع الماتشا الأخضر. بالصحة والهناء!
+                
+                <div style="background: #fff; border: 2px inset #808080; padding: 12px; margin-top: 10px; text-align: center;">
+                    <div style="font-size: 0.85rem; font-weight: bold; color: #2e7d32; margin-bottom: 8px;">🎁 هدية أسبوع الماتشا الخاصة بك:</div>
+                    <button class="win95-btn" id="btn-claim-free-matcha" style="width: 100%; font-weight: bold; background: #2e7d32; color: #fff; border-color: #2e7d32; cursor: pointer; padding: 6px 12px;" ${redeemed ? 'disabled' : ''}>
+                        ${redeemed ? 'تم استلام الكوب المجاني بنجاح! ✔️' : 'ماتشا ماهرة مجاناً (كوب واحد فقط!) 🍵'}
+                    </button>
                 </div>
-                <button class="win95-btn" id="retro-modal-ok" style="margin-top: 15px; width: 100%;">موافق</button>
+                
+                <button class="win95-btn" id="retro-modal-ok" style="margin-top: 15px; width: 100%;">إغلاق</button>
             </div>
         `;
         document.getElementById('retro-modal-ok').addEventListener('click', closeRetroModalFn);
+        if (!redeemed) {
+            document.getElementById('btn-claim-free-matcha').addEventListener('click', claimFreeMatchaDrink);
+        }
+    }
+}
+
+function claimFreeMatchaDrink() {
+    const redeemed = localStorage.getItem('maher_matcha_redeemed') === 'true';
+    if (redeemed) return;
+    
+    // Add item to cart
+    cart.push({
+        id: `matcha-free-${Date.now()}`,
+        productId: 'matcha',
+        name: 'ماتشا ماهرة (كوب مجاني 🎁)',
+        price: 0,
+        image: 'matcha.jpg',
+        options: { size: 'وسط', sugar: 'سكر وسط' },
+        quantity: 1
+    });
+    updateCartUI();
+    playSuccessSound();
+    triggerConfetti();
+    
+    // Mark as redeemed
+    localStorage.setItem('maher_matcha_redeemed', 'true');
+    
+    // Update button in UI
+    const claimBtn = document.getElementById('btn-claim-free-matcha');
+    if (claimBtn) {
+        claimBtn.disabled = true;
+        claimBtn.textContent = 'تم استلام الكوب المجاني بنجاح! ✔️';
+        claimBtn.style.background = '#6c757d';
+        claimBtn.style.borderColor = '#6c757d';
+        claimBtn.style.color = '#fff';
+        claimBtn.style.cursor = 'not-allowed';
     }
 }
 
