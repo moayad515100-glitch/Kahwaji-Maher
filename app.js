@@ -13,6 +13,16 @@
 // ==========================================================
 const ACTIVE_EVENT = 'matcha'; 
 
+const EVENT_LAUNCH_TIME = 1784543543000; // Fixed timestamp: 24 Hours from 2026-07-19 13:32:23 UTC+3
+let globalCountdownInterval = null;
+
+function isEventLaunched() {
+    if (localStorage.getItem('maher_launch_bypass') === 'true') {
+        return true;
+    }
+    return Date.now() >= EVENT_LAUNCH_TIME;
+}
+
 // Cart State
 let cart = [];
 try {
@@ -107,12 +117,17 @@ function showToast(message) {
 
 // Add Item to Cart
 function addToCart(productId, name, price, image) {
-    if (ACTIVE_EVENT === 'anger') {
+    let currentEvent = ACTIVE_EVENT;
+    if (ACTIVE_EVENT === 'matcha' && !isEventLaunched()) {
+        currentEvent = 'none';
+    }
+
+    if (currentEvent === 'anger') {
         triggerAlarm("عذراً! لا يمكنك الطلب الآن لأن قهوجي ماهر غاضب! 😡");
         return;
     }
 
-    if (ACTIVE_EVENT === 'thief' && Math.random() < 0.25) {
+    if (currentEvent === 'thief' && Math.random() < 0.25) {
         triggerAlarm("🚨 انتبه! سارق القهوة 🥷 تسلل وسرق المشروب من يدك! اذهب لمطاردته بالسيارة في الكمبيوتر القديم واستعِدْ كوبك!");
         return;
     }
@@ -166,12 +181,25 @@ function addToCart(productId, name, price, image) {
 
     let finalPrice = price;
     let finalName = name;
-    if (ACTIVE_EVENT === 'maher_vacation') {
+    if (currentEvent === 'maher_vacation') {
         finalPrice = fluctuatedPrices[productId] !== undefined ? fluctuatedPrices[productId] : price;
         finalName = `${name} (سعر البورصة)`;
-    } else if (ACTIVE_EVENT === 'matcha' && productId === 'superpro') {
-        finalPrice = 2;
-        finalName = `${name} (خصم الماتشا)`;
+    } else if (currentEvent === 'matcha') {
+        if (productId === 'matcha' || productId === 'superpro') {
+            finalPrice = 0;
+            finalName = `${name} (هدية الافتتاح! 🎁)`;
+        }
+    }
+
+    // Limit free event items (Matcha / Super Pro) to 1 cup per customer
+    if (finalPrice === 0 && (productId === 'matcha' || productId === 'superpro')) {
+        const existingCount = cart
+            .filter(item => item.productId === productId && item.price === 0)
+            .reduce((sum, item) => sum + item.quantity, 0);
+        if (existingCount >= 1) {
+            showToast(`عذراً! يُسمح بكوب مجاني واحد فقط من ${name}! 🎁`);
+            return;
+        }
     }
 
     if (existingItemIndex > -1) {
@@ -281,6 +309,12 @@ function changeQuantity(itemId, change) {
     const itemIndex = cart.findIndex(item => item.id === itemId);
     if (itemIndex > -1) {
         if (change > 0) {
+            const item = cart[itemIndex];
+            // Enforce limit of 1 for free event items on increase
+            if (item.price === 0 && (item.productId === 'matcha' || item.productId === 'superpro')) {
+                showToast(`عذراً! يُسمح بكوب مجاني واحد فقط من ${item.name}! 🎁`);
+                return;
+            }
             const currentTotalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
             if (currentTotalCount >= 5) {
                 triggerAlarm();
@@ -1051,31 +1085,696 @@ function renderActiveEventTemplate() {
         `;
         document.getElementById('btn-start-chase').addEventListener('click', startCarChaseGame);
     } else if (ACTIVE_EVENT === 'matcha') {
-        const redeemed = localStorage.getItem('maher_matcha_redeemed') === 'true';
-        retroEventDynamicBody.innerHTML = `
-            <div class="win95-body" style="padding: 20px; text-align: center; font-family: var(--font-arabic); background: #f0fff0;">
-                <i class="fa-solid fa-leaf" style="font-size: 3rem; color: #2e7d32; margin-bottom: 15px; text-shadow: 0 0 10px rgba(46,125,50,0.3);"></i>
-                <h3 style="margin-bottom: 10px; color: #2e7d32;">أسبوع الماتشا الماهرة الرائعة!</h3>
-                <p style="font-size: 0.9rem; color: #333; line-height: 1.5; text-align: right;">
-                    مرحباً بكم في نظام المعلم ماهر الخاص. احتفالاً بتدشين <strong>ماتشا ماهرة 🍵</strong> بـ 6 ريال فقط، قمنا بتفعيل خصم 60% على <strong>قهوجي ماهر سوبر برو</strong> لتصبح بـ 2 ريال فقط بدلاً من 5 ريال!
-                </p>
-                
-                <div style="background: #fff; border: 2px inset #808080; padding: 12px; margin-top: 10px; text-align: center;">
-                    <div style="font-size: 0.85rem; font-weight: bold; color: #2e7d32; margin-bottom: 8px;">🎁 هدية أسبوع الماتشا الخاصة بك:</div>
-                    <button class="win95-btn" id="btn-claim-free-matcha" style="width: 100%; font-weight: bold; background: #2e7d32; color: #fff; border-color: #2e7d32; cursor: pointer; padding: 6px 12px;" ${redeemed ? 'disabled' : ''}>
-                        ${redeemed ? 'تم استلام الكوب المجاني بنجاح! ✔️' : 'ماتشا ماهرة مجاناً (كوب واحد فقط!) 🍵'}
-                    </button>
+        if (!isEventLaunched()) {
+            // Pre-launch state: preparation screen
+            retroEventDynamicBody.innerHTML = `
+                <div class="win95-body" style="padding: 20px; text-align: center; font-family: var(--font-arabic); background: #000080; color: #fff; min-height: 300px;">
+                    <div style="font-size: 1.2rem; font-weight: bold; margin-bottom: 15px;">*** شاشة استعداد ماهر 95 ***</div>
+                    <p style="font-size: 0.85rem; line-height: 1.6; text-align: right;">
+                        نظام التشغيل يستعد حالياً للترقية التلقائية وتنشيط أكبر حدث في تاريخ قهوجي ماهر مجاناً.
+                    </p>
+                    <div class="countdown-display" style="margin-top: 25px;">
+                        <div class="countdown-label" style="font-size: 0.8rem; color: #ffff00;">الوقت المتبقي للترقية:</div>
+                        <div class="countdown-timer" id="prelaunch-comp-timer" style="font-size: 1.8rem; font-weight: bold; margin-top: 5px;">--:--:--</div>
+                    </div>
+                    <hr style="margin: 25px 0; border-color: #555;">
+                    <button class="win95-btn" onclick="closeRetroModalFn()" style="width: 100%;">إغلاق</button>
                 </div>
-                
-                <button class="win95-btn" id="retro-modal-ok" style="margin-top: 15px; width: 100%;">إغلاق</button>
-            </div>
-        `;
-        document.getElementById('retro-modal-ok').addEventListener('click', closeRetroModalFn);
-        if (!redeemed) {
-            document.getElementById('btn-claim-free-matcha').addEventListener('click', claimFreeMatchaDrink);
+            `;
+            const updateCompTimer = () => {
+                const remaining = EVENT_LAUNCH_TIME - Date.now();
+                const timerEl = document.getElementById('prelaunch-comp-timer');
+                if (!timerEl) return;
+                if (remaining <= 0) {
+                    clearInterval(compTimerInterval);
+                    location.reload();
+                    return;
+                }
+                const hours = Math.floor(remaining / (1000 * 60 * 60));
+                const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
+                timerEl.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            };
+            updateCompTimer();
+            const compTimerInterval = setInterval(() => {
+                if (document.getElementById('prelaunch-comp-timer')) {
+                    updateCompTimer();
+                } else {
+                    clearInterval(compTimerInterval);
+                }
+            }, 1000);
+        } else {
+            // Post-launch: render full Win95 Desktop environment!
+            const redeemed = localStorage.getItem('maher_matcha_redeemed') === 'true';
+            retroEventDynamicBody.innerHTML = `
+                <div class="maher-os-desktop" id="maher-desktop">
+                    <!-- Icons Grid -->
+                    <div class="desktop-icons">
+                        <div class="desktop-icon" onclick="openOSWindow('win-event')">
+                            <span class="desktop-icon-img">📁</span>
+                            <span class="desktop-icon-text">لوحة الفعاليات</span>
+                        </div>
+                        <div class="desktop-icon" onclick="openOSWindow('win-barista')">
+                            <span class="desktop-icon-img">🎮</span>
+                            <span class="desktop-icon-text">بارستا ماهر</span>
+                        </div>
+                        <div class="desktop-icon" onclick="openOSWindow('win-paint')">
+                            <span class="desktop-icon-img">🎨</span>
+                            <span class="desktop-icon-text">لاتيه آرت</span>
+                        </div>
+                        <div class="desktop-icon" onclick="openOSWindow('win-radio')">
+                            <span class="desktop-icon-img">📻</span>
+                            <span class="desktop-icon-text">راديو لوفي</span>
+                        </div>
+                        <div class="desktop-icon" onclick="openOSWindow('win-notepad')">
+                            <span class="desktop-icon-img">📝</span>
+                            <span class="desktop-icon-text">المفكرة</span>
+                        </div>
+                    </div>
+
+                    <!-- Windows -->
+                    <!-- Window 1: Event Console -->
+                    <div class="os-window" id="win-event" style="display: none;">
+                        <div class="window-titlebar" onmousedown="dragOSWindow(event, 'win-event')">
+                            <span class="window-title">📁 لوحة الفعاليات</span>
+                            <div class="window-controls">
+                                <button class="win-btn" onclick="closeOSWindow('win-event')">X</button>
+                            </div>
+                        </div>
+                        <div class="window-body">
+                            <div style="text-align: center; background: #e8f5e9; padding: 8px; border: 1px solid #81c784; border-radius: 4px; direction: rtl; font-family: var(--font-arabic);">
+                                <h4 style="color:#2e7d32;">🍵 أسبوع الماتشا الماهرة نشط!</h4>
+                                <p style="font-size:0.75rem; margin-top:5px; color:#333;">لقد قمنا بتوفير الماتشا وسوبر برو مجاناً بالكامل للجميع! يمكنك طلب الأكواب الآن من المتجر.</p>
+                                <hr style="margin: 8px 0; border: none; border-top: 1px dotted #ccc;">
+                                <div style="font-size: 0.8rem; font-weight: bold; color: #2e7d32; margin-bottom: 6px;">🎁 هدية أسبوع الماتشا الخاصة بك:</div>
+                                <button class="win95-btn" id="btn-claim-free-matcha" style="width: 100%; font-weight: bold; background: #2e7d32; color: #fff; border-color: #2e7d32; cursor: pointer; padding: 6px 12px; user-select:none;" ${redeemed ? 'disabled' : ''}>
+                                    ${redeemed ? 'تم استلام الكوب المجاني بنجاح! ✔️' : 'ماتشا ماهرة مجاناً (كوب واحد فقط!) 🍵'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Window 2: Barista Game -->
+                    <div class="os-window" id="win-barista" style="display: none;">
+                        <div class="window-titlebar" onmousedown="dragOSWindow(event, 'win-barista')">
+                            <span class="window-title">🎮 بارستا ماهر</span>
+                            <div class="window-controls">
+                                <button class="win-btn" onclick="closeOSWindow('win-barista')">X</button>
+                            </div>
+                        </div>
+                        <div class="window-body" style="background:#f4f4f4; padding:6px;">
+                            <div id="barista-menu-view" style="display: block; text-align:center;">
+                                <p style="font-size:0.75rem; color:#555; margin-bottom:8px; line-height:1.4;">
+                                    محاكي بارستا ماهر: قم بتحضير المشروبات المطلوبة بالترتيب الصحيح لكسب النقاط. حضّر 5 طلبات صحيحة لتربح!
+                                </p>
+                                <button class="win95-btn" onclick="startBaristaGame()" style="width:100%; padding:6px; font-weight:bold;">ابدأ الطبخ! ☕🎮</button>
+                            </div>
+                            <div id="barista-game-view" style="display: none;">
+                                <div class="barista-order-bubble" id="barista-order-text">طلب الزبون: ...</div>
+                                <div style="display:flex; justify-content:space-between; font-size:0.75rem; margin-bottom:5px;">
+                                    <span>النقاط: <strong id="barista-points">0 / 5</strong></span>
+                                    <span>الوقت: <strong id="barista-time">45s</strong></span>
+                                </div>
+                                <div class="barista-progress-cup" id="barista-cup-display">كوب فارغ</div>
+                                <div class="barista-ingredients-grid">
+                                    <div class="ingredient-group-title">الأكواب:</div>
+                                    <button class="barista-btn" onclick="selectBaristaIngredient('cup', 'وسط')">🥤 وسط</button>
+                                    <button class="barista-btn" onclick="selectBaristaIngredient('cup', 'كبير')">🥤 كبير</button>
+                                    
+                                    <div class="ingredient-group-title">المشروبات:</div>
+                                    <button class="barista-btn" onclick="selectBaristaIngredient('drink', 'كلاسيك')">☕ كلاسيك</button>
+                                    <button class="barista-btn" onclick="selectBaristaIngredient('drink', 'برو')">☕ برو</button>
+                                    <button class="barista-btn" onclick="selectBaristaIngredient('drink', 'ماتشا')">🍵 ماتشا</button>
+                                    
+                                    <div class="ingredient-group-title">السكر والحليب:</div>
+                                    <button class="barista-btn" onclick="selectBaristaIngredient('sugar', 'بدون')">🍬 بدون</button>
+                                    <button class="barista-btn" onclick="selectBaristaIngredient('sugar', 'سكر وسط')">🍬 وسط</button>
+                                    <button class="barista-btn" onclick="selectBaristaIngredient('milk', 'milk')">🥛 حليب</button>
+                                    <button class="barista-btn" onclick="selectBaristaIngredient('milk', 'nomilk')">🥛 بدون حليب</button>
+                                </div>
+                                <div style="display:flex; gap:6px; margin-top:8px;">
+                                    <button class="win95-btn" onclick="submitBaristaOrder()" style="flex:1; background:#2e7d32; color:#fff;">تقديم 📤</button>
+                                    <button class="win95-btn" onclick="resetBaristaCup()" style="flex:1; background:#d9534f; color:#fff;">تفريغ 🗑️</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Window 3: Paint -->
+                    <div class="os-window" id="win-paint" style="display: none;">
+                        <div class="window-titlebar" onmousedown="dragOSWindow(event, 'win-paint')">
+                            <span class="window-title">🎨 لاتيه آرت</span>
+                            <div class="window-controls">
+                                <button class="win-btn" onclick="closeOSWindow('win-paint')">X</button>
+                            </div>
+                        </div>
+                        <div class="window-body" style="display:flex; flex-direction:column; align-items:center; padding:5px;">
+                            <div class="paint-canvas-container">
+                                <canvas id="paint-canvas" width="130" height="130"></canvas>
+                            </div>
+                            <div class="paint-palette">
+                                <div class="paint-color active" style="background:#3d2314;" onclick="setPaintColor('#3d2314', this)"></div>
+                                <div class="paint-color" style="background:#fdf6e2;" onclick="setPaintColor('#fdf6e2', this)"></div>
+                                <div class="paint-color" style="background:#b37d14;" onclick="setPaintColor('#b37d14', this)"></div>
+                                <div class="paint-color" style="background:#4c7c3c;" onclick="setPaintColor('#4c7c3c', this)"></div>
+                            </div>
+                            <button class="win95-btn" onclick="clearPaintCanvas()" style="width:100%; margin-top:6px; padding:3px;">مسح الكوب 🧹</button>
+                        </div>
+                    </div>
+
+                    <!-- Window 4: Radio -->
+                    <div class="os-window" id="win-radio" style="display: none;">
+                        <div class="window-titlebar" onmousedown="dragOSWindow(event, 'win-radio')">
+                            <span class="window-title">📻 راديو لوفي</span>
+                            <div class="window-controls">
+                                <button class="win-btn" onclick="closeOSWindow('win-radio')">X</button>
+                            </div>
+                        </div>
+                        <div class="window-body" style="padding:10px;">
+                            <div class="radio-display" id="radio-track-name">📻 راديو ماهر: مغلق 💤</div>
+                            <div class="radio-controls">
+                                <button class="win95-btn" onclick="toggleOSRadio()" style="padding:4px 10px; font-weight:bold;" id="btn-radio-play">تشغيل ▶</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Window 5: Notepad -->
+                    <div class="os-window" id="win-notepad" style="display: none;">
+                        <div class="window-titlebar" onmousedown="dragOSWindow(event, 'win-notepad')">
+                            <span class="window-title">📝 المفكرة</span>
+                            <div class="window-controls">
+                                <button class="win-btn" onclick="closeOSWindow('win-notepad')">X</button>
+                            </div>
+                        </div>
+                        <div class="window-body" style="background:#fff; color:#000; font-family:monospace; font-size:0.7rem; direction:rtl; text-align:right;">
+                            <strong>مذكرات المعلم ماهر:</strong><br>
+                            - لا تخبر أحداً بالشيفرات السرية للموقع!<br>
+                            🗝️ اكتب الكود في أي مكان بالموقع لتفعيله:<br>
+                            • <code>MAHERMATCHAFREE</code> : تصفير مؤشر الماتشا المجانية مجدداً.<br>
+                            • <code>FASTCAR</code> : تفعيل وضع السرعة الفائقة والحياة اللانهائية لسيارتك في مطاردة السارق.<br>
+                            • <code>BARISTAPASS</code> : الفوز فوراً بلعبة البارستا مجاناً كوب ماتشا.<br>
+                        </div>
+                    </div>
+
+                    <!-- Taskbar -->
+                    <div class="os-taskbar">
+                        <button class="start-btn" id="os-start-btn" onclick="toggleStartMenu()">☕ ابدأ</button>
+                        <div class="taskbar-tabs" id="taskbar-tabs-container"></div>
+                        <div class="taskbar-clock" id="taskbar-clock-display">--:-- م</div>
+                    </div>
+
+                    <!-- Start Menu Dropdown -->
+                    <div class="start-menu" id="start-menu-dropdown">
+                        <div style="display: flex;">
+                            <div class="start-menu-sidebar">MAHER 95</div>
+                            <div style="flex-grow: 1;">
+                                <div class="start-menu-item" onclick="openOSWindow('win-event')">📁 لوحة الفعاليات</div>
+                                <div class="start-menu-item" onclick="openOSWindow('win-barista')">🎮 بارستا ماهر</div>
+                                <div class="start-menu-item" onclick="openOSWindow('win-paint')">🎨 لاتيه آرت</div>
+                                <div class="start-menu-item" onclick="openOSWindow('win-radio')">📻 راديو لوفي</div>
+                                <div class="start-menu-item" onclick="openOSWindow('win-notepad')">📝 المفكرة</div>
+                                <hr style="margin: 4px 0; border: none; border-top: 1px solid #808080;">
+                                <div class="start-menu-item" onclick="closeRetroModalFn()">🔌 إيقاف التشغيل</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            // Init Clock and Event button
+            updateOSClock();
+            setInterval(updateOSClock, 30000);
+            
+            const claimBtn = document.getElementById('btn-claim-free-matcha');
+            if (claimBtn && !redeemed) {
+                claimBtn.addEventListener('click', claimFreeMatchaDrink);
+            }
+            
+            // Init paint app canvas events
+            initPaintCanvas();
         }
     }
 }
+
+// ==========================================================
+// MaherOS 95 Desktop Engine & Helper Functions
+// ==========================================================
+let activeOSWindows = [];
+
+function updateOSClock() {
+    const clockEl = document.getElementById('taskbar-clock-display');
+    if (!clockEl) return;
+    const now = new Date();
+    let hours = now.getHours();
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const ampm = hours >= 12 ? 'م' : 'ص';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // 0 should be 12
+    clockEl.textContent = `${hours}:${minutes} ${ampm}`;
+}
+
+function toggleStartMenu() {
+    const menu = document.getElementById('start-menu-dropdown');
+    const btn = document.getElementById('os-start-btn');
+    if (!menu) return;
+    if (menu.style.display === 'block') {
+        menu.style.display = 'none';
+        btn.classList.remove('active');
+    } else {
+        menu.style.display = 'block';
+        btn.classList.add('active');
+    }
+}
+
+function openOSWindow(winId) {
+    const win = document.getElementById(winId);
+    if (!win) return;
+    
+    // Hide Start menu
+    const menu = document.getElementById('start-menu-dropdown');
+    const btn = document.getElementById('os-start-btn');
+    if (menu) menu.style.display = 'none';
+    if (btn) btn.classList.remove('active');
+    
+    win.style.display = 'flex';
+    
+    if (!activeOSWindows.includes(winId)) {
+        activeOSWindows.push(winId);
+    }
+    
+    focusOSWindow(winId);
+    updateTaskbarTabs();
+}
+
+function closeOSWindow(winId) {
+    const win = document.getElementById(winId);
+    if (win) win.style.display = 'none';
+    
+    activeOSWindows = activeOSWindows.filter(id => id !== winId);
+    updateTaskbarTabs();
+    
+    // Stop barista game if closed
+    if (winId === 'win-barista') {
+        clearInterval(baristaTimer);
+        baristaActive = false;
+    }
+}
+
+function focusOSWindow(winId) {
+    document.querySelectorAll('.os-window').forEach(w => {
+        w.classList.remove('active');
+        w.classList.add('inactive');
+    });
+    const win = document.getElementById(winId);
+    if (win) {
+        win.classList.add('active');
+        win.classList.remove('inactive');
+    }
+}
+
+function updateTaskbarTabs() {
+    const container = document.getElementById('taskbar-tabs-container');
+    if (!container) return;
+    
+    const titles = {
+        'win-event': '📁 الفعاليات',
+        'win-barista': '🎮 بارستا',
+        'win-paint': '🎨 الرسام',
+        'win-radio': '📻 الراديو',
+        'win-notepad': '📝 المفكرة'
+    };
+    
+    container.innerHTML = activeOSWindows.map(id => {
+        return `<div class="taskbar-tab active" onclick="focusOSWindow('${id}')">${titles[id]}</div>`;
+    }).join('');
+}
+
+function dragOSWindow(event, winId) {
+    const win = document.getElementById(winId);
+    if (!win) return;
+    focusOSWindow(winId);
+    
+    let shiftX = event.clientX - win.getBoundingClientRect().left;
+    let shiftY = event.clientY - win.getBoundingClientRect().top;
+    
+    const container = document.getElementById('maher-desktop');
+    if (!container) return;
+    const containerRect = container.getBoundingClientRect();
+    
+    function moveAt(clientX, clientY) {
+        let left = clientX - containerRect.left - shiftX;
+        let top = clientY - containerRect.top - shiftY;
+        
+        left = Math.max(0, Math.min(containerRect.width - win.offsetWidth, left));
+        top = Math.max(0, Math.min(containerRect.height - win.offsetHeight - 32, top));
+        
+        win.style.left = left + 'px';
+        win.style.top = top + 'px';
+    }
+    
+    function onMouseMove(e) {
+        moveAt(e.clientX, e.clientY);
+    }
+    
+    document.addEventListener('mousemove', onMouseMove);
+    
+    document.onmouseup = function() {
+        document.removeEventListener('mousemove', onMouseMove);
+        document.onmouseup = null;
+    };
+}
+
+// ----------------------------------------------------------
+// MaherOS 95 Barista Game Logic
+// ----------------------------------------------------------
+let baristaActive = false;
+let baristaOrder = null;
+let baristaSelection = { cup: null, drink: null, sugar: null, milk: null };
+let baristaScore = 0;
+let baristaTimeLeft = 45;
+let baristaTimer = null;
+
+function startBaristaGame() {
+    document.getElementById('barista-menu-view').style.display = 'none';
+    document.getElementById('barista-game-view').style.display = 'block';
+    
+    baristaActive = true;
+    baristaScore = 0;
+    baristaTimeLeft = 45;
+    
+    document.getElementById('barista-points').textContent = '0 / 5';
+    document.getElementById('barista-time').textContent = '45s';
+    
+    resetBaristaCup();
+    generateBaristaOrder();
+    
+    clearInterval(baristaTimer);
+    baristaTimer = setInterval(() => {
+        baristaTimeLeft--;
+        const timeEl = document.getElementById('barista-time');
+        if (timeEl) timeEl.textContent = `${baristaTimeLeft}s`;
+        
+        if (baristaTimeLeft <= 0) {
+            clearInterval(baristaTimer);
+            endBaristaGame(false);
+        }
+    }, 1000);
+}
+
+function generateBaristaOrder() {
+    const cups = ['وسط', 'كبير'];
+    const drinks = ['كلاسيك', 'برو', 'ماتشا'];
+    const sugars = ['بدون', 'سكر وسط', 'زيادة'];
+    const milks = ['milk', 'nomilk'];
+    
+    const cup = cups[Math.floor(Math.random() * cups.length)];
+    const drink = drinks[Math.floor(Math.random() * drinks.length)];
+    const sugar = sugars[Math.floor(Math.random() * sugars.length)];
+    const milk = milks[Math.floor(Math.random() * milks.length)];
+    
+    baristaOrder = { cup, drink, sugar, milk };
+    
+    const orderTxt = `طلب الزبون: كوب ${cup} ${drink === 'ماتشا' ? 'ماتشا' : 'قهوة ' + drink}، ${sugar === 'بدون' ? 'بدون سكر' : sugar === 'سكر وسط' ? 'سكر وسط' : 'سكر زيادة'}، ${milk === 'milk' ? 'مع حليب 🥛' : 'بدون حليب ❌'}`;
+    const orderEl = document.getElementById('barista-order-text');
+    if (orderEl) orderEl.textContent = orderTxt;
+}
+
+function selectBaristaIngredient(type, value) {
+    if (!baristaActive) return;
+    baristaSelection[type] = value;
+    updateBaristaCupUI();
+    playTickSound();
+}
+
+function resetBaristaCup() {
+    baristaSelection = { cup: null, drink: null, sugar: null, milk: null };
+    updateBaristaCupUI();
+}
+
+function updateBaristaCupUI() {
+    const cupEl = document.getElementById('barista-cup-display');
+    if (!cupEl) return;
+    
+    const parts = [];
+    if (baristaSelection.cup) parts.push(`🥤 حجم ${baristaSelection.cup}`);
+    if (baristaSelection.drink) parts.push(`🧪 ${baristaSelection.drink}`);
+    if (baristaSelection.sugar) parts.push(`🍬 سكر: ${baristaSelection.sugar}`);
+    if (baristaSelection.milk) parts.push(baristaSelection.milk === 'milk' ? '🥛 حليب' : '💧 سادة');
+    
+    cupEl.textContent = parts.join(' + ') || 'كوب فارغ';
+}
+
+function submitBaristaOrder() {
+    if (!baristaActive) return;
+    
+    const isCorrect = 
+        baristaSelection.cup === baristaOrder.cup &&
+        baristaSelection.drink === baristaOrder.drink &&
+        baristaSelection.sugar === baristaOrder.sugar &&
+        baristaSelection.milk === baristaOrder.milk;
+        
+    if (isCorrect) {
+        baristaScore++;
+        const ptsEl = document.getElementById('barista-points');
+        if (ptsEl) ptsEl.textContent = `${baristaScore} / 5`;
+        playSuccessSound();
+        resetBaristaCup();
+        
+        if (baristaScore >= 5) {
+            clearInterval(baristaTimer);
+            endBaristaGame(true);
+        } else {
+            generateBaristaOrder();
+        }
+    } else {
+        playAlarmSound();
+        showToast('ترتيب التحضير غير صحيح! أعد المحاولة.');
+        resetBaristaCup();
+    }
+}
+
+function endBaristaGame(success) {
+    baristaActive = false;
+    const viewEl = document.getElementById('barista-game-view');
+    const menuEl = document.getElementById('barista-menu-view');
+    if (viewEl) viewEl.style.display = 'none';
+    if (menuEl) menuEl.style.display = 'block';
+    
+    if (success) {
+        playSuccessSound();
+        triggerConfetti();
+        showToast('تهانينا! لقد طهوت كبارستا محترف واستلمت كوب ماتشا مجاني!');
+        
+        cart.push({
+            id: `matcha-barista-${Date.now()}`,
+            productId: 'matcha',
+            name: 'ماتشا ماهرة (مكافأة بارستا 🎮)',
+            price: 0,
+            image: 'matcha.jpg',
+            options: { size: 'وسط', sugar: 'سكر وسط' },
+            quantity: 1
+        });
+        updateCartUI();
+        closeOSWindow('win-barista');
+        
+        localStorage.setItem(`maher_cooldown_${ACTIVE_EVENT}`, String(Date.now() + COOLDOWN_DURATION));
+        setTimeout(checkCooldownState, 2000);
+    } else {
+        playSadChime();
+        showToast('انتهى الوقت! فشلت في الوردية.');
+    }
+}
+
+// ----------------------------------------------------------
+// MaherOS 95 Latte Art Paint Logic
+// ----------------------------------------------------------
+let paintColor = '#3d2314';
+let painting = false;
+let paintCtx = null;
+
+function initPaintCanvas() {
+    const canvas = document.getElementById('paint-canvas');
+    if (!canvas) return;
+    paintCtx = canvas.getContext('2d');
+    clearPaintCanvas();
+    
+    const startDrawing = (e) => {
+        painting = true;
+        draw(e);
+    };
+    
+    const stopDrawing = () => {
+        painting = false;
+        if (paintCtx) paintCtx.beginPath();
+    };
+    
+    // Mouse events
+    canvas.addEventListener('mousedown', startDrawing);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', stopDrawing);
+    canvas.addEventListener('mouseleave', stopDrawing);
+    
+    // Touch events
+    canvas.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        const t = e.touches[0];
+        const rect = canvas.getBoundingClientRect();
+        painting = true;
+        drawTouch(t.clientX - rect.left, t.clientY - rect.top);
+    });
+    
+    canvas.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        const t = e.touches[0];
+        const rect = canvas.getBoundingClientRect();
+        if (painting) drawTouch(t.clientX - rect.left, t.clientY - rect.top);
+    });
+    
+    canvas.addEventListener('touchend', stopDrawing);
+}
+
+function setPaintColor(color, el) {
+    paintColor = color;
+    document.querySelectorAll('.paint-color').forEach(c => c.classList.remove('active'));
+    if (el) el.classList.add('active');
+    playTickSound();
+}
+
+function clearPaintCanvas() {
+    const canvas = document.getElementById('paint-canvas');
+    if (!canvas || !paintCtx) return;
+    paintCtx.fillStyle = '#fdf6e2'; // Coffee Foam Base
+    paintCtx.fillRect(0, 0, canvas.width, canvas.height);
+}
+
+function draw(e) {
+    if (!painting || !paintCtx) return;
+    const canvas = document.getElementById('paint-canvas');
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    paintCtx.lineWidth = 4;
+    paintCtx.lineCap = 'round';
+    paintCtx.strokeStyle = paintColor;
+    
+    paintCtx.lineTo(x, y);
+    paintCtx.stroke();
+    paintCtx.beginPath();
+    paintCtx.moveTo(x, y);
+}
+
+function drawTouch(x, y) {
+    if (!painting || !paintCtx) return;
+    paintCtx.lineWidth = 4;
+    paintCtx.lineCap = 'round';
+    paintCtx.strokeStyle = paintColor;
+    
+    paintCtx.lineTo(x, y);
+    paintCtx.stroke();
+    paintCtx.beginPath();
+    paintCtx.moveTo(x, y);
+}
+
+// ----------------------------------------------------------
+// MaherOS 95 Retro Radio Synthesizer (Ambient Chords)
+// ----------------------------------------------------------
+let radioSynthInterval = null;
+let synthCtx = null;
+
+function toggleOSRadio() {
+    const btn = document.getElementById('btn-radio-play');
+    const displayEl = document.getElementById('radio-track-name');
+    if (!btn || !displayEl) return;
+    
+    if (radioSynthInterval) {
+        clearInterval(radioSynthInterval);
+        radioSynthInterval = null;
+        displayEl.textContent = '📻 راديو ماهر: مغلق 💤';
+        btn.textContent = 'تشغيل ▶';
+        playTickSound();
+    } else {
+        displayEl.textContent = '📻 يعزف الآن: ريترو لوفي روقان... ✨';
+        btn.textContent = 'إيقاف ⏸';
+        startRadioSynth();
+    }
+}
+
+function startRadioSynth() {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContext) return;
+    if (!synthCtx) synthCtx = new AudioContext();
+    
+    const notes = [
+        [261.63, 329.63, 392.00], // C Maj
+        [293.66, 349.23, 440.00], // D Min
+        [329.63, 392.00, 493.88], // E Min
+        [349.23, 440.00, 523.25]  // F Maj
+    ];
+    
+    const playChord = () => {
+        if (!radioSynthInterval) return;
+        const chord = notes[Math.floor(Math.random() * notes.length)];
+        chord.forEach(freq => {
+            const osc = synthCtx.createOscillator();
+            const gain = synthCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, synthCtx.currentTime);
+            gain.gain.setValueAtTime(0.0, synthCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(0.03, synthCtx.currentTime + 0.5);
+            gain.gain.exponentialRampToValueAtTime(0.0001, synthCtx.currentTime + 2.8);
+            osc.connect(gain);
+            gain.connect(synthCtx.destination);
+            osc.start();
+            osc.stop(synthCtx.currentTime + 3.0);
+        });
+    };
+    
+    radioSynthInterval = setInterval(playChord, 3000);
+    playChord();
+}
+
+// ----------------------------------------------------------
+// MaherOS 95 Secrets & Cheat Codes Interpreter
+// ----------------------------------------------------------
+let cheatBuffer = "";
+window.addEventListener('keydown', (e) => {
+    // Only register alphabetical letters
+    if (e.key.length === 1 && /[a-zA-Z]/i.test(e.key)) {
+        cheatBuffer += e.key.toUpperCase();
+        if (cheatBuffer.length > 30) cheatBuffer = cheatBuffer.substring(cheatBuffer.length - 20);
+        
+        // Check cheat codes
+        if (cheatBuffer.endsWith("MAHERMATCHAFREE")) {
+            localStorage.removeItem('maher_matcha_redeemed');
+            showToast('🗝️ تم تفعيل الغش: إعادة تفعيل كوب الماتشا المجاني!');
+            playSuccessSound();
+            triggerConfetti();
+            checkCooldownState();
+            cheatBuffer = "";
+        } else if (cheatBuffer.endsWith("FASTCAR")) {
+            chaseLives = 99;
+            const livesEl = document.getElementById('chase-lives');
+            if (livesEl) livesEl.textContent = '❤️ x99 (حياة لانهائية!)';
+            showToast('🗝️ تم تفعيل الغش: سيارة خارقة وحياة لانهائية!');
+            playSuccessSound();
+            cheatBuffer = "";
+        } else if (cheatBuffer.endsWith("BARISTAPASS")) {
+            if (baristaActive) {
+                baristaScore = 5;
+                endBaristaGame(true);
+                showToast('🗝️ تم تفعيل الغش: تخطي الوردية والربح الفوري!');
+                cheatBuffer = "";
+            }
+        } else if (cheatBuffer.endsWith("LAUNCHNOW")) {
+            localStorage.setItem('maher_launch_bypass', 'true');
+            showToast('🗝️ تم تفعيل الغش: إطلاق الحدث فوراً وتخطي عداد الـ 24 ساعة!');
+            playSuccessSound();
+            triggerConfetti();
+            setTimeout(() => location.reload(), 1500);
+            cheatBuffer = "";
+        }
+    }
+});
 
 function claimFreeMatchaDrink() {
     const redeemed = localStorage.getItem('maher_matcha_redeemed') === 'true';
@@ -1693,7 +2392,66 @@ function updateStockGridHTML() {
 // ----------------------------------------------------------
 // Main Initialization Hook for the active event
 // ----------------------------------------------------------
+function checkGlobalCountdown() {
+    const bannerEl = document.getElementById('prelaunch-timer-banner');
+    const heroCdContainer = document.getElementById('hero-countdown-container');
+    if (!bannerEl) return;
+    
+    if (!isEventLaunched()) {
+        // Pre-launch state
+        bannerEl.style.display = 'block';
+        if (moodHeaderBanner) moodHeaderBanner.style.display = 'none';
+        if (heroCdContainer) heroCdContainer.style.display = 'flex';
+        
+        const updateBanner = () => {
+            const timeRemaining = EVENT_LAUNCH_TIME - Date.now();
+            if (timeRemaining <= 0) {
+                clearInterval(globalCountdownInterval);
+                location.reload();
+                return;
+            }
+            
+            const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
+            const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+            
+            const formattedHrs = String(hours).padStart(2, '0');
+            const formattedMins = String(minutes).padStart(2, '0');
+            const formattedSecs = String(seconds).padStart(2, '0');
+            
+            bannerEl.innerHTML = `⏳ ترقبوا! انطلاق أكبر حدث في تاريخ قهوجي ماهر خلال: ${formattedHrs}:${formattedMins}:${formattedSecs}`;
+            
+            // Update hero countdown digits
+            const hoursEl = document.getElementById('cd-hours');
+            const minutesEl = document.getElementById('cd-minutes');
+            const secondsEl = document.getElementById('cd-seconds');
+            if (hoursEl) hoursEl.textContent = formattedHrs;
+            if (minutesEl) minutesEl.textContent = formattedMins;
+            if (secondsEl) secondsEl.textContent = formattedSecs;
+        };
+        
+        if (!globalCountdownInterval) {
+            updateBanner();
+            globalCountdownInterval = setInterval(updateBanner, 1000);
+        }
+    } else {
+        // Post-launch state
+        bannerEl.style.display = 'none';
+        if (moodHeaderBanner) moodHeaderBanner.style.display = 'block';
+        if (heroCdContainer) heroCdContainer.style.display = 'none';
+    }
+}
+
 function initActiveEventHooks() {
+    // Check countdown
+    checkGlobalCountdown();
+    
+    // Determine local active event
+    let currentEvent = ACTIVE_EVENT;
+    if (ACTIVE_EVENT === 'matcha' && !isEventLaunched()) {
+        currentEvent = 'none';
+    }
+
     // 1. Clear any active intervals
     if (priceInterval) clearInterval(priceInterval);
     if (priceFluctuationInterval) clearInterval(priceFluctuationInterval);
@@ -1716,10 +2474,10 @@ function initActiveEventHooks() {
 
     // Set Header Banner
     if (moodHeaderBanner) {
-        if (ACTIVE_EVENT === 'none') {
+        if (currentEvent === 'none') {
             moodHeaderBanner.className = 'mood-header-banner success-mood';
             moodHeaderBanner.innerHTML = '<i class="fa-solid fa-mug-hot"></i> حالة المتجر: المعلم ماهر يروق ويصنع لكم القهوة بكل حب! الطلب متاح كالمعتاد.';
-        } else if (ACTIVE_EVENT === 'anger') {
+        } else if (currentEvent === 'anger') {
             moodHeaderBanner.className = 'mood-header-banner danger-mood';
             moodHeaderBanner.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> الحدث النشط: غضب قهوجي ماهر! الطلبات موقوفة حالياً بسبب صنع قهوة خارجية!';
             
@@ -1732,49 +2490,50 @@ function initActiveEventHooks() {
             // Play alarm loop
             triggerAlarm("تنبيه: المعلم ماهر غاضب وتم إيقاف السلة والطلبات!");
             
-        } else if (ACTIVE_EVENT === 'luck_wheel') {
+        } else if (currentEvent === 'luck_wheel') {
             moodHeaderBanner.className = 'mood-header-banner';
             moodHeaderBanner.innerHTML = '<i class="fa-solid fa-circle-check"></i> بشرى سارة: قهوجي ماهر قبل الاعتذار ورجّع لكم الموقع طبيعي! جرب حظك الآن عبر الكمبيوتر القديم 🎰';
-        } else if (ACTIVE_EVENT === 'cup_strike') {
+        } else if (currentEvent === 'cup_strike') {
             moodHeaderBanner.className = 'mood-header-banner warning-mood';
             moodHeaderBanner.innerHTML = '<i class="fa-solid fa-face-frown-open"></i> الحدث النشط: إضراب فناجين القهوة! الأزرار لا تستجيب بسهولة، تفاهم معهم عبر الكمبيوتر القديم ☕';
-            
-            // Setup button fleeing listener
             setupFleeingButtons();
             
-        } else if (ACTIVE_EVENT === 'lie_detector') {
+        } else if (currentEvent === 'lie_detector') {
             moodHeaderBanner.className = 'mood-header-banner';
             moodHeaderBanner.innerHTML = '<i class="fa-solid fa-user-secret"></i> الحدث النشط: جهاز كشف كذب محبي القهوة! تفضل بالفحص عبر الكمبيوتر القديم واربح كوب سوبر برو مجاني! 🤥';
-        } else if (ACTIVE_EVENT === 'maher_vacation') {
+        } else if (currentEvent === 'maher_vacation') {
             moodHeaderBanner.className = 'mood-header-banner success-mood';
             moodHeaderBanner.innerHTML = '<i class="fa-solid fa-chart-line"></i> الحدث النشط: إجازة المعلم ماهر وبورصة القهوة! الأسعار تتذبذب كل 5 ثوانٍ، تتبع الكمبيوتر للشراء بأفضل سعر! 📈';
-            
-            // Start price fluctuation
             startPriceFluctuation();
             
-        } else if (ACTIVE_EVENT === 'grind_challenge') {
+        } else if (currentEvent === 'grind_challenge') {
             moodHeaderBanner.className = 'mood-header-banner';
             moodHeaderBanner.innerHTML = '<i class="fa-solid fa-gauge-high"></i> الحدث النشط: تحدي طحن حبوب البن السريع! ادخل عبر الكمبيوتر القديم واطحن واربح قهوتك مجاناً! ⚙️';
-        } else if (ACTIVE_EVENT === 'neon_magic') {
+        } else if (currentEvent === 'neon_magic') {
             moodHeaderBanner.className = 'mood-header-banner';
             moodHeaderBanner.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> الحدث النشط: خلطة قهوة ماهر السحرية المضيئة! استمتع بوضع النيون الليلي الخارق وجرب الماوس 🔮';
-            
-            // Activate Neon magic theme
             document.body.classList.add('neon-magic-active');
             setupNeonParticles();
-        } else if (ACTIVE_EVENT === 'thief') {
+        } else if (currentEvent === 'thief') {
             moodHeaderBanner.className = 'mood-header-banner danger-mood';
-            moodHeaderBanner.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> الحدث النشط: سارق القهوة يتجول في المتجر! إذا سرق سلتك، اقبض عليه بالكمبيوتر القديم! 🚓🥷';
-        } else if (ACTIVE_EVENT === 'matcha') {
+            moodHeaderBanner.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> الحدث النشط: سارق القهوة يتجول في المتجر! إذا سرق سلتك, اقبض عليه بالكمبيوتر القديم! 🚓🥷';
+        } else if (currentEvent === 'matcha') {
             moodHeaderBanner.className = 'mood-header-banner success-mood';
-            moodHeaderBanner.innerHTML = '<i class="fa-solid fa-leaf"></i> الحدث النشط: أسبوع الماتشا الماهرة! 🍵 جرب الماتشا الجديدة بـ 6 ريال، واحصل على خصم خارق لسوبر برو بـ 2 ريال فقط! 💚';
+            moodHeaderBanner.innerHTML = '<i class="fa-solid fa-leaf"></i> الحدث النشط: بدء أكبر حدث قهوجي ماهر 95! 🍵 الماتشا وسوبر برو مجاناً بالكامل! اطلب كوبك الآن! 💚';
             
-            // Dynamic UI update for Super Pro price card
+            // Dynamic UI update for Super Pro and Matcha price cards to show free
             const superProCard = document.querySelector('.product-card[data-id="superpro"]');
             if (superProCard) {
                 const priceEl = superProCard.querySelector('.product-price');
                 if (priceEl) {
-                    priceEl.innerHTML = `2 ر.س <span class="old-price" style="text-decoration: line-through; color: #777; font-size: 0.95rem; margin-right: 5px;">5 ر.س</span> <span class="price-suffix">/ كوب</span>`;
+                    priceEl.innerHTML = `مجاناً <span class="old-price" style="text-decoration: line-through; color: #777; font-size: 0.95rem; margin-right: 5px;">5 ر.س</span> <span class="price-suffix">/ كوب</span>`;
+                }
+            }
+            const matchaCard = document.querySelector('.product-card[data-id="matcha"]');
+            if (matchaCard) {
+                const priceEl = matchaCard.querySelector('.product-price');
+                if (priceEl) {
+                    priceEl.innerHTML = `مجاناً <span class="old-price" style="text-decoration: line-through; color: #777; font-size: 0.95rem; margin-right: 5px;">6 ر.س</span> <span class="price-suffix">/ كوب</span>`;
                 }
             }
         }

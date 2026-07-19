@@ -2405,6 +2405,457 @@ textarea:focus {
     box-shadow: none;
 }
 
+/* ==========================================================
+   MaherOS 95 Desktop & App Simulator Styles
+   ========================================================== */
+
+.maher-os-desktop {
+    position: relative;
+    width: 100%;
+    height: 380px;
+    background-color: #008080; /* Win95 Teal */
+    border: 3px inset #808080;
+    overflow: hidden;
+    font-family: var(--font-arabic);
+    color: #000;
+    user-select: none;
+    box-sizing: border-box;
+}
+
+/* Icon Grid */
+.desktop-icons {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
+    z-index: 10;
+}
+
+.desktop-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 72px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.desktop-icon-img {
+    font-size: 1.8rem;
+    margin-bottom: 4px;
+    filter: drop-shadow(1px 1px 0 rgba(0,0,0,0.5));
+}
+
+.desktop-icon-text {
+    font-size: 0.72rem;
+    color: #fff;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px #000;
+    padding: 2px 4px;
+    border-radius: 2px;
+    word-break: break-word;
+}
+
+.desktop-icon:hover .desktop-icon-text {
+    background-color: #000080;
+}
+
+/* Taskbar */
+.os-taskbar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 32px;
+    background: #d4d0c8;
+    border-top: 2px solid #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 4px;
+    z-index: 1000;
+    box-sizing: border-box;
+}
+
+.start-btn {
+    background: #d4d0c8;
+    border: 2px solid;
+    border-color: #fff #808080 #808080 #fff;
+    font-weight: bold;
+    font-size: 0.8rem;
+    padding: 2px 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    box-shadow: inset 1px 1px 0 #fff;
+}
+
+.start-btn:active, .start-btn.active {
+    border-color: #808080 #fff #fff #808080;
+    box-shadow: none;
+    padding: 3px 7px 1px 9px;
+}
+
+.taskbar-tabs {
+    display: flex;
+    gap: 4px;
+    flex-grow: 1;
+    margin: 0 10px;
+    overflow-x: auto;
+}
+
+.taskbar-tab {
+    background: #d4d0c8;
+    border: 2px solid;
+    border-color: #fff #808080 #808080 #fff;
+    font-size: 0.75rem;
+    padding: 2px 6px;
+    cursor: pointer;
+    max-width: 100px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.taskbar-tab.active {
+    border-color: #808080 #fff #fff #808080;
+    background: #e6e6e6;
+    font-weight: bold;
+}
+
+.taskbar-clock {
+    border: 2px inset #fff;
+    padding: 2px 6px;
+    font-size: 0.75rem;
+    background: #d4d0c8;
+    min-width: 55px;
+    text-align: center;
+}
+
+/* Start Menu Dropdown */
+.start-menu {
+    position: absolute;
+    bottom: 32px;
+    left: 4px;
+    width: 160px;
+    background: #d4d0c8;
+    border: 2px solid;
+    border-color: #fff #808080 #808080 #fff;
+    z-index: 1001;
+    display: none;
+    box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+}
+
+.start-menu-sidebar {
+    width: 24px;
+    background: linear-gradient(180deg, #000080, #1084d0);
+    color: #fff;
+    font-weight: bold;
+    writing-mode: vertical-lr;
+    transform: rotate(180deg);
+    text-align: center;
+    font-size: 0.8rem;
+    padding: 6px 0;
+}
+
+.start-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    font-size: 0.78rem;
+    cursor: pointer;
+    color: #000;
+}
+
+.start-menu-item:hover {
+    background-color: #000080;
+    color: #fff;
+}
+
+/* Windows */
+.os-window {
+    position: absolute;
+    width: 92%;
+    height: 290px;
+    top: 20px;
+    left: 4%;
+    background: #d4d0c8;
+    border: 2px solid;
+    border-color: #fff #808080 #808080 #fff;
+    display: none;
+    flex-direction: column;
+    z-index: 100;
+    box-shadow: 2px 2px 12px rgba(0,0,0,0.4);
+    box-sizing: border-box;
+}
+
+.os-window.active {
+    z-index: 500;
+}
+
+.window-titlebar {
+    background: linear-gradient(90deg, #000080, #1084d0);
+    color: #fff;
+    font-weight: bold;
+    padding: 4px 8px;
+    font-size: 0.78rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: move;
+}
+
+.os-window.inactive .window-titlebar {
+    background: #808080;
+}
+
+.window-controls {
+    display: flex;
+    gap: 2px;
+}
+
+.win-btn {
+    background: #d4d0c8;
+    border: 1px solid;
+    border-color: #fff #808080 #808080 #fff;
+    color: #000;
+    font-size: 0.7rem;
+    font-weight: bold;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: inset 1px 1px 0 #fff;
+}
+
+.win-btn:active {
+    border-color: #808080 #fff #fff #808080;
+    box-shadow: none;
+}
+
+.window-body {
+    flex-grow: 1;
+    padding: 8px;
+    overflow-y: auto;
+    background: #fff;
+    margin: 4px;
+    border: 2px inset #808080;
+    box-sizing: border-box;
+}
+
+/* Barista Game UI */
+.barista-order-bubble {
+    background: #ffffcc;
+    border: 2px solid #808080;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+    position: relative;
+    direction: rtl;
+}
+
+.barista-progress-cup {
+    border: 2px solid #000;
+    border-radius: 4px 4px 12px 12px;
+    background: #fff;
+    padding: 8px;
+    margin: 8px auto;
+    max-width: 140px;
+    min-height: 48px;
+    text-align: center;
+    font-size: 0.72rem;
+    box-shadow: inset 0 -10px 10px rgba(0,0,0,0.05);
+}
+
+.barista-ingredients-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.ingredient-group-title {
+    grid-column: span 2;
+    font-size: 0.7rem;
+    font-weight: bold;
+    color: #555;
+    margin-top: 4px;
+    border-bottom: 1px dotted #ccc;
+}
+
+.barista-btn {
+    background: #d4d0c8;
+    border: 2px solid;
+    border-color: #fff #808080 #808080 #fff;
+    color: #000;
+    padding: 5px;
+    font-size: 0.72rem;
+    cursor: pointer;
+    text-align: center;
+}
+
+.barista-btn:active {
+    border-color: #808080 #fff #fff #808080;
+}
+
+/* Paint App */
+.paint-canvas-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 8px;
+}
+
+#paint-canvas {
+    background: #fdf6e2;
+    border: 3px inset #808080;
+    border-radius: 50%; /* Coffee Cup shape! */
+    cursor: crosshair;
+    touch-action: none;
+}
+
+.paint-palette {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.paint-color {
+    width: 22px;
+    height: 22px;
+    border: 2px solid #808080;
+    cursor: pointer;
+}
+
+.paint-color.active {
+    border-color: #000080;
+    outline: 1px solid #fff;
+}
+
+/* Radio App */
+.radio-display {
+    background: #000;
+    color: #0f0;
+    font-family: monospace;
+    padding: 8px;
+    border: 2px inset #808080;
+    text-align: center;
+    font-size: 0.8rem;
+    margin-bottom: 10px;
+}
+
+.radio-controls {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+}
+
+/* Global pre-launch banner style */
+.prelaunch-banner {
+    background: linear-gradient(45deg, #b7943c, #ecc94b, #b7943c);
+    color: #000;
+    text-align: center;
+    padding: 8px 15px;
+    font-weight: bold;
+    font-family: var(--font-arabic);
+    font-size: 0.9rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.25);
+    border-bottom: 2px solid #b7943c;
+    z-index: 9999;
+}
+
+/* Hero Countdown styles */
+.hero-countdown-card {
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 2px solid rgba(236, 201, 75, 0.4);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 25px auto;
+    max-width: 450px;
+    width: 90%;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    direction: rtl;
+    animation: pulseGlow 3s infinite alternate;
+}
+
+@keyframes pulseGlow {
+    0% {
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37), 0 0 10px rgba(236, 201, 75, 0.1);
+    }
+    100% {
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37), 0 0 20px rgba(236, 201, 75, 0.3);
+        border-color: rgba(236, 201, 75, 0.7);
+    }
+}
+
+.countdown-title {
+    font-size: 0.95rem;
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 12px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    text-align: center;
+}
+
+.countdown-digits {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.digit-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    min-width: 65px;
+    padding: 8px 5px;
+}
+
+.digit-box span {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #ecc94b;
+    line-height: 1;
+    text-shadow: 0 0 10px rgba(236, 201, 75, 0.4);
+}
+
+.digit-box label {
+    font-size: 0.7rem;
+    color: #ccc;
+    margin-top: 4px;
+    font-weight: 600;
+}
+
+.digit-separator {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #ecc94b;
+    margin-bottom: 20px;
+    animation: blinkColon 1s infinite;
+}
+
+@keyframes blinkColon {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
 
 
 

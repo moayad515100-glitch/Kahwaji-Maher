@@ -16,6 +16,9 @@
 </head>
 <body>
 
+    <!-- Global Prelaunch Countdown Banner -->
+    <div id="prelaunch-timer-banner" class="prelaunch-banner" style="display: none;"></div>
+
     <!-- Header / Navbar -->
     <header class="main-header">
         <div id="mood-header-banner" class="mood-header-banner"></div>
@@ -47,6 +50,19 @@
         <div class="container hero-content">
             <div class="hero-badge">تأسس عام 2030</div>
             <h1 class="hero-title">القهوة الماهرة <span class="gold-text">الأصيلة</span></h1>
+            
+            <!-- Hero Countdown Card -->
+            <div id="hero-countdown-container" class="hero-countdown-card" style="display: none;">
+                <div class="countdown-title">🔥 أكبر حدث في تاريخ قهوجي ماهر ينطلق خلال:</div>
+                <div class="countdown-digits">
+                    <div class="digit-box"><span id="cd-hours">00</span><label>ساعة</label></div>
+                    <div class="digit-separator">:</div>
+                    <div class="digit-box"><span id="cd-minutes">00</span><label>دقيقة</label></div>
+                    <div class="digit-separator">:</div>
+                    <div class="digit-box"><span id="cd-seconds">00</span><label>ثانية</label></div>
+                </div>
+            </div>
+
             <div class="hero-buttons">
                 <a href="#menu" class="btn btn-primary">اطلب الآن</a>
                 <a href="#about" class="btn btn-secondary">اكتشف المزيد</a>
