@@ -13,10 +13,17 @@
 // ==========================================================
 const ACTIVE_EVENT = 'matcha'; 
 
+const IS_EVENT_POSTPONED = true;
+const POSTPONED_REASON = 'تم تأجيل الحدث لأن قهوجي ماهر غير متواجد اليوم 😴';
+const IS_MENU_LOCKED = true;
+
 const EVENT_LAUNCH_TIME = 1784543543000; // Fixed timestamp: 24 Hours from 2026-07-19 13:32:23 UTC+3
 let globalCountdownInterval = null;
 
 function isEventLaunched() {
+    if (typeof IS_EVENT_POSTPONED !== 'undefined' && IS_EVENT_POSTPONED) {
+        return false;
+    }
     if (localStorage.getItem('maher_launch_bypass') === 'true') {
         return true;
     }
@@ -90,6 +97,11 @@ closeModal.addEventListener('click', closeCheckoutModal);
 modalOverlay.addEventListener('click', closeCheckoutModal);
 
 function openCheckoutModal() {
+    if (typeof IS_MENU_LOCKED !== 'undefined' && IS_MENU_LOCKED) {
+        closeCartDrawer();
+        triggerAlarm("🔒 المنيو والطلبات مغلقة حالياً لأن قهوجي ماهر غير متواجد اليوم!");
+        return;
+    }
     if (ACTIVE_EVENT === 'anger') {
         closeCartDrawer();
         triggerAlarm("عذراً! لا يمكنك إتمام الطلب الآن لأن قهوجي ماهر غاضب! 😡");
@@ -117,6 +129,11 @@ function showToast(message) {
 
 // Add Item to Cart
 function addToCart(productId, name, price, image) {
+    if (typeof IS_MENU_LOCKED !== 'undefined' && IS_MENU_LOCKED) {
+        showToast("🔒 المنيو مقفل حالياً لأن قهوجي ماهر غير متواجد اليوم!");
+        return;
+    }
+
     let currentEvent = ACTIVE_EVENT;
     if (ACTIVE_EVENT === 'matcha' && !isEventLaunched()) {
         currentEvent = 'none';
@@ -1085,7 +1102,22 @@ function renderActiveEventTemplate() {
         `;
         document.getElementById('btn-start-chase').addEventListener('click', startCarChaseGame);
     } else if (ACTIVE_EVENT === 'matcha') {
-        if (!isEventLaunched()) {
+        if (typeof IS_EVENT_POSTPONED !== 'undefined' && IS_EVENT_POSTPONED) {
+            retroEventDynamicBody.innerHTML = `
+                <div class="win95-body" style="padding: 20px; text-align: center; font-family: var(--font-arabic); background: #8b0000; color: #fff; min-height: 300px;">
+                    <div style="font-size: 1.2rem; font-weight: bold; margin-bottom: 15px;">*** تنبيه: تجميد الوقت وتأجيل الحدث ***</div>
+                    <p style="font-size: 1rem; line-height: 1.6; text-align: center; font-weight: bold;">
+                        🛑 ${POSTPONED_REASON}
+                    </p>
+                    <div class="countdown-display" style="margin-top: 25px;">
+                        <div class="countdown-label" style="font-size: 0.8rem; color: #ffcccc;">حالة المؤقت:</div>
+                        <div class="countdown-timer" id="prelaunch-comp-timer" style="font-size: 1.8rem; font-weight: bold; margin-top: 5px; color: #ffeb3b;">مُجمّد ❄️ (00:00:00)</div>
+                    </div>
+                    <hr style="margin: 25px 0; border-color: #555;">
+                    <button class="win95-btn" onclick="closeRetroModalFn()" style="width: 100%;">إغلاق</button>
+                </div>
+            `;
+        } else if (!isEventLaunched()) {
             // Pre-launch state: preparation screen
             retroEventDynamicBody.innerHTML = `
                 <div class="win95-body" style="padding: 20px; text-align: center; font-family: var(--font-arabic); background: #000080; color: #fff; min-height: 300px;">
@@ -2397,6 +2429,36 @@ function checkGlobalCountdown() {
     const heroCdContainer = document.getElementById('hero-countdown-container');
     if (!bannerEl) return;
     
+    if (typeof IS_EVENT_POSTPONED !== 'undefined' && IS_EVENT_POSTPONED) {
+        bannerEl.style.display = 'block';
+        bannerEl.style.background = '#8b0000';
+        bannerEl.style.color = '#ffffff';
+        bannerEl.style.textAlign = 'center';
+        bannerEl.style.padding = '10px 15px';
+        bannerEl.style.fontWeight = 'bold';
+        bannerEl.innerHTML = `🛑 <strong>تنويه هام:</strong> ${POSTPONED_REASON} (التايمر مُجمّد ❄️)`;
+        
+        if (moodHeaderBanner) moodHeaderBanner.style.display = 'none';
+        if (heroCdContainer) {
+            heroCdContainer.style.display = 'flex';
+            const titleEl = heroCdContainer.querySelector('.countdown-title');
+            if (titleEl) {
+                titleEl.innerHTML = `🛑 <strong>تم تجميد الوقت وتأجيل الحدث:</strong><br><span style="color: #ffeb3b; font-size: 1.1rem; display: block; margin-top: 5px;">${POSTPONED_REASON}</span>`;
+            }
+            const hoursEl = document.getElementById('cd-hours');
+            const minutesEl = document.getElementById('cd-minutes');
+            const secondsEl = document.getElementById('cd-seconds');
+            if (hoursEl) hoursEl.textContent = '00';
+            if (minutesEl) minutesEl.textContent = '00';
+            if (secondsEl) secondsEl.textContent = '00';
+        }
+        if (globalCountdownInterval) {
+            clearInterval(globalCountdownInterval);
+            globalCountdownInterval = null;
+        }
+        return;
+    }
+
     if (!isEventLaunched()) {
         // Pre-launch state
         bannerEl.style.display = 'block';
@@ -2468,6 +2530,32 @@ function initActiveEventHooks() {
             btn.style.transform = '';
         }
     });
+
+    if (typeof IS_MENU_LOCKED !== 'undefined' && IS_MENU_LOCKED) {
+        document.querySelectorAll('.product-card').forEach(card => {
+            card.classList.add('disabled-mood');
+            const btn = card.querySelector('.btn-add-cart');
+            if (btn) {
+                btn.innerHTML = '<i class="fa-solid fa-lock"></i> المنيو مغلق';
+                btn.style.opacity = '0.6';
+                btn.style.cursor = 'not-allowed';
+            }
+            const inputs = card.querySelectorAll('input, select');
+            inputs.forEach(inp => inp.disabled = true);
+        });
+
+        const menuSection = document.getElementById('menu');
+        if (menuSection) {
+            const sectionHeader = menuSection.querySelector('.section-header');
+            if (sectionHeader && !document.getElementById('menu-locked-notice')) {
+                const banner = document.createElement('div');
+                banner.id = 'menu-locked-notice';
+                banner.style.cssText = 'background: rgba(139, 0, 0, 0.95); color: #fff; padding: 14px 20px; border-radius: 12px; margin: 15px auto 0; max-width: 600px; font-weight: bold; border: 2px solid #ff4444; font-size: 1.05rem; text-align: center; box-shadow: 0 4px 15px rgba(255,0,0,0.3); font-family: var(--font-arabic);';
+                banner.innerHTML = `🔒 <strong>المنيو مقفل:</strong> قهوجي ماهر غير متواجد اليوم 😴`;
+                sectionHeader.appendChild(banner);
+            }
+        }
+    }
 
     // Reset escape counts
     cupEscapeCounts = { classic: 0, pro: 0, superpro: 0, juice: 0 };
