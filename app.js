@@ -13,11 +13,11 @@
 // ==========================================================
 const ACTIVE_EVENT = 'matcha'; 
 
-const IS_EVENT_POSTPONED = true;
-const POSTPONED_REASON = 'تم تأجيل الحدث لأن قهوجي ماهر غير متواجد اليوم 😴';
-const IS_MENU_LOCKED = true;
+const IS_EVENT_POSTPONED = false;
+const POSTPONED_REASON = '';
+const IS_MENU_LOCKED = false;
 
-const EVENT_LAUNCH_TIME = 1784543543000; // Fixed timestamp: 24 Hours from 2026-07-19 13:32:23 UTC+3
+const EVENT_LAUNCH_TIME = Date.now() + 60000; // Launch in exactly 1 minute (60 seconds)
 let globalCountdownInterval = null;
 
 function isEventLaunched() {
@@ -1166,6 +1166,10 @@ function renderActiveEventTemplate() {
                             <span class="desktop-icon-img">📁</span>
                             <span class="desktop-icon-text">لوحة الفعاليات</span>
                         </div>
+                        <div class="desktop-icon" onclick="openOSWindow('win-cmd')">
+                            <span class="desktop-icon-img">🖥️</span>
+                            <span class="desktop-icon-text">Terminal CMD</span>
+                        </div>
                         <div class="desktop-icon" onclick="openOSWindow('win-barista')">
                             <span class="desktop-icon-img">🎮</span>
                             <span class="desktop-icon-text">بارستا ماهر</span>
@@ -1202,6 +1206,29 @@ function renderActiveEventTemplate() {
                                 <button class="win95-btn" id="btn-claim-free-matcha" style="width: 100%; font-weight: bold; background: #2e7d32; color: #fff; border-color: #2e7d32; cursor: pointer; padding: 6px 12px; user-select:none;" ${redeemed ? 'disabled' : ''}>
                                     ${redeemed ? 'تم استلام الكوب المجاني بنجاح! ✔️' : 'ماتشا ماهرة مجاناً (كوب واحد فقط!) 🍵'}
                                 </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Window: CMD Terminal -->
+                    <div class="os-window" id="win-cmd" style="display: none; min-width: 320px;">
+                        <div class="window-titlebar" onmousedown="dragOSWindow(event, 'win-cmd')">
+                            <span class="window-title">🖥️ Command Prompt (cmd.exe)</span>
+                            <div class="window-controls">
+                                <button class="win-btn" onclick="closeOSWindow('win-cmd')">X</button>
+                            </div>
+                        </div>
+                        <div class="window-body" style="background: #000; color: #00ff00; font-family: 'Courier New', Courier, monospace; font-size: 0.75rem; padding: 10px; height: 230px; display: flex; flex-direction: column; direction: ltr; text-align: left;">
+                            <div id="cmd-output" style="flex: 1; overflow-y: auto; margin-bottom: 6px; line-height: 1.4; word-break: break-all;">
+                                <div>Microsoft(R) Windows 95 [Version 4.00.950]</div>
+                                <div>(C)Copyright Kahwaji Maher Corp 1981-1995.</div>
+                                <br>
+                                <div>Type <span style="color:#ffff00;">'help'</span> to view commands list.</div>
+                                <div>Try typing <span style="color:#ffff00;">'buy classic'</span> or secret command <span style="color:#ffff00;">'cmd Kahwaji Maher'</span>!</div>
+                            </div>
+                            <div style="display: flex; align-items: center; border-top: 1px solid #333; padding-top: 4px;">
+                                <span style="color: #00ff00; font-weight: bold; margin-right: 4px;">C:\\MAHER95&gt;</span>
+                                <input type="text" id="cmd-input-field" style="flex: 1; background: transparent; border: none; outline: none; color: #00ff00; font-family: monospace; font-size: 0.75rem;" placeholder="type command..." onkeydown="handleCmdKeyDown(event)">
                             </div>
                         </div>
                     </div>
@@ -1305,6 +1332,7 @@ function renderActiveEventTemplate() {
                             • <code>MAHERMATCHAFREE</code> : تصفير مؤشر الماتشا المجانية مجدداً.<br>
                             • <code>FASTCAR</code> : تفعيل وضع السرعة الفائقة والحياة اللانهائية لسيارتك في مطاردة السارق.<br>
                             • <code>BARISTAPASS</code> : الفوز فوراً بلعبة البارستا مجاناً كوب ماتشا.<br>
+                            • <code>cmd Kahwaji Maher</code> : تحويل المنيو إلى كمبيوتر قديم.<br>
                         </div>
                     </div>
 
@@ -1321,6 +1349,7 @@ function renderActiveEventTemplate() {
                             <div class="start-menu-sidebar">MAHER 95</div>
                             <div style="flex-grow: 1;">
                                 <div class="start-menu-item" onclick="openOSWindow('win-event')">📁 لوحة الفعاليات</div>
+                                <div class="start-menu-item" onclick="openOSWindow('win-cmd')">🖥️ Terminal CMD</div>
                                 <div class="start-menu-item" onclick="openOSWindow('win-barista')">🎮 بارستا ماهر</div>
                                 <div class="start-menu-item" onclick="openOSWindow('win-paint')">🎨 لاتيه آرت</div>
                                 <div class="start-menu-item" onclick="openOSWindow('win-radio')">📻 راديو لوفي</div>
@@ -1429,6 +1458,7 @@ function updateTaskbarTabs() {
     
     const titles = {
         'win-event': '📁 الفعاليات',
+        'win-cmd': '🖥️ Terminal',
         'win-barista': '🎮 بارستا',
         'win-paint': '🎨 الرسام',
         'win-radio': '📻 الراديو',
@@ -1436,8 +1466,165 @@ function updateTaskbarTabs() {
     };
     
     container.innerHTML = activeOSWindows.map(id => {
-        return `<div class="taskbar-tab active" onclick="focusOSWindow('${id}')">${titles[id]}</div>`;
+        return `<div class="taskbar-tab active" onclick="focusOSWindow('${id}')">${titles[id] || id}</div>`;
     }).join('');
+}
+
+// CMD Terminal Helper Functions
+function handleCmdKeyDown(e) {
+    if (e.key === 'Enter') {
+        const inputEl = document.getElementById('cmd-input-field');
+        if (!inputEl) return;
+        const rawCmd = inputEl.value.trim();
+        if (!rawCmd) return;
+        
+        processCmdCommand(rawCmd);
+        inputEl.value = '';
+    }
+}
+
+function escapeHtml(text) {
+    return text.replace(/[&<>"']/g, function(m) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
+    });
+}
+
+function processCmdCommand(rawCmd) {
+    const outputEl = document.getElementById('cmd-output');
+    if (!outputEl) return;
+
+    const cmdLine = document.createElement('div');
+    cmdLine.innerHTML = `<span style="color:#00ff00;">C:\\MAHER95&gt;</span> ${escapeHtml(rawCmd)}`;
+    outputEl.appendChild(cmdLine);
+
+    const cleanCmd = rawCmd.toLowerCase().trim();
+
+    // Secret Command: cmd Kahwaji Maher
+    if (cleanCmd === 'cmd kahwaji maher') {
+        enableRetroComputerMenuTheme();
+        const res = document.createElement('div');
+        res.style.color = '#ffff00';
+        res.style.fontWeight = 'bold';
+        res.innerHTML = '[SUCCESS] Kahwaji Maher Old Computer Mode Activated! 💻<br>The entire menu has transformed into Retro Win95 Computer theme!';
+        outputEl.appendChild(res);
+    }
+    // Buy Command: buy <item>
+    else if (cleanCmd.startsWith('buy ')) {
+        const targetItemName = cleanCmd.replace('buy ', '').trim();
+        executeBuyCmd(targetItemName, outputEl);
+    }
+    else if (cleanCmd === 'help') {
+        const res = document.createElement('div');
+        res.style.color = '#00ffff';
+        res.innerHTML = `
+            --- MAHER OS 95 COMMAND HELP ---<br>
+            • <b>buy &lt;coffee_name&gt;</b> : Buy &amp; add item to cart (e.g. buy classic, buy pro, buy superpro, buy juice, buy matcha)<br>
+            • <b>cmd Kahwaji Maher</b> : Secret command to transform full menu to old computer theme<br>
+            • <b>list</b> : List all available drinks to buy<br>
+            • <b>clear</b> : Clear CMD terminal output<br>
+        `;
+        outputEl.appendChild(res);
+    }
+    else if (cleanCmd === 'list') {
+        const res = document.createElement('div');
+        res.style.color = '#00ffff';
+        res.innerHTML = `
+            Available Drinks to Buy:<br>
+            1. classic / عادي (0 SAR)<br>
+            2. pro / برو (3 SAR)<br>
+            3. superpro / سوبر برو (5 SAR)<br>
+            4. juice / عصير (4 SAR)<br>
+            5. matcha / ماتشا (0 SAR)<br>
+            Example: type 'buy classic' or 'buy pro'
+        `;
+        outputEl.appendChild(res);
+    }
+    else if (cleanCmd === 'clear') {
+        outputEl.innerHTML = '';
+    }
+    else {
+        const res = document.createElement('div');
+        res.style.color = '#ff6666';
+        res.textContent = `'${rawCmd}' is not recognized as an internal command. Type 'help' for commands.`;
+        outputEl.appendChild(res);
+    }
+
+    outputEl.scrollTop = outputEl.scrollHeight;
+}
+
+function executeBuyCmd(itemName, outputEl) {
+    const cmdMap = {
+        'classic': { id: 'classic', name: 'قهوجي ماهر العادي', price: 0, image: 'classic_new.jpg' },
+        'عادي': { id: 'classic', name: 'قهوجي ماهر العادي', price: 0, image: 'classic_new.jpg' },
+        'العادي': { id: 'classic', name: 'قهوجي ماهر العادي', price: 0, image: 'classic_new.jpg' },
+        
+        'pro': { id: 'pro', name: 'قهوجي ماهر برو', price: 3, image: 'pro_new.jpg' },
+        'برو': { id: 'pro', name: 'قهوجي ماهر برو', price: 3, image: 'pro_new.jpg' },
+
+        'superpro': { id: 'superpro', name: 'قهوجي ماهر سوبر برو', price: 5, image: '5960730354593238427.jpg' },
+        'سوبر برو': { id: 'superpro', name: 'قهوجي ماهر سوبر برو', price: 5, image: '5960730354593238427.jpg' },
+        'سوبربرو': { id: 'superpro', name: 'قهوجي ماهر سوبر برو', price: 5, image: '5960730354593238427.jpg' },
+
+        'juice': { id: 'juice', name: 'عصير طازج', price: 4, image: '5963013000862043793.jpg' },
+        'عصير': { id: 'juice', name: 'عصير طازج', price: 4, image: '5963013000862043793.jpg' },
+
+        'matcha': { id: 'matcha', name: 'ماتشا ماهرة', price: 0, image: 'matcha.jpg' },
+        'ماتشا': { id: 'matcha', name: 'ماتشا ماهرة', price: 0, image: 'matcha.jpg' }
+    };
+
+    const item = cmdMap[itemName.toLowerCase()];
+    if (!item) {
+        const err = document.createElement('div');
+        err.style.color = '#ff6666';
+        err.textContent = `[ERROR] Coffee '${itemName}' not found. Type 'list' for valid drink names.`;
+        outputEl.appendChild(err);
+        return;
+    }
+
+    const cartItemId = `${item.id}-وسط-بدون سكر`;
+    const existingIndex = cart.findIndex(i => i.id === cartItemId);
+    if (existingIndex > -1) {
+        cart[existingIndex].quantity += 1;
+    } else {
+        cart.push({
+            id: cartItemId,
+            productId: item.id,
+            name: item.name,
+            price: item.price,
+            image: item.image,
+            options: { size: 'وسط', sugar: 'بدون سكر' },
+            quantity: 1
+        });
+    }
+    updateCartUI();
+    showToast(`🛒 [CMD Terminal] تمت إضافة ${item.name} إلى السلة بنجاح!`);
+
+    const ok = document.createElement('div');
+    ok.style.color = '#00ff00';
+    ok.textContent = `[SUCCESS] Item '${item.name}' added to cart successfully!`;
+    outputEl.appendChild(ok);
+}
+
+function enableRetroComputerMenuTheme() {
+    document.body.classList.add('retro-cmd-menu-active');
+    
+    // Add Win95 window headers to product cards if not added
+    const cards = document.querySelectorAll('.product-card');
+    cards.forEach((card, idx) => {
+        if (!card.querySelector('.win95-card-header')) {
+            const header = document.createElement('div');
+            header.className = 'win95-card-header';
+            header.innerHTML = `
+                <span>💻 MAHER_DRINK_0${idx + 1}.EXE</span>
+                <div class="win95-card-controls"><span>_</span><span>□</span><span>×</span></div>
+            `;
+            card.prepend(header);
+        }
+    });
+
+    playSuccessSound();
+    triggerConfetti();
+    showToast('🖥️ تم تحويل المنيو بالكامل إلى شكل الكمبيوتر القديم (Win95)!');
 }
 
 function dragOSWindow(event, winId) {
@@ -1803,6 +1990,9 @@ window.addEventListener('keydown', (e) => {
             playSuccessSound();
             triggerConfetti();
             setTimeout(() => location.reload(), 1500);
+            cheatBuffer = "";
+        } else if (cheatBuffer.endsWith("CMDKAHWAJIMAHER") || cheatBuffer.endsWith("CMDKAHWAJI MAHER")) {
+            enableRetroComputerMenuTheme();
             cheatBuffer = "";
         }
     }
@@ -2462,8 +2652,17 @@ function checkGlobalCountdown() {
     if (!isEventLaunched()) {
         // Pre-launch state
         bannerEl.style.display = 'block';
+        bannerEl.style.background = '';
+        bannerEl.style.color = '';
+        bannerEl.style.padding = '';
         if (moodHeaderBanner) moodHeaderBanner.style.display = 'none';
-        if (heroCdContainer) heroCdContainer.style.display = 'flex';
+        if (heroCdContainer) {
+            heroCdContainer.style.display = 'flex';
+            const titleEl = heroCdContainer.querySelector('.countdown-title');
+            if (titleEl) {
+                titleEl.innerHTML = `🔥 أكبر حدث في تاريخ قهوجي ماهر ينطلق خلال:`;
+            }
+        }
         
         const updateBanner = () => {
             const timeRemaining = EVENT_LAUNCH_TIME - Date.now();
