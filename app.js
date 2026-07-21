@@ -17,7 +17,8 @@ const IS_EVENT_POSTPONED = false;
 const POSTPONED_REASON = '';
 const IS_MENU_LOCKED = false;
 
-const EVENT_LAUNCH_TIME = Date.now() + 60000; // Launch in exactly 1 minute (60 seconds)
+// Fixed synchronized launch timestamp for all users (2026-07-21 13:32:16 UTC+3)
+const EVENT_LAUNCH_TIME = 1784629936000; 
 let globalCountdownInterval = null;
 
 function isEventLaunched() {
