@@ -651,6 +651,26 @@
     </div>
     <div class="retro-overlay" id="dev-panel-overlay" style="z-index: 10004;" onclick="closeSecretDevPanel()"></div>
 
+    <!-- Secret Developer Login Modal -->
+    <div class="retro-modal" id="secret-dev-auth-modal" style="z-index: 10007;">
+        <div class="win95-window" style="max-width: 350px; width: 90%; margin: auto;">
+            <div class="win95-title-bar">
+                <div class="win95-title-text"><i class="fa-solid fa-key"></i> نظام التشغيل - دخول المطور</div>
+                <button class="win95-close-btn" onclick="closeDevAuthModal()">×</button>
+            </div>
+            <div class="win95-body" style="padding: 15px; font-family: var(--font-arabic); text-align: right; background: #c0c0c0; color: #000; direction: rtl;">
+                <p style="font-size: 0.85rem; margin-bottom: 12px; font-weight: bold;">الرجاء إدخال كود المطور لفتح لوحة التحكم:</p>
+                <input type="password" id="dev-auth-pass-input" placeholder="كلمة المرور..." style="width: 100%; padding: 6px; border: 2px inset #fff; background: #fff; color: #000; outline: none; margin-bottom: 12px; font-family: monospace;" onkeydown="if(event.key==='Enter') submitDevAuth()">
+                
+                <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                    <button class="win95-btn" onclick="submitDevAuth()" style="padding: 5px 15px; font-weight: bold; cursor: pointer; font-family: var(--font-arabic);">موافق</button>
+                    <button class="win95-btn" onclick="closeDevAuthModal()" style="padding: 5px 15px; cursor: pointer; font-family: var(--font-arabic);">إلغاء</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="retro-overlay" id="dev-auth-overlay" style="z-index: 10006;" onclick="closeDevAuthModal()"></div>
+
     <!-- Script file -->
     <script src="app.js?v=1.2"></script>
 </body>
