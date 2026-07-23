@@ -602,7 +602,7 @@
                 <!-- Section 1: Event Switcher -->
                 <fieldset style="border: 2px inset #fff; padding: 12px; margin-bottom: 5px; border-radius: 0;">
                     <legend style="font-weight: bold; background: #c0c0c0; padding: 0 5px; font-size: 0.9rem;">🔥 إدارة الفعاليات النشطة</legend>
-                    <label style="display: block; margin-bottom: 8px; font-size: 0.85rem; font-weight: bold;">اختر الفعالية لتنشيطها فوراً:</label>
+                    <label style="display: block; margin-bottom: 8px; font-size: 0.85rem; font-weight: bold;">اختر الفعالية لتنشيطها:</label>
                     <select id="dev-event-select" style="width: 100%; padding: 6px; background: #fff; color: #000; border: 2px inset #fff; font-family: monospace; font-size: 0.85rem; outline: none; margin-bottom: 12px;">
                         <option value="none">بدون فعالية (عادي)</option>
                         <option value="neon_magic">القهوة المضيئة (neon_magic)</option>
@@ -615,7 +615,18 @@
                         <option value="grind_challenge">تحدي الطحن السريع (grind_challenge)</option>
                         <option value="matcha">الماتشا السحرية (matcha)</option>
                     </select>
-                    <button class="win95-btn" onclick="devSwitchEvent()" style="width: 100%; font-weight: bold; padding: 8px; font-family: var(--font-arabic); cursor: pointer;">تطبيق الفعالية النشطة ⚡</button>
+
+                    <div style="margin-bottom: 12px; border-top: 1px dashed #808080; padding-top: 10px;">
+                        <label style="display: block; margin-bottom: 5px; font-size: 0.8rem; font-weight: bold;">🔑 مفتاح GitHub Token للنشر التلقائي:</label>
+                        <input type="password" id="dev-github-token" placeholder="ghp_..." style="width: 100%; padding: 6px; border: 2px inset #fff; background: #fff; color: #000; outline: none; font-size: 0.85rem; font-family: monospace;">
+                    </div>
+
+                    <div id="dev-publish-status" style="display: none; font-size: 0.8rem; font-weight: bold; margin-bottom: 10px; text-align: center;"></div>
+
+                    <div style="display: flex; gap: 8px;">
+                        <button class="win95-btn" onclick="publishEventToGitHub()" style="flex: 2; font-weight: bold; padding: 8px; font-family: var(--font-arabic); cursor: pointer; background: #008000; color: #fff; border-color: #00b000 #005000 #005000 #00b000;">نشر وتحديث الموقع 🚀</button>
+                        <button class="win95-btn" onclick="devSwitchEvent()" style="flex: 1; padding: 8px; font-family: var(--font-arabic); cursor: pointer;" title="تطبيق محلي فقط">تطبيق محلي 💻</button>
+                    </div>
                 </fieldset>
                 
             </div>
