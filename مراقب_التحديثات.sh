@@ -37,9 +37,9 @@ while true; do
     
     if [ "$CHANGED" = true ]; then
         echo "🚀 جاري الرفع التلقائي إلى GitHub..."
-        cd "$REPO_DIR" || exit
         git add .
         git commit -m "تحديث تلقائي عبر مراقب الملفات بتاريخ $(date '+%Y-%m-%d %H:%M:%S')"
+        git pull --rebase origin main
         git push origin main
         echo "🎉 تم تحديث الموقع بنجاح على الإنترنت!"
         echo "=================================================="
