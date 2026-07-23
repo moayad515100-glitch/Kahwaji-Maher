@@ -574,12 +574,11 @@
     <div class="retro-modal" id="retro-event-modal">
         <div class="win95-window">
             <div class="win95-title-bar">
-                <div class="win95-title-text" id="retro-modal-title"><i class="fa-solid fa-laptop-code"></i> لوحة الفعاليات النشطة v2.0</div>
-                <div style="display: flex; align-items: center; gap: 4px;">
-                    <!-- Secret button inside computer window -->
-                    <button id="secret-dev-trigger-btn" onclick="promptDevPanel()" style="width: 12px; height: 12px; background: transparent; border: none; cursor: default; outline: none; padding: 0; margin-right: 5px;" title="System Info"></button>
-                    <button class="win95-close-btn" id="close-retro-modal">×</button>
+                <div class="win95-title-text" id="retro-modal-title">
+                    <span onclick="promptDevPanel()" style="cursor: pointer; padding: 2px 6px; margin-right: -4px;" title="نظام التشغيل"><i class="fa-solid fa-laptop-code"></i></span>
+                    لوحة الفعاليات النشطة v2.0
                 </div>
+                <button class="win95-close-btn" id="close-retro-modal">×</button>
             </div>
             
             <div id="retro-event-dynamic-body">
