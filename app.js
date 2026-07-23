@@ -3325,3 +3325,4 @@ function devCreateProduct() {
 }
 
 
+// Auto-watch active v1.0
