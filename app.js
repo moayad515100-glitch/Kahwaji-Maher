@@ -159,25 +159,15 @@ function addToCart(productId, name, price, image) {
         }
     }
 
-    // Get custom options based on product ID
-    let size, sugar;
+    // Get custom options dynamically based on product ID
+    let size = 'وسط';
+    let sugar = 'سكر وسط';
     
-    if (productId === 'classic') {
-        size = document.querySelector('input[name="size-classic"]:checked').value;
-        sugar = document.querySelector('select[name="sugar-classic"]').value;
-    } else if (productId === 'pro') {
-        size = document.querySelector('input[name="size-pro"]:checked').value;
-        sugar = document.querySelector('select[name="sugar-pro"]').value;
-    } else if (productId === 'superpro') {
-        size = document.querySelector('input[name="size-superpro"]:checked').value;
-        sugar = document.querySelector('select[name="sugar-superpro"]').value;
-    } else if (productId === 'juice') {
-        size = document.querySelector('input[name="size-juice"]:checked').value;
-        sugar = document.querySelector('select[name="sugar-juice"]').value;
-    } else if (productId === 'matcha') {
-        size = document.querySelector('input[name="size-matcha"]:checked').value;
-        sugar = document.querySelector('select[name="sugar-matcha"]').value;
-    }
+    const sizeInput = document.querySelector(`input[name="size-${productId}"]:checked`);
+    const sugarSelect = document.querySelector(`select[name="sugar-${productId}"]`);
+    
+    if (sizeInput) size = sizeInput.value;
+    if (sugarSelect) sugar = sugarSelect.value;
 
     const options = {
         size,
@@ -2639,7 +2629,7 @@ function checkGlobalCountdown() {
         bannerEl.style.display = 'none';
         if (moodHeaderBanner) moodHeaderBanner.style.display = 'block';
         if (heroCdContainer) heroCdContainer.style.display = 'none';
-        if (retroCompBtn) retroCompBtn.style.display = 'none';
+        if (retroCompBtn) retroCompBtn.style.display = 'block';
         return;
     }
     
@@ -3178,6 +3168,129 @@ function fallbackCopyToClipboard(text, msg) {
         showToast("⚠️ فشل النسخ التلقائي، يمكنك نسخه يدوياً.");
     }
     document.body.removeChild(textarea);
+}
+
+// ==========================================================
+// SECRET DEVELOPER CONTROL PANEL EVENTS & ACTIONS
+// ==========================================================
+function promptDevPanel() {
+    const code = prompt("🔑 أدخل كود المطور لفتح لوحة التحكم السرية:");
+    if (code === "o359h74687tnlw489") {
+        openSecretDevPanel();
+    } else if (code !== null) {
+        showToast("❌ كود المطور غير صحيح!");
+    }
+}
+
+function openSecretDevPanel() {
+    const panel = document.getElementById('secret-dev-panel');
+    const overlay = document.getElementById('dev-panel-overlay');
+    if (panel && overlay) {
+        panel.style.display = 'block';
+        overlay.style.display = 'block';
+        
+        // Pre-select current event
+        const eventSelect = document.getElementById('dev-event-select');
+        if (eventSelect) eventSelect.value = ACTIVE_EVENT;
+    }
+}
+
+function closeSecretDevPanel() {
+    const panel = document.getElementById('secret-dev-panel');
+    const overlay = document.getElementById('dev-panel-overlay');
+    if (panel && overlay) {
+        panel.style.display = 'none';
+        overlay.style.display = 'none';
+    }
+}
+
+function devSwitchEvent() {
+    const eventSelect = document.getElementById('dev-event-select');
+    if (!eventSelect) return;
+    
+    const selectedEvent = eventSelect.value;
+    ACTIVE_EVENT = selectedEvent;
+    
+    // Trigger initialization of active event system
+    initActiveEventHooks();
+    
+    showToast(`⚡ تم تفعيل الحدث: [${selectedEvent}] بنجاح!`);
+    closeSecretDevPanel();
+}
+
+function devCreateProduct() {
+    const name = document.getElementById('dev-prod-name').value.trim();
+    const priceInput = document.getElementById('dev-prod-price').value.trim();
+    const icon = document.getElementById('dev-prod-icon').value.trim() || '☕';
+    const desc = document.getElementById('dev-prod-desc').value.trim();
+    
+    if (!name || !priceInput) {
+        showToast("⚠️ يرجى إدخال اسم المنتج والسعر!");
+        return;
+    }
+    
+    const price = parseFloat(priceInput);
+    const prodId = 'custom-' + Date.now();
+    
+    const menuGrid = document.querySelector('.menu-grid');
+    if (!menuGrid) return;
+    
+    const card = document.createElement('div');
+    card.className = 'product-card dynamic-card';
+    card.setAttribute('data-id', prodId);
+    card.innerHTML = `
+        <div class="product-image-container" style="position: relative;">
+            <div class="custom-prod-art" style="height: 200px; display: flex; align-items: center; justify-content: center; font-size: 5rem; background: #1c1510; border-bottom: 1px solid rgba(197, 168, 128, 0.15); user-select: none;">${icon}</div>
+            <span class="product-tag tag-new" style="background: var(--gold); color: #000; font-weight: bold; padding: 4px 8px; font-size: 0.75rem; border-radius: 4px; position: absolute; top: 10px; right: 10px;">جديد ✨</span>
+        </div>
+        <div class="product-info" style="padding: 20px; display: flex; flex-direction: column; flex-grow: 1;">
+            <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 10px; color: var(--gold); font-family: var(--font-arabic);">${name}</h3>
+            <p class="product-desc" style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 15px; flex-grow: 1; height: auto; font-family: var(--font-arabic);">${desc}</p>
+            
+            <div class="product-options" style="margin-bottom: 15px; border-top: 1px dashed rgba(197, 168, 128, 0.1); padding-top: 12px; display: flex; flex-direction: column; gap: 10px;">
+                <!-- Size Selection -->
+                <div class="option-group">
+                    <label style="font-weight: 600; font-size: 0.8rem; color: var(--text-main); display: block; margin-bottom: 6px; font-family: var(--font-arabic);">الحجم:</label>
+                    <div style="display: flex; gap: 8px;">
+                        <label class="radio-label">
+                            <input type="radio" name="size-${prodId}" value="وسط" checked>
+                            <span>وسط</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="size-${prodId}" value="كبير">
+                            <span>كبير</span>
+                        </label>
+                    </div>
+                </div>
+                <!-- Sugar Selection -->
+                <div class="option-group">
+                    <label style="font-weight: 600; font-size: 0.8rem; color: var(--text-main); display: block; margin-bottom: 6px; font-family: var(--font-arabic);">السكر:</label>
+                    <select name="sugar-${prodId}" style="width: 100%; padding: 6px; background: #1a1411; color: var(--text-main); border: 1px solid rgba(197, 168, 128, 0.15); border-radius: 6px; font-size: 0.8rem; font-family: var(--font-arabic); outline: none;">
+                        <option value="بدون سكر" selected>بدون سكر</option>
+                        <option value="سكر خفيف">سكر خفيف</option>
+                        <option value="سكر وسط">سكر وسط</option>
+                        <option value="سكر زيادة">سكر زيادة</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="product-price" style="font-size: 1.3rem; font-weight: 700; color: var(--gold); margin-bottom: 15px; font-family: monospace;">${price.toFixed(1)} ر.س</div>
+            <button class="btn btn-add-cart" onclick="addToCart('${prodId}', '${name}', ${price}, '${icon}')" style="width: 100%; margin-top: auto; font-family: var(--font-arabic);">
+                <i class="fa-solid fa-cart-plus"></i> إضافة للسلة
+            </button>
+        </div>
+    `;
+    
+    menuGrid.prepend(card);
+    
+    // Clear inputs
+    document.getElementById('dev-prod-name').value = '';
+    document.getElementById('dev-prod-price').value = '';
+    document.getElementById('dev-prod-icon').value = '';
+    document.getElementById('dev-prod-desc').value = '';
+    
+    showToast(`🎉 تم إضافة المنتج "${name}" بنجاح!`);
+    closeSecretDevPanel();
 }
 
 
