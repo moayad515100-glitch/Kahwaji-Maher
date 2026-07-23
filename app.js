@@ -3186,8 +3186,8 @@ function openSecretDevPanel() {
     const panel = document.getElementById('secret-dev-panel');
     const overlay = document.getElementById('dev-panel-overlay');
     if (panel && overlay) {
-        panel.style.display = 'block';
-        overlay.style.display = 'block';
+        panel.classList.add('open');
+        overlay.classList.add('open');
         
         // Pre-select current event
         const eventSelect = document.getElementById('dev-event-select');
@@ -3199,8 +3199,8 @@ function closeSecretDevPanel() {
     const panel = document.getElementById('secret-dev-panel');
     const overlay = document.getElementById('dev-panel-overlay');
     if (panel && overlay) {
-        panel.style.display = 'none';
-        overlay.style.display = 'none';
+        panel.classList.remove('open');
+        overlay.classList.remove('open');
     }
 }
 
