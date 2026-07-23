@@ -392,6 +392,9 @@ function submitOrder(event) {
         return;
     }
 
+    const paymentMethodEl = document.querySelector('input[name="payment-method"]:checked');
+    const paymentMethod = paymentMethodEl ? paymentMethodEl.value : 'whatsapp';
+
     // Build the WhatsApp message
     let message = `☕ *فاتورة طلب جديدة - قهوجي ماهر* ☕\n\n`;
     message += `👤 *بيانات العميل:*\n`;
@@ -417,7 +420,15 @@ function submitOrder(event) {
 
     const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     message += `-----------------------------------\n`;
-    message += `💰 *المجموع الكلي:* ${total} ريال سعودي\n\n`;
+    message += `💰 *المجموع الكلي:* ${total} ريال سعودي\n`;
+    
+    if (paymentMethod === 'transfer') {
+        message += `💳 *طريقة الدفع:* تحويل بنكي (الأهلي السعودي)\n`;
+        message += `⚠️ *ملاحظة:* يرجى إرسال صورة إيصال التحويل مع هذه الرسالة.\n`;
+    } else {
+        message += `💵 *طريقة الدفع:* الدفع عند الاستلام\n`;
+    }
+    message += `\n`;
     
     if (ACTIVE_EVENT === 'neon_magic') {
         message += `🔮 *تم الطلب بخلطة ماهر السحرية المضيئة المروقة!* 🔮\n\n`;
@@ -2722,6 +2733,9 @@ function initActiveEventHooks() {
     // Check countdown
     checkGlobalCountdown();
     
+    // Set up payment toggle listeners
+    setupPaymentMethodToggle();
+    
     // Determine local active event
     let currentEvent = ACTIVE_EVENT;
     if (ACTIVE_EVENT === 'matcha' && !isEventLaunched()) {
@@ -3114,5 +3128,56 @@ function selectSpookyAnswer(option) {
 
 // Start Spooky Dot check
 initSpookyDot();
+
+// Toggle Bank Details container in Checkout Modal
+function setupPaymentMethodToggle() {
+    const radios = document.getElementsByName('payment-method');
+    const bankBox = document.getElementById('bank-details-box');
+    if (!bankBox) return;
+    
+    // Trigger initial state
+    const activeRadio = document.querySelector('input[name="payment-method"]:checked');
+    if (activeRadio) {
+        bankBox.style.display = activeRadio.value === 'transfer' ? 'block' : 'none';
+    }
+    
+    radios.forEach(radio => {
+        radio.addEventListener('change', () => {
+            if (radio.value === 'transfer') {
+                bankBox.style.display = 'block';
+            } else {
+                bankBox.style.display = 'none';
+            }
+        });
+    });
+}
+
+// Copy to Clipboard Utility with Fallback
+function copyToClipboard(text, msg) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+            showToast(msg + " ✔️");
+        }).catch(err => {
+            fallbackCopyToClipboard(text, msg);
+        });
+    } else {
+        fallbackCopyToClipboard(text, msg);
+    }
+}
+
+function fallbackCopyToClipboard(text, msg) {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed'; // prevent scrolling to bottom
+    document.body.appendChild(textarea);
+    textarea.select();
+    try {
+        document.execCommand('copy');
+        showToast(msg + " ✔️");
+    } catch (err) {
+        showToast("⚠️ فشل النسخ التلقائي، يمكنك نسخه يدوياً.");
+    }
+    document.body.removeChild(textarea);
+}
 
 
