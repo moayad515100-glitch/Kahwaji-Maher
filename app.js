@@ -3298,8 +3298,14 @@ async function publishEventToGitHub() {
         const fileData = await getRes.json();
         const sha = fileData.sha;
         
-        // Decode base64 content supporting UTF-8 (Arabic) characters correctly
-        const originalContent = decodeURIComponent(escape(window.atob(fileData.content.replace(/\s/g, ''))));
+        // Decode base64 content supporting UTF-8 (Arabic & Emojis) safely using TextDecoder
+        const binaryString = window.atob(fileData.content.replace(/\s/g, ''));
+        const len = binaryString.length;
+        const bytes = new Uint8Array(len);
+        for (let i = 0; i < len; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+        }
+        const originalContent = new TextDecoder('utf-8').decode(bytes);
         
         // Step 2: Replace let ACTIVE_EVENT = '...'; with the new event
         const regex = /let\s+ACTIVE_EVENT\s*=\s*['"][^'"]*['"]\s*;/;
@@ -3309,8 +3315,14 @@ async function publishEventToGitHub() {
         
         const updatedContent = originalContent.replace(regex, `let ACTIVE_EVENT = '${selectedEvent}';`);
         
-        // Encode back to base64 supporting UTF-8 correctly
-        const base64Content = window.btoa(unescape(encodeURIComponent(updatedContent)));
+        // Encode back to base64 supporting UTF-8 correctly using TextEncoder
+        const encoderBytes = new TextEncoder().encode(updatedContent);
+        let outputBinaryString = '';
+        const lenBytes = encoderBytes.byteLength;
+        for (let i = 0; i < lenBytes; i++) {
+            outputBinaryString += String.fromCharCode(encoderBytes[i]);
+        }
+        const base64Content = window.btoa(outputBinaryString);
         
         // Step 3: Put updated file back to GitHub
         statusEl.innerHTML = '🚀 جاري رفع التحديث المباشر...';
