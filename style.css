@@ -2978,6 +2978,62 @@ body.retro-cmd-menu-active .btn-add-cart:active {
     border-color: #808080 #ffffff #ffffff #808080 !important;
 }
 
+/* ==========================================================
+   SPOOKY MODE (SECRET EVENT)
+   ========================================================== */
+body.spooky-mode {
+    background: #0d0000 !important;
+    color: #ff3333 !important;
+}
+
+body.spooky-mode #menu {
+    background: #0f0202 !important;
+    border-top: 3px double #ff0000;
+    border-bottom: 3px double #ff0000;
+}
+
+body.spooky-mode .section-header h2 {
+    color: #ff0000 !important;
+    text-shadow: 0 0 10px #ff0000, 2px 2px #000;
+    animation: spookyFlicker 1.5s infinite;
+}
+
+body.spooky-mode .product-card {
+    background: #1a0505 !important;
+    border: 2px solid #550000 !important;
+    box-shadow: 0 0 12px rgba(255, 0, 0, 0.2) !important;
+}
+
+body.spooky-mode .product-card:hover {
+    border-color: #ff0000 !important;
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.4) !important;
+}
+
+body.spooky-mode .product-info h3 {
+    color: #ff3333 !important;
+}
+
+body.spooky-mode .product-price {
+    color: #ff0000 !important;
+}
+
+body.spooky-mode .btn-add-cart {
+    background: #4a0000 !important;
+    color: #fff !important;
+    border: 1px solid #ff0000 !important;
+}
+
+@keyframes spookyFlicker {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.75; }
+    80% { opacity: 0.9; }
+}
+
+@keyframes blinkSpooky {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
 
 
 

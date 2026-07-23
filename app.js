@@ -11,7 +11,7 @@
 //   'grind_challenge': "Coffee Grind Speed" clicker game (click fast to win)
 //   'neon_magic'     : "Magic Glowing Coffee" neon theme (glow, mouse trails)
 // ==========================================================
-const ACTIVE_EVENT = 'matcha'; 
+const ACTIVE_EVENT = 'cup_strike'; 
 
 const IS_EVENT_POSTPONED = false;
 const POSTPONED_REASON = '';
@@ -331,6 +331,10 @@ function changeQuantity(itemId, change) {
             // Enforce limit of 1 for free event items on increase
             if (item.price === 0 && (item.productId === 'matcha' || item.productId === 'superpro')) {
                 showToast(`عذراً! يُسمح بكوب مجاني واحد فقط من ${item.name}! 🎁`);
+                return;
+            }
+            if (item.productId === 'tea') {
+                showToast("🤫 يمديك تطلب شاهي واحد بس! لا تطمع عشان ما يكتشفنا ماهر.");
                 return;
             }
             const currentTotalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -2620,6 +2624,16 @@ function checkGlobalCountdown() {
     const heroCdContainer = document.getElementById('hero-countdown-container');
     if (!bannerEl) return;
     
+    if (ACTIVE_EVENT === 'none') {
+        bannerEl.style.display = 'none';
+        if (moodHeaderBanner) moodHeaderBanner.style.display = 'block';
+        if (heroCdContainer) heroCdContainer.style.display = 'none';
+        if (retroCompBtn) retroCompBtn.style.display = 'none';
+        return;
+    }
+    
+    if (retroCompBtn) retroCompBtn.style.display = 'block';
+    
     if (typeof IS_EVENT_POSTPONED !== 'undefined' && IS_EVENT_POSTPONED) {
         bannerEl.style.display = 'block';
         bannerEl.style.background = '#8b0000';
@@ -2931,5 +2945,174 @@ localStorage.removeItem('maher_matcha_redeemed');
 
 // Populate the cart drawer UI from persistent storage on load
 updateCartUI();
+
+// ==========================================================
+// SECRET SPOOKY HACKED TEA EVENT
+// ==========================================================
+function initSpookyDot() {
+    if (localStorage.getItem('spooky_banned') === 'true') return;
+    
+    const dot = document.createElement('div');
+    dot.id = 'spooky-black-dot';
+    
+    // Choose random positions (keeping away from edges)
+    const posX = Math.floor(Math.random() * 80) + 10;
+    const posY = Math.floor(Math.random() * 80) + 10;
+    
+    dot.style.cssText = `
+        position: fixed;
+        top: ${posY}vh;
+        left: ${posX}vw;
+        width: 8px;
+        height: 8px;
+        background: #000000;
+        border-radius: 50%;
+        cursor: pointer;
+        z-index: 99999;
+        opacity: 0.6;
+        box-shadow: 0 0 4px rgba(0,0,0,0.6);
+        transition: transform 0.2s ease;
+    `;
+    
+    dot.addEventListener('mouseenter', () => {
+        dot.style.transform = 'scale(1.6)';
+        dot.style.opacity = '1';
+    });
+    dot.addEventListener('mouseleave', () => {
+        dot.style.transform = 'scale(1)';
+        dot.style.opacity = '0.6';
+    });
+    
+    dot.addEventListener('click', () => {
+        activateSpookyMode();
+    });
+    
+    document.body.appendChild(dot);
+}
+
+function activateSpookyMode() {
+    document.body.classList.add('spooky-mode');
+    
+    const menuGrid = document.querySelector('.menu-grid');
+    if (menuGrid && !document.getElementById('product-tea')) {
+        const teaCard = document.createElement('div');
+        teaCard.id = 'product-tea';
+        teaCard.className = 'product-card spooky-card';
+        teaCard.setAttribute('data-id', 'tea');
+        teaCard.innerHTML = `
+            <div class="product-image-container" style="position: relative;">
+                <div class="spooky-tea-art" style="height: 200px; display: flex; align-items: center; justify-content: center; font-size: 5rem; background: #1a0000; border-bottom: 2px solid #500; user-select: none;">🍵</div>
+                <span class="product-tag tag-spooky" style="background: #8b0000; color: #fff; animation: blinkSpooky 1s infinite; font-weight: bold; padding: 4px 8px; font-size: 0.75rem; border-radius: 4px; position: absolute; top: 10px; right: 10px; font-family: monospace; z-index: 2;">⚠️ متسلل / HACKED</span>
+            </div>
+            <div class="product-info" style="padding: 15px;">
+                <h3 style="color: #ff3333; margin-bottom: 8px; font-size: 1.3rem; font-weight: bold; font-family: var(--font-arabic);">شاهي متسلل 🤐</h3>
+                <p class="product-desc" style="color: #ff8888; font-size: 0.85rem; line-height: 1.4; margin-bottom: 12px; height: auto; font-family: var(--font-arabic);">مشروب غامض نجح في اختراق خوادم قهوجي ماهر وتسلل للمنيو...</p>
+                <div class="product-price" style="color: #ff3333; font-weight: bold; font-size: 1.4rem; margin-bottom: 15px; font-family: monospace;">1.5 ر.س</div>
+                <button class="btn btn-add-cart spooky-btn" onclick="triggerTeaDialogue()" style="background: #4a0000; color: #fff; border: 1px solid #ff3333; width: 100%; padding: 10px; font-weight: bold; border-radius: 6px; cursor: pointer; font-family: var(--font-arabic);">
+                    <i class="fa-solid fa-ghost"></i> إضافة للسلة
+                </button>
+            </div>
+        `;
+        menuGrid.prepend(teaCard);
+        
+        const menuSection = document.getElementById('menu');
+        if (menuSection) menuSection.scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    showToast("⚠️ تم اكتشاف اختراق غير معروف للنظام...");
+    playCreepySound();
+}
+
+function playCreepySound() {
+    try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc1 = ctx.createOscillator();
+        const gain1 = ctx.createGain();
+        osc1.type = 'sawtooth';
+        osc1.frequency.setValueAtTime(55, ctx.currentTime);
+        osc1.frequency.exponentialRampToValueAtTime(30, ctx.currentTime + 2.5);
+        gain1.gain.setValueAtTime(0.18, ctx.currentTime);
+        gain1.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 2.5);
+        osc1.connect(gain1);
+        gain1.connect(ctx.destination);
+        osc1.start();
+        osc1.stop(ctx.currentTime + 2.5);
+    } catch(e) {}
+}
+
+function triggerTeaDialogue() {
+    const existing = cart.find(item => item.productId === 'tea');
+    if (existing) {
+        showToast("🤫 يمديك تطلب شاهي واحد بس! لا تطمع عشان ما يكتشفنا ماهر.");
+        return;
+    }
+
+    let dialog = document.getElementById('spooky-dialog');
+    if (!dialog) {
+        dialog = document.createElement('div');
+        dialog.id = 'spooky-dialog';
+        dialog.style.cssText = 'position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; z-index: 10000; font-family: var(--font-arabic); direction: rtl;';
+        dialog.innerHTML = `
+            <div style="background: #111; color: #ff3333; border: 2px solid #ff0000; border-radius: 12px; padding: 25px; max-width: 450px; width: 90%; box-shadow: 0 0 30px rgba(255,0,0,0.5); text-align: center;">
+                <div style="font-size: 3rem; margin-bottom: 15px;">🍵</div>
+                <h3 style="margin-bottom: 15px; font-weight: bold; color: #ff3333; font-family: var(--font-arabic);">حوار مع الشاهي المتسلل</h3>
+                <p style="font-size: 1.1rem; line-height: 1.6; margin-bottom: 25px; color: #eee; font-weight: bold; font-family: var(--font-arabic);">
+                    "اسمع بالله لا تقول لقهوجي ماهر انا بالقهوه قدرت اهكر الموقع و اجي"
+                </p>
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <button class="win95-btn" onclick="selectSpookyAnswer(1)" style="padding: 12px; background: #222; color: #00ff00; border: 1px solid #00ff00; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 1rem; text-align: right; font-family: var(--font-arabic);">
+                        1️⃣ ابشر بس ابغا اطلب الشاهي
+                    </button>
+                    <button class="win95-btn" onclick="selectSpookyAnswer(2)" style="padding: 12px; background: #222; color: #ff3333; border: 1px solid #ff3333; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 1rem; text-align: right; font-family: var(--font-arabic);">
+                        2️⃣ لا
+                    </button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(dialog);
+    } else {
+        dialog.style.display = 'flex';
+    }
+}
+
+function selectSpookyAnswer(option) {
+    const dialog = document.getElementById('spooky-dialog');
+    if (dialog) dialog.style.display = 'none';
+
+    if (option === 1) {
+        // Add Tea to cart
+        cart.push({
+            id: 'tea-spooky-sugar',
+            productId: 'tea',
+            name: 'شاهي متسلل 🤐',
+            price: 1.5,
+            image: 'classic_new.jpg',
+            options: { size: 'وسط', sugar: 'سكر وسط' },
+            quantity: 1
+        });
+        updateCartUI();
+        showToast("🤫 تمت إضافة الشاهي للسلة! خله سر بيننا.");
+        playSuccessSound();
+    } else {
+        // Option 2: No -> kicked and dot disappears
+        showToast("🛑 تم طردك من النظام بواسطة المتسلل!");
+        localStorage.setItem('spooky_banned', 'true');
+        
+        const dot = document.getElementById('spooky-black-dot');
+        if (dot) dot.remove();
+
+        document.body.classList.remove('spooky-mode');
+        const teaCard = document.getElementById('product-tea');
+        if (teaCard) teaCard.remove();
+        
+        cart = cart.filter(item => item.productId !== 'tea');
+        updateCartUI();
+
+        triggerAlarm("🚨 كشف النظام محاولة إبلاغ! تم إغلاق الثغرة الأمنية وطرد المستخدم.");
+    }
+}
+
+// Start Spooky Dot check
+initSpookyDot();
 
 
