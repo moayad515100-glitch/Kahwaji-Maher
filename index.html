@@ -592,18 +592,18 @@
 
     <!-- Secret Developer Control Panel Modal -->
     <div class="retro-modal" id="secret-dev-panel" style="z-index: 10005;">
-        <div class="win95-window" style="max-width: 500px; width: 90%;">
+        <div class="win95-window" style="max-width: 440px; width: 90%;">
             <div class="win95-title-bar">
-                <div class="win95-title-text"><i class="fa-solid fa-user-gear"></i> لوحة التحكم السرية (المطور)</div>
+                <div class="win95-title-text"><i class="fa-solid fa-user-gear"></i> لوحة التحكم السرية (إدارة الفعاليات)</div>
                 <button class="win95-close-btn" onclick="closeSecretDevPanel()">×</button>
             </div>
             <div class="win95-body" style="padding: 15px; font-family: var(--font-arabic); text-align: right; background: #c0c0c0; color: #000; direction: rtl;">
                 
                 <!-- Section 1: Event Switcher -->
-                <fieldset style="border: 2px inset #fff; padding: 10px; margin-bottom: 15px; border-radius: 0;">
+                <fieldset style="border: 2px inset #fff; padding: 12px; margin-bottom: 5px; border-radius: 0;">
                     <legend style="font-weight: bold; background: #c0c0c0; padding: 0 5px; font-size: 0.9rem;">🔥 إدارة الفعاليات النشطة</legend>
-                    <label style="display: block; margin-bottom: 5px; font-size: 0.85rem; font-weight: bold;">اختر الفعالية لتنشيطها فوراً:</label>
-                    <select id="dev-event-select" style="width: 100%; padding: 6px; background: #fff; color: #000; border: 2px inset #fff; font-family: monospace; font-size: 0.85rem; outline: none;">
+                    <label style="display: block; margin-bottom: 8px; font-size: 0.85rem; font-weight: bold;">اختر الفعالية لتنشيطها فوراً:</label>
+                    <select id="dev-event-select" style="width: 100%; padding: 6px; background: #fff; color: #000; border: 2px inset #fff; font-family: monospace; font-size: 0.85rem; outline: none; margin-bottom: 12px;">
                         <option value="none">بدون فعالية (عادي)</option>
                         <option value="neon_magic">القهوة المضيئة (neon_magic)</option>
                         <option value="anger">غضب ماهر (anger)</option>
@@ -615,35 +615,7 @@
                         <option value="grind_challenge">تحدي الطحن السريع (grind_challenge)</option>
                         <option value="matcha">الماتشا السحرية (matcha)</option>
                     </select>
-                    <button class="win95-btn" onclick="devSwitchEvent()" style="margin-top: 10px; width: 100%; font-weight: bold; padding: 6px; font-family: var(--font-arabic); cursor: pointer;">تطبيق الفعالية ⚡</button>
-                </fieldset>
-
-                <!-- Section 2: Product Creator -->
-                <fieldset style="border: 2px inset #fff; padding: 10px; border-radius: 0;">
-                    <legend style="font-weight: bold; background: #c0c0c0; padding: 0 5px; font-size: 0.9rem;">➕ إضافة منتج جديد للمنيو</legend>
-                    
-                    <div style="margin-bottom: 8px;">
-                        <label style="display: block; font-size: 0.8rem; margin-bottom: 3px; font-weight: bold;">اسم المنتج:</label>
-                        <input type="text" id="dev-prod-name" placeholder="مثال: شاهي روقان" style="width: 100%; padding: 6px; border: 2px inset #fff; background: #fff; color: #000; outline: none; font-size: 0.85rem; font-family: var(--font-arabic);">
-                    </div>
-                    
-                    <div style="margin-bottom: 8px; display: flex; gap: 10px;">
-                        <div style="flex: 1;">
-                            <label style="display: block; font-size: 0.8rem; margin-bottom: 3px; font-weight: bold;">السعر (ر.س):</label>
-                            <input type="number" id="dev-prod-price" step="0.5" placeholder="مثال: 2.5" style="width: 100%; padding: 6px; border: 2px inset #fff; background: #fff; color: #000; outline: none; font-size: 0.85rem; font-family: monospace;">
-                        </div>
-                        <div style="flex: 1;">
-                            <label style="display: block; font-size: 0.8rem; margin-bottom: 3px; font-weight: bold;">أيقونة المنتج:</label>
-                            <input type="text" id="dev-prod-icon" placeholder="مثال: ☕ أو 🍵" style="width: 100%; padding: 6px; border: 2px inset #fff; background: #fff; color: #000; outline: none; font-size: 0.85rem; font-family: var(--font-arabic);">
-                        </div>
-                    </div>
-                    
-                    <div style="margin-bottom: 8px;">
-                        <label style="display: block; font-size: 0.8rem; margin-bottom: 3px; font-weight: bold;">وصف المنتج:</label>
-                        <textarea id="dev-prod-desc" placeholder="اكتب وصفاً مشوقاً للمنتج..." rows="2" style="width: 100%; padding: 6px; border: 2px inset #fff; background: #fff; color: #000; outline: none; font-size: 0.85rem; font-family: var(--font-arabic); resize: vertical;"></textarea>
-                    </div>
-
-                    <button class="win95-btn" onclick="devCreateProduct()" style="width: 100%; font-weight: bold; padding: 8px; background: #008000; color: #fff; border-color: #00b000 #005000 #005000 #00b000; font-family: var(--font-arabic); cursor: pointer;">إضافة المنتج للموقع ➕</button>
+                    <button class="win95-btn" onclick="devSwitchEvent()" style="width: 100%; font-weight: bold; padding: 8px; font-family: var(--font-arabic); cursor: pointer;">تطبيق الفعالية النشطة ⚡</button>
                 </fieldset>
                 
             </div>
