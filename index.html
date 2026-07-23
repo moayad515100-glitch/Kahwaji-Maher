@@ -370,8 +370,13 @@
 
     <!-- Cart Drawer -->
     <div class="cart-drawer" id="cart-drawer">
-        <div class="cart-header">
-            <h3><i class="fa-solid fa-bag-shopping gold-text"></i> سلة الطلبات</h3>
+        <div class="cart-header" style="display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <h3><i class="fa-solid fa-bag-shopping gold-text"></i> سلة الطلبات</h3>
+                <button onclick="promptDevPanel()" style="background: none; border: none; color: var(--gold); cursor: pointer; opacity: 0.3; font-size: 0.9rem; padding: 4px; display: inline-flex; align-items: center; transition: opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.3'" title="Dev Panel">
+                    <i class="fa-solid fa-key"></i>
+                </button>
+            </div>
             <button class="close-cart" id="close-cart"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <div class="cart-items" id="cart-items">
@@ -574,10 +579,7 @@
     <div class="retro-modal" id="retro-event-modal">
         <div class="win95-window">
             <div class="win95-title-bar">
-                <div class="win95-title-text" id="retro-modal-title">
-                    <span onclick="promptDevPanel()" style="cursor: pointer; padding: 2px 6px; margin-right: -4px;" title="نظام التشغيل"><i class="fa-solid fa-laptop-code"></i></span>
-                    لوحة الفعاليات النشطة v2.0
-                </div>
+                <div class="win95-title-text" id="retro-modal-title"><i class="fa-solid fa-laptop-code"></i> لوحة الفعاليات النشطة v2.0</div>
                 <button class="win95-close-btn" id="close-retro-modal">×</button>
             </div>
             
