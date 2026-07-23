@@ -11,7 +11,7 @@
 //   'grind_challenge': "Coffee Grind Speed" clicker game (click fast to win)
 //   'neon_magic'     : "Magic Glowing Coffee" neon theme (glow, mouse trails)
 // ==========================================================
-let ACTIVE_EVENT = 'neon_magic'; 
+let ACTIVE_EVENT = 'none'; 
 
 const IS_EVENT_POSTPONED = false;
 const POSTPONED_REASON = '';
