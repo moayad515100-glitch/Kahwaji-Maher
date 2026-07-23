@@ -3170,7 +3170,48 @@ function fallbackCopyToClipboard(text, msg) {
     document.body.removeChild(textarea);
 }
 
+// ==========================================================
+// SECRET DEVELOPER CONTROL PANEL EVENTS & ACTIONS
+// ==========================================================
+function promptDevPanel() {
+    const authModal = document.getElementById('secret-dev-auth-modal');
+    const authOverlay = document.getElementById('dev-auth-overlay');
+    if (authModal && authOverlay) {
+        authModal.classList.add('open');
+        authOverlay.classList.add('open');
+        
+        // Auto focus password field
+        const input = document.getElementById('dev-auth-pass-input');
+        if (input) {
+            input.value = '';
+            setTimeout(() => input.focus(), 150);
+        }
+    }
+}
 
+function closeDevAuthModal() {
+    const authModal = document.getElementById('secret-dev-auth-modal');
+    const authOverlay = document.getElementById('dev-auth-overlay');
+    if (authModal && authOverlay) {
+        authModal.classList.remove('open');
+        authOverlay.classList.remove('open');
+    }
+}
+
+function submitDevAuth() {
+    const input = document.getElementById('dev-auth-pass-input');
+    if (!input) return;
+    
+    const code = input.value.trim();
+    if (code === "o359h74687tnlw489") {
+        closeDevAuthModal();
+        openSecretDevPanel();
+    } else {
+        showToast("❌ كود المطور غير صحيح!");
+        input.value = '';
+        input.focus();
+    }
+}
 
 function openSecretDevPanel() {
     const panel = document.getElementById('secret-dev-panel');
