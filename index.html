@@ -110,9 +110,17 @@
                 <p>اختر ما يناسبك من باقاتنا الفاخرة للقهوة الماهرة الأصيلة</p>
             </div>
 
+            <!-- Category Filter Tabs -->
+            <div class="menu-categories">
+                <button class="category-tab active" data-category="all">كل المشروبات ☕</button>
+                <button class="category-tab" data-category="coffee">القهوة الماهرة 🧋</button>
+                <button class="category-tab" data-category="matcha">الماتشا السحرية 🍵</button>
+                <button class="category-tab" data-category="juice">عصائر وخلطات 🔮</button>
+            </div>
+
             <div class="menu-grid">
                 <!-- Product 1: Classic (Free) -->
-                <div class="product-card" data-id="classic">
+                <div class="product-card" data-id="classic" data-category="coffee">
                     <div class="product-image-container">
                         <img src="classic_new.jpg" alt="قهوجي ماهر العادي" class="product-image">
                         <span class="product-tag tag-free">العادي</span>
@@ -122,7 +130,7 @@
                         <p class="product-desc">قهوة تركية</p>
                         <div class="product-price">مجانا <span class="old-price">1.5 ر.س</span></div>
                         
-                        <!-- Customization Accordion -->
+                        <!-- Customization Section with Chips -->
                         <div class="customization-section">
                             <h4 class="custom-title"><i class="fa-solid fa-sliders"></i> خصص كوبك:</h4>
                             
@@ -130,29 +138,31 @@
                                 <!-- Size -->
                                 <div class="option-group">
                                     <label>الحجم:</label>
-                                    <div class="radio-buttons">
-                                        <label class="radio-label">
-                                            <input type="radio" name="size-classic" value="وسط" checked>
-                                            <span>وسط</span>
-                                        </label>
-                                        <label class="radio-label">
-                                            <input type="radio" name="size-classic" value="كبير">
-                                            <span>كبير</span>
-                                        </label>
+                                    <div class="chips-container size-chips">
+                                        <input type="radio" id="size-classic-normal" name="size-classic" value="وسط" checked style="display:none;" onchange="scaleProductImage(this, 'classic', 1.0)">
+                                        <label for="size-classic-normal" class="chip-label">وسط</label>
+
+                                        <input type="radio" id="size-classic-large" name="size-classic" value="كبير" style="display:none;" onchange="scaleProductImage(this, 'classic', 1.18)">
+                                        <label for="size-classic-large" class="chip-label">كبير (+1 ر.س)</label>
                                     </div>
                                 </div>
-
-
 
                                 <!-- Sugar -->
                                 <div class="option-group">
                                     <label>السكر:</label>
-                                    <select name="sugar-classic" class="form-select">
-                                        <option value="بدون سكر" selected>بدون سكر (سادة)</option>
-                                        <option value="سكر خفيف">سكر خفيف</option>
-                                        <option value="سكر وسط">سكر وسط</option>
-                                        <option value="سكر زيادة">سكر زيادة</option>
-                                    </select>
+                                    <div class="chips-container sugar-chips">
+                                        <input type="radio" id="sugar-classic-none" name="sugar-classic" value="بدون سكر" checked style="display:none;">
+                                        <label for="sugar-classic-none" class="chip-label">سادة</label>
+
+                                        <input type="radio" id="sugar-classic-low" name="sugar-classic" value="سكر خفيف" style="display:none;">
+                                        <label for="sugar-classic-low" class="chip-label">خفيف</label>
+
+                                        <input type="radio" id="sugar-classic-medium" name="sugar-classic" value="سكر وسط" style="display:none;">
+                                        <label for="sugar-classic-medium" class="chip-label">وسط</label>
+
+                                        <input type="radio" id="sugar-classic-high" name="sugar-classic" value="سكر زيادة" style="display:none;">
+                                        <label for="sugar-classic-high" class="chip-label">زيادة</label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -164,7 +174,7 @@
                 </div>
 
                 <!-- Product 2: Pro (3 SAR) -->
-                <div class="product-card premium" data-id="pro">
+                <div class="product-card premium" data-id="pro" data-category="coffee">
                     <div class="product-image-container">
                         <img src="pro_new.jpg" alt="قهوجي ماهر برو" class="product-image">
                         <span class="product-tag tag-pro">PRO برو</span>
@@ -174,7 +184,7 @@
                         <p class="product-desc">قهوة مقطرة ويمديك تضيف لها ثلج إذا تبغى</p>
                         <div class="product-price">3 ر.س <span class="price-suffix">/ كوب</span></div>
                         
-                        <!-- Customization Accordion -->
+                        <!-- Customization Section with Chips -->
                         <div class="customization-section">
                             <h4 class="custom-title"><i class="fa-solid fa-sliders"></i> خصص كوبك:</h4>
                             
@@ -182,29 +192,31 @@
                                 <!-- Size -->
                                 <div class="option-group">
                                     <label>الحجم:</label>
-                                    <div class="radio-buttons">
-                                        <label class="radio-label">
-                                            <input type="radio" name="size-pro" value="وسط" checked>
-                                            <span>وسط</span>
-                                        </label>
-                                        <label class="radio-label">
-                                            <input type="radio" name="size-pro" value="كبير">
-                                            <span>كبير</span>
-                                        </label>
+                                    <div class="chips-container size-chips">
+                                        <input type="radio" id="size-pro-normal" name="size-pro" value="وسط" checked style="display:none;" onchange="scaleProductImage(this, 'pro', 1.0)">
+                                        <label for="size-pro-normal" class="chip-label">وسط</label>
+
+                                        <input type="radio" id="size-pro-large" name="size-pro" value="كبير" style="display:none;" onchange="scaleProductImage(this, 'pro', 1.18)">
+                                        <label for="size-pro-large" class="chip-label">كبير (+1 ر.س)</label>
                                     </div>
                                 </div>
-
-
 
                                 <!-- Sugar -->
                                 <div class="option-group">
                                     <label>السكر:</label>
-                                    <select name="sugar-pro" class="form-select">
-                                        <option value="بدون سكر" selected>بدون سكر (سادة)</option>
-                                        <option value="سكر خفيف">سكر خفيف</option>
-                                        <option value="سكر وسط">سكر وسط</option>
-                                        <option value="سكر زيادة">سكر زيادة</option>
-                                    </select>
+                                    <div class="chips-container sugar-chips">
+                                        <input type="radio" id="sugar-pro-none" name="sugar-pro" value="بدون سكر" checked style="display:none;">
+                                        <label for="sugar-pro-none" class="chip-label">سادة</label>
+
+                                        <input type="radio" id="sugar-pro-low" name="sugar-pro" value="سكر خفيف" style="display:none;">
+                                        <label for="sugar-pro-low" class="chip-label">خفيف</label>
+
+                                        <input type="radio" id="sugar-pro-medium" name="sugar-pro" value="سكر وسط" style="display:none;">
+                                        <label for="sugar-pro-medium" class="chip-label">وسط</label>
+
+                                        <input type="radio" id="sugar-pro-high" name="sugar-pro" value="سكر زيادة" style="display:none;">
+                                        <label for="sugar-pro-high" class="chip-label">زيادة</label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -216,7 +228,7 @@
                 </div>
 
                 <!-- Product 3: Super Pro (5 SAR) -->
-                <div class="product-card luxury" data-id="superpro">
+                <div class="product-card luxury" data-id="superpro" data-category="coffee">
                     <div class="product-image-container">
                         <img src="5960730354593238427.jpg" alt="قهوجي ماهر سوبر برو" class="product-image">
                         <span class="product-tag tag-super">SUPER PRO سوبر برو</span>
@@ -226,7 +238,7 @@
                         <p class="product-desc">قهوة مقطرة مضاف عليها حليب وسكر</p>
                         <div class="product-price">5 ر.س <span class="price-suffix">/ كوب</span></div>
                         
-                        <!-- Customization Accordion -->
+                        <!-- Customization Section with Chips -->
                         <div class="customization-section">
                             <h4 class="custom-title"><i class="fa-solid fa-sliders"></i> خصص كوبك:</h4>
                             
@@ -234,29 +246,31 @@
                                 <!-- Size -->
                                 <div class="option-group">
                                     <label>الحجم:</label>
-                                    <div class="radio-buttons">
-                                        <label class="radio-label">
-                                            <input type="radio" name="size-superpro" value="وسط" checked>
-                                            <span>وسط</span>
-                                        </label>
-                                        <label class="radio-label">
-                                            <input type="radio" name="size-superpro" value="كبير">
-                                            <span>كبير</span>
-                                        </label>
+                                    <div class="chips-container size-chips">
+                                        <input type="radio" id="size-superpro-normal" name="size-superpro" value="وسط" checked style="display:none;" onchange="scaleProductImage(this, 'superpro', 1.0)">
+                                        <label for="size-superpro-normal" class="chip-label">وسط</label>
+
+                                        <input type="radio" id="size-superpro-large" name="size-superpro" value="كبير" style="display:none;" onchange="scaleProductImage(this, 'superpro', 1.18)">
+                                        <label for="size-superpro-large" class="chip-label">كبير (+1 ر.س)</label>
                                     </div>
                                 </div>
-
-
 
                                 <!-- Sugar -->
                                 <div class="option-group">
                                     <label>السكر:</label>
-                                    <select name="sugar-superpro" class="form-select">
-                                        <option value="بدون سكر" selected>بدون سكر (سادة)</option>
-                                        <option value="سكر خفيف">سكر خفيف</option>
-                                        <option value="سكر وسط">سكر وسط</option>
-                                        <option value="سكر زيادة">سكر زيادة</option>
-                                    </select>
+                                    <div class="chips-container sugar-chips">
+                                        <input type="radio" id="sugar-superpro-none" name="sugar-superpro" value="بدون سكر" checked style="display:none;">
+                                        <label for="sugar-superpro-none" class="chip-label">سادة</label>
+
+                                        <input type="radio" id="sugar-superpro-low" name="sugar-superpro" value="سكر خفيف" style="display:none;">
+                                        <label for="sugar-superpro-low" class="chip-label">خفيف</label>
+
+                                        <input type="radio" id="sugar-superpro-medium" name="sugar-superpro" value="سكر وسط" style="display:none;">
+                                        <label for="sugar-superpro-medium" class="chip-label">وسط</label>
+
+                                        <input type="radio" id="sugar-superpro-high" name="sugar-superpro" value="سكر زيادة" style="display:none;">
+                                        <label for="sugar-superpro-high" class="chip-label">زيادة</label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -268,7 +282,7 @@
                 </div>
 
                 <!-- Product 4: Juice of the Day (3 SAR) -->
-                <div class="product-card premium" data-id="juice">
+                <div class="product-card premium" data-id="juice" data-category="juice">
                     <div class="product-image-container">
                         <img src="5963013000862043793.jpg" alt="عصير اليوم" class="product-image">
                         <span class="product-tag tag-pro">عصير اليوم</span>
@@ -278,7 +292,7 @@
                         <p class="product-desc">كل يوم عصير مختلف ما يمدينا نحدده في الوصف</p>
                         <div class="product-price">3 ر.س <span class="price-suffix">/ كوب</span></div>
                         
-                        <!-- Customization Accordion -->
+                        <!-- Customization Section with Chips -->
                         <div class="customization-section">
                             <h4 class="custom-title"><i class="fa-solid fa-sliders"></i> خصص كوبك:</h4>
                             
@@ -286,27 +300,31 @@
                                 <!-- Size -->
                                 <div class="option-group">
                                     <label>الحجم:</label>
-                                    <div class="radio-buttons">
-                                        <label class="radio-label">
-                                            <input type="radio" name="size-juice" value="وسط" checked>
-                                            <span>وسط</span>
-                                        </label>
-                                        <label class="radio-label">
-                                            <input type="radio" name="size-juice" value="كبير">
-                                            <span>كبير</span>
-                                        </label>
+                                    <div class="chips-container size-chips">
+                                        <input type="radio" id="size-juice-normal" name="size-juice" value="وسط" checked style="display:none;" onchange="scaleProductImage(this, 'juice', 1.0)">
+                                        <label for="size-juice-normal" class="chip-label">وسط</label>
+
+                                        <input type="radio" id="size-juice-large" name="size-juice" value="كبير" style="display:none;" onchange="scaleProductImage(this, 'juice', 1.18)">
+                                        <label for="size-juice-large" class="chip-label">كبير (+1 ر.س)</label>
                                     </div>
                                 </div>
 
                                 <!-- Sugar -->
                                 <div class="option-group">
                                     <label>السكر:</label>
-                                    <select name="sugar-juice" class="form-select">
-                                        <option value="سكر وسط" selected>سكر وسط</option>
-                                        <option value="بدون سكر">بدون سكر (سادة)</option>
-                                        <option value="سكر خفيف">سكر خفيف</option>
-                                        <option value="سكر زيادة">سكر زيادة</option>
-                                    </select>
+                                    <div class="chips-container sugar-chips">
+                                        <input type="radio" id="sugar-juice-medium" name="sugar-juice" value="سكر وسط" checked style="display:none;">
+                                        <label for="sugar-juice-medium" class="chip-label">وسط</label>
+
+                                        <input type="radio" id="sugar-juice-none" name="sugar-juice" value="بدون سكر" style="display:none;">
+                                        <label for="sugar-juice-none" class="chip-label">سادة</label>
+
+                                        <input type="radio" id="sugar-juice-low" name="sugar-juice" value="سكر خفيف" style="display:none;">
+                                        <label for="sugar-juice-low" class="chip-label">خفيف</label>
+
+                                        <input type="radio" id="sugar-juice-high" name="sugar-juice" value="سكر زيادة" style="display:none;">
+                                        <label for="sugar-juice-high" class="chip-label">زيادة</label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -318,7 +336,7 @@
                 </div>
 
                 <!-- Product 5: Matcha Mahira -->
-                <div class="product-card premium" data-id="matcha">
+                <div class="product-card premium" data-id="matcha" data-category="matcha">
                     <div class="product-image-container">
                         <img src="matcha.jpg" alt="ماتشا ماهرة" class="product-image">
                         <span class="product-tag tag-pro" style="background: #2e7d32; color: #fff;">جديد / NEW</span>
@@ -328,7 +346,7 @@
                         <p class="product-desc">ماتشا ماهرة أصلية.. خضراء ولذيذة، يعني إيش نكتب غير كذا؟ 🍵😉</p>
                         <div class="product-price" style="color: #2e7d32;">6 ر.س <span class="price-suffix">/ كوب</span></div>
                         
-                        <!-- Customization Accordion -->
+                        <!-- Customization Section with Chips -->
                         <div class="customization-section">
                             <h4 class="custom-title"><i class="fa-solid fa-sliders"></i> خصص كوبك:</h4>
                             
@@ -336,27 +354,31 @@
                                 <!-- Size -->
                                 <div class="option-group">
                                     <label>الحجم:</label>
-                                    <div class="radio-buttons">
-                                        <label class="radio-label">
-                                            <input type="radio" name="size-matcha" value="وسط" checked>
-                                            <span>وسط</span>
-                                        </label>
-                                        <label class="radio-label">
-                                            <input type="radio" name="size-matcha" value="كبير">
-                                            <span>كبير</span>
-                                        </label>
+                                    <div class="chips-container size-chips">
+                                        <input type="radio" id="size-matcha-normal" name="size-matcha" value="وسط" checked style="display:none;" onchange="scaleProductImage(this, 'matcha', 1.0)">
+                                        <label for="size-matcha-normal" class="chip-label">وسط</label>
+
+                                        <input type="radio" id="size-matcha-large" name="size-matcha" value="كبير" style="display:none;" onchange="scaleProductImage(this, 'matcha', 1.18)">
+                                        <label for="size-matcha-large" class="chip-label">كبير (+1 ر.س)</label>
                                     </div>
                                 </div>
 
                                 <!-- Sugar -->
                                 <div class="option-group">
                                     <label>السكر:</label>
-                                    <select name="sugar-matcha" class="form-select">
-                                        <option value="بدون سكر">بدون سكر (سادة)</option>
-                                        <option value="سكر خفيف">سكر خفيف</option>
-                                        <option value="سكر وسط" selected>سكر وسط</option>
-                                        <option value="سكر زيادة">سكر زيادة</option>
-                                    </select>
+                                    <div class="chips-container sugar-chips">
+                                        <input type="radio" id="sugar-matcha-none" name="sugar-matcha" value="بدون سكر" style="display:none;">
+                                        <label for="sugar-matcha-none" class="chip-label">سادة</label>
+
+                                        <input type="radio" id="sugar-matcha-low" name="sugar-matcha" value="سكر خفيف" style="display:none;">
+                                        <label for="sugar-matcha-low" class="chip-label">خفيف</label>
+
+                                        <input type="radio" id="sugar-matcha-medium" name="sugar-matcha" value="سكر وسط" checked style="display:none;">
+                                        <label for="sugar-matcha-medium" class="chip-label">وسط</label>
+
+                                        <input type="radio" id="sugar-matcha-high" name="sugar-matcha" value="سكر زيادة" style="display:none;">
+                                        <label for="sugar-matcha-high" class="chip-label">زيادة</label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
