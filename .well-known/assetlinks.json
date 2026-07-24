@@ -3,6 +3,6 @@
       "target": {
         "namespace": "android_app",
         "package_name": "com.kahwajimaher.twa",
-        "sha256_cert_fingerprints": ["ED:D5:D0:59:DE:42:4D:69:A0:FB:B1:26:E5:D6:55:7B:5F:65:89:0B:BF:74:03:C2:A3:04:72:44:1C:4F:AA:B4"]
+        "sha256_cert_fingerprints": ["80:2F:70:22:E0:BC:72:B8:69:3C:3E:CA:76:CA:B3:18:B8:30:3C:6C:AA:0F:BF:18:08:F1:3C:A1:D3:3C:6E:0F"]
       }
     }]
