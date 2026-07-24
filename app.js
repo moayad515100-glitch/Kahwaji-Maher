@@ -3475,6 +3475,26 @@ function scaleProductImage(radioInput, productId, scaleFactor) {
     }
 }
 
+// Copy IBAN to clipboard helper
+function copyIBAN() {
+    const ibanText = document.getElementById('iban-text');
+    if (!ibanText) return;
+    
+    const textToCopy = ibanText.textContent.trim();
+    
+    // Copy to clipboard
+    const tempInput = document.createElement('textarea');
+    tempInput.style.position = 'absolute';
+    tempInput.style.left = '-9999px';
+    tempInput.value = textToCopy;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    document.execCommand('copy');
+    document.body.removeChild(tempInput);
+    
+    showToast("📋 تم نسخ رقم الآيبان بنجاح!");
+}
+
 // Initialize layout enhancements
 initTypewriter();
 initCategoryFilters();
