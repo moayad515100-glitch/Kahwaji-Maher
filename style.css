@@ -1,21 +1,28 @@
-/* Root Variables for Premium Luxury Dark Coffee Theme */
+/* Root Variables for Modern Cyberpunk Matcha & Neon Espresso Theme */
 :root {
-    --bg-main: #0c0907;
-    --bg-card: #140f0c;
-    --bg-header: rgba(12, 9, 7, 0.85);
-    --gold: #c5a880;
-    --gold-hover: #e5c79e;
-    --gold-glow: rgba(197, 168, 128, 0.2);
-    --text-main: #e6dfd9;
-    --text-muted: #a89f95;
+    --bg-main: #050403;
+    --bg-card: rgba(22, 17, 14, 0.7);
+    --bg-header: rgba(5, 4, 3, 0.85);
+    --gold: #ffaa00; /* Cyber Neon Amber */
+    --gold-hover: #ffc44d;
+    --gold-glow: rgba(255, 170, 0, 0.25);
+    --text-main: #f5efe8;
+    --text-muted: #bdaea0;
     --white: #ffffff;
-    --accent: #d4af37;
-    --danger: #d9534f;
+    --accent: #ff6a00; /* Cyber Orange */
+    --danger: #ff4444;
     --whatsapp-green: #25d366;
     --whatsapp-green-hover: #20ba5a;
-    --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    --border-radius: 12px;
+    --transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    --border-radius: 16px;
     --font-arabic: 'Cairo', sans-serif;
+    
+    /* Cyberpunk neon theme variables */
+    --neon-matcha: #39ff14;
+    --neon-espresso: #ff5e00;
+    --neon-blue: #00f0ff;
+    --glass-bg: rgba(20, 16, 13, 0.65);
+    --glass-border: rgba(255, 170, 0, 0.15);
 }
 
 /* Base Styles & Reset */
@@ -157,6 +164,19 @@ a {
     border-radius: 50%;
     border: 1.5px solid var(--gold);
     padding: 2px;
+    box-shadow: 0 0 10px var(--gold-glow);
+    animation: neon-logo-pulse 2s infinite alternate;
+}
+
+@keyframes neon-logo-pulse {
+    from {
+        box-shadow: 0 0 5px rgba(255, 170, 0, 0.25);
+        border-color: rgba(255, 170, 0, 0.6);
+    }
+    to {
+        box-shadow: 0 0 15px rgba(255, 170, 0, 0.6);
+        border-color: rgba(255, 170, 0, 1);
+    }
 }
 
 .brand-name {
@@ -246,7 +266,9 @@ a {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(rgba(12, 9, 7, 0.9) 0%, rgba(12, 9, 7, 0.85) 50%, rgba(12, 9, 7, 1) 100%);
+    background: radial-gradient(circle at 15% 25%, rgba(57, 255, 20, 0.05) 0%, transparent 60%),
+                radial-gradient(circle at 85% 75%, rgba(255, 94, 0, 0.05) 0%, transparent 60%),
+                linear-gradient(rgba(5, 4, 3, 0.85) 0%, rgba(5, 4, 3, 0.8) 60%, rgba(5, 4, 3, 1) 100%);
 }
 
 .hero-content {
@@ -374,20 +396,52 @@ a {
 }
 
 .product-card {
-    background-color: var(--bg-card);
+    background: var(--glass-bg);
     border-radius: var(--border-radius);
     overflow: hidden;
-    border: 1px solid rgba(197, 168, 128, 0.05);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
     transition: var(--transition);
     display: flex;
     flex-direction: column;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
 }
 
 .product-card:hover {
     transform: translateY(-8px);
-    border-color: rgba(197, 168, 128, 0.3);
-    box-shadow: 0 20px 45px rgba(197, 168, 128, 0.07);
+}
+
+/* Custom Cyber Neon Hover Glows by Drink Type */
+.product-card[data-id="classic"]:hover {
+    border-color: var(--neon-espresso);
+    box-shadow: 0 15px 35px rgba(255, 94, 0, 0.22);
+}
+
+.product-card[data-id="pro"]:hover {
+    border-color: var(--gold);
+    box-shadow: 0 15px 35px rgba(255, 170, 0, 0.22);
+}
+
+.product-card[data-id="superpro"]:hover {
+    border-color: var(--neon-blue);
+    box-shadow: 0 15px 35px rgba(0, 240, 255, 0.22);
+}
+
+.product-card[data-id="juice"]:hover {
+    border-color: #ff007f;
+    box-shadow: 0 15px 35px rgba(255, 0, 127, 0.22);
+}
+
+.product-card[data-id="matcha"]:hover {
+    border-color: var(--neon-matcha);
+    box-shadow: 0 15px 35px rgba(57, 255, 20, 0.22);
+}
+
+/* Fallback/dynamic cards glow */
+.product-card.dynamic-card:hover {
+    border-color: var(--gold);
+    box-shadow: 0 15px 35px rgba(255, 170, 0, 0.22);
 }
 
 .product-image-container {
@@ -3030,6 +3084,8 @@ body.spooky-mode .btn-add-cart {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.3; }
 }
+
+/* Cyberpunk Theme Applied */
 
 
 
