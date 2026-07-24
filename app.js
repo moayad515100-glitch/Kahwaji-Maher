@@ -177,7 +177,7 @@ function addToCart(productId, name, price, image) {
     const sugarInput = document.querySelector(`input[name="sugar-${productId}"]:checked`) || document.querySelector(`select[name="sugar-${productId}"]`);
     
     if (sizeInput) size = sizeInput.value;
-    if (sugarSelect) sugar = sugarSelect.value;
+    if (sugarInput) sugar = sugarInput.value;
 
     const options = {
         size,
