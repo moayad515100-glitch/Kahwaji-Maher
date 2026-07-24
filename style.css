@@ -490,6 +490,82 @@ a {
     font-size: 1.05rem;
 }
 
+/* Dynamic Menu Category Filter Tabs */
+.menu-categories {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 5;
+}
+
+.category-tab {
+    padding: 10px 24px;
+    font-family: var(--font-arabic);
+    font-size: 0.95rem;
+    font-weight: 700;
+    border-radius: 30px;
+    border: 1.5px solid rgba(255, 170, 0, 0.2);
+    background: rgba(20, 16, 13, 0.4);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: var(--transition);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.category-tab:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+    box-shadow: 0 4px 15px rgba(255, 170, 0, 0.15);
+}
+
+.category-tab.active {
+    background: linear-gradient(135deg, var(--gold) 0%, #ae8c5c 100%);
+    color: #110d0a;
+    border-color: var(--gold);
+    box-shadow: 0 5px 20px var(--gold-glow);
+}
+
+/* Chips / Pills Selectors */
+.chips-container {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+
+.chip-label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 14px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    background: rgba(30, 24, 20, 0.6);
+    border: 1px solid rgba(255, 170, 0, 0.1);
+    color: var(--text-muted);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: var(--transition);
+    user-select: none;
+}
+
+.chip-label:hover {
+    border-color: rgba(255, 170, 0, 0.4);
+    color: var(--gold);
+}
+
+/* Checked Radio Pills styles */
+input[type="radio"]:checked + .chip-label {
+    background: rgba(255, 170, 0, 0.18);
+    border-color: var(--gold);
+    color: var(--gold);
+    box-shadow: 0 0 10px rgba(255, 170, 0, 0.25);
+}
+
 .menu-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
