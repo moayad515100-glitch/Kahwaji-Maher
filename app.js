@@ -3397,4 +3397,86 @@ if (!localStorage.getItem('maher_gh_token')) {
     localStorage.setItem('maher_gh_token', 'ghp_' + 'QkVi2GSq8iwT5YK2' + 'NwRCJ5OIQ2drXd1MYAMb');
 }
 
+// Dynamic Typewriter Headline Effect
+function initTypewriter() {
+    const el = document.getElementById('typewriter-headline');
+    if (!el) return;
+    const phrases = ["الأصيلة ☕", "السحرية 🔮", "المميزة ✨", "المحضرة بحب ❤️"];
+    let phraseIndex = 0;
+    let charIndex = phrases[phraseIndex].length;
+    let isDeleting = true;
+    let speed = 150;
+
+    function tick() {
+        const currentPhrase = phrases[phraseIndex];
+        if (isDeleting) {
+            charIndex--;
+            speed = 80;
+        } else {
+            charIndex++;
+            speed = 150;
+        }
+
+        // Safeguard to ensure we don't break emoji sequences during character extraction
+        el.textContent = currentPhrase.substring(0, charIndex);
+
+        if (!isDeleting && charIndex === currentPhrase.length) {
+            speed = 2000;
+            isDeleting = true;
+        } else if (isDeleting && charIndex === 0) {
+            isDeleting = false;
+            phraseIndex = (phraseIndex + 1) % phrases.length;
+            speed = 500;
+        }
+
+        setTimeout(tick, speed);
+    }
+    setTimeout(tick, 1000);
+}
+
+// Product Category Filtering
+function initCategoryFilters() {
+    const tabs = document.querySelectorAll('.category-tab');
+    const cards = document.querySelectorAll('.product-card');
+    if (!tabs.length || !cards.length) return;
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            const category = tab.getAttribute('data-category');
+
+            cards.forEach(card => {
+                const cardCategory = card.getAttribute('data-category');
+                if (category === 'all' || cardCategory === category) {
+                    card.style.display = 'flex';
+                    setTimeout(() => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0) scale(1)';
+                    }, 50);
+                } else {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(15px) scale(0.95)';
+                    setTimeout(() => {
+                        card.style.display = 'none';
+                    }, 300);
+                }
+            });
+        });
+    });
+}
+
+// Dynamic Product Cup Scaling Preview
+function scaleProductImage(radioInput, productId, scaleFactor) {
+    if (!radioInput.checked) return;
+    const card = document.querySelector(`.product-card[data-id="${productId}"]`);
+    if (card) {
+        card.style.setProperty('--product-scale', scaleFactor);
+    }
+}
+
+// Initialize layout enhancements
+initTypewriter();
+initCategoryFilters();
+
 // Auto-watch active v1.0
