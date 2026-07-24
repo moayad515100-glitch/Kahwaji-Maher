@@ -47,38 +47,55 @@
     <!-- Hero Section -->
     <section id="home" class="hero-section">
         <div class="hero-overlay"></div>
-        <div class="container hero-content">
-            <div class="hero-badge">تأسس عام 2030</div>
-            <h1 class="hero-title">القهوة الماهرة <span class="gold-text">الأصيلة</span></h1>
+        <div class="container hero-grid-layout">
             
-            <!-- Hero Countdown Card -->
-            <div id="hero-countdown-container" class="hero-countdown-card" style="display: none;">
-                <div class="countdown-title">🔥 أكبر حدث في تاريخ قهوجي ماهر ينطلق خلال:</div>
-                <div class="countdown-digits">
-                    <div class="digit-box"><span id="cd-hours">00</span><label>ساعة</label></div>
-                    <div class="digit-separator">:</div>
-                    <div class="digit-box"><span id="cd-minutes">00</span><label>دقيقة</label></div>
-                    <div class="digit-separator">:</div>
-                    <div class="digit-box"><span id="cd-seconds">00</span><label>ثانية</label></div>
+            <!-- Right side: Text details -->
+            <div class="hero-left-col">
+                <div class="hero-badge">تأسس عام 2030</div>
+                <h1 class="hero-title">
+                    القهوة الماهرة <br>
+                    <span class="gold-text" id="typewriter-headline">الأصيلة</span>
+                </h1>
+                <p class="hero-subtitle">متعة ومذاق القهوة التركية الفاخرة والمشروبات السحرية المميزة المحضرة بدقة وعناية.</p>
+                
+                <!-- Hero Countdown Card -->
+                <div id="hero-countdown-container" class="hero-countdown-card" style="display: none; margin-right: 0; margin-left: auto;">
+                    <div class="countdown-title">🔥 أكبر حدث في تاريخ قهوجي ماهر ينطلق خلال:</div>
+                    <div class="countdown-digits">
+                        <div class="digit-box"><span id="cd-hours">00</span><label>ساعة</label></div>
+                        <div class="digit-separator">:</div>
+                        <div class="digit-box"><span id="cd-minutes">00</span><label>دقيقة</label></div>
+                        <div class="digit-separator">:</div>
+                        <div class="digit-box"><span id="cd-seconds">00</span><label>ثانية</label></div>
+                    </div>
+                </div>
+
+                <div class="hero-buttons" style="justify-content: flex-start;">
+                    <a href="#menu" class="btn btn-primary">اطلب الآن</a>
+                    <a href="#about" class="btn btn-secondary">اكتشف المزيد</a>
                 </div>
             </div>
 
-            <div class="hero-buttons">
-                <a href="#menu" class="btn btn-primary">اطلب الآن</a>
-                <a href="#about" class="btn btn-secondary">اكتشف المزيد</a>
+            <!-- Left side: Interactive glowing disc & Leaderboard -->
+            <div class="hero-right-col">
+                <div class="cyber-cup-container">
+                    <div class="glowing-ring"></div>
+                    <img src="5960730354593238429.jpg" alt="Glowing Cup" class="cyber-cup-img">
+                </div>
+                
+                <!-- Secret Tea Finders Leaderboard -->
+                <div class="tea-finders-card floating-leaderboard">
+                    <div class="leaderboard-title">
+                        <span>🏆</span> أبطال الشاهي السري 🕵️‍♂️
+                    </div>
+                    <div class="leaderboard-list">
+                        <div>🥇 المستكشف الأول: <strong>جنى</strong></div>
+                        <div>🥈 المستكشف الثاني: <strong>عبد الله</strong></div>
+                        <div>🥉 المستكشف الثالث: <strong>مروج</strong></div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Secret Tea Finders Leaderboard -->
-            <div class="tea-finders-card" style="background: rgba(0, 0, 0, 0.65); border: 1.5px solid rgba(236, 201, 75, 0.4); border-radius: 12px; padding: 16px 20px; margin: 25px auto 0; max-width: 420px; text-align: center; font-family: var(--font-arabic); backdrop-filter: blur(5px); box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
-                <div style="font-size: 1.15rem; color: #ecc94b; font-weight: 800; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                    <span>🏆</span> أبطال الشاهي السري 🕵️‍♂️
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 6px; font-size: 0.95rem; color: #fff; text-align: right; padding-right: 15px; border-right: 2px solid #ecc94b; margin: 0 10px;">
-                    <div>🥇 المستكشف الأول: <strong>جنى</strong></div>
-                    <div>🥈 المستكشف الثاني: <strong>عبد الله</strong></div>
-                    <div>🥉 المستكشف الثالث: <strong>مروج</strong></div>
-                </div>
-            </div>
         </div>
     </section>
 
