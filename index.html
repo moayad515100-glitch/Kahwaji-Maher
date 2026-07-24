@@ -412,19 +412,24 @@
                 <!-- Card 2: Bank Card -->
                 <div class="dashboard-card bank-card">
                     <h3><i class="fa-solid fa-credit-card gold-text"></i> تفاصيل الحساب البنكي</h3>
-                    <div class="bank-details-list">
-                        <div class="bank-item"><strong>الاسم:</strong> <span>مؤيد محمد عبدالحق المهاجرى</span></div>
-                        <div class="bank-item"><strong>البنك:</strong> <span>البنك الأهلي السعودي</span></div>
-                        <div class="bank-item"><strong>رقم الحساب:</strong> <span class="mono-code" id="bank-acc-text">00200001178402</span></div>
+                    <div class="bank-details-list" style="margin-top: 15px;">
+                        <div class="bank-item">
+                            <strong>رقم الحساب:</strong> 
+                            <span class="mono-code" id="bank-acc-text">00200001178402</span>
+                        </div>
                         <div class="bank-item iban-item">
                             <strong>الآيبان IBAN:</strong> 
                             <span class="mono-code" id="iban-text" style="font-size: 0.72rem;">SA7610000000200001178402</span>
                         </div>
-                        <div class="bank-item"><strong>رمز سويفت:</strong> <span class="mono-code">NCBKSAJE</span></div>
                     </div>
-                    <button class="btn btn-secondary btn-block" onclick="copyIBAN()" style="margin-top: 15px; padding: 10px 15px; font-size: 0.85rem;">
-                        <i class="fa-solid fa-copy"></i> نسخ الآيبان السريع
-                    </button>
+                    <div style="display: flex; gap: 8px; width: 100%; margin-top: 20px;">
+                        <button class="btn btn-secondary" onclick="copyToClipboard('00200001178402', 'رقم الحساب')" style="flex: 1; padding: 10px 5px; font-size: 0.78rem;">
+                            <i class="fa-solid fa-copy"></i> نسخ الحساب
+                        </button>
+                        <button class="btn btn-secondary" onclick="copyToClipboard('SA7610000000200001178402', 'الآيبان')" style="flex: 1; padding: 10px 5px; font-size: 0.78rem;">
+                            <i class="fa-solid fa-copy"></i> نسخ الآيبان
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Card 3: Metrics Card -->
