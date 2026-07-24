@@ -3325,6 +3325,94 @@ body.spooky-mode .btn-add-cart {
 
 /* Cyberpunk Theme Applied */
 
+/* ==========================================================
+   Responsive Mobile Overrides
+   ========================================================== */
+@media (max-width: 992px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr !important;
+        gap: 20px !important;
+    }
+    .hero-grid-layout {
+        grid-template-columns: 1fr !important;
+        gap: 40px !important;
+        text-align: center !important;
+        padding-top: 100px !important;
+    }
+    .hero-left-col {
+        text-align: center !important;
+    }
+    .hero-countdown-card {
+        margin-right: auto !important;
+        margin-left: auto !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-section {
+        min-height: auto !important;
+        padding-top: 90px !important;
+    }
+    .hero-grid-layout {
+        grid-template-columns: 1fr !important;
+        gap: 30px !important;
+        padding-top: 40px !important;
+        padding-bottom: 40px !important;
+    }
+    .hero-title {
+        font-size: 2.2rem !important;
+        line-height: 1.3 !important;
+    }
+    .hero-subtitle {
+        font-size: 1rem !important;
+        margin-bottom: 25px !important;
+    }
+    .hero-left-col {
+        text-align: center !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+    }
+    .hero-buttons {
+        flex-direction: column !important;
+        width: 100% !important;
+        max-width: 300px !important;
+        margin: 0 auto !important;
+        gap: 12px !important;
+        justify-content: center !important;
+    }
+    .hero-buttons .btn {
+        width: 100% !important;
+        justify-content: center !important;
+        display: inline-flex !important;
+    }
+    .cyber-cup-container {
+        width: 200px !important;
+        height: 200px !important;
+    }
+    .cyber-cup-img {
+        width: 150px !important;
+        height: 150px !important;
+    }
+    .dashboard-grid {
+        grid-template-columns: 1fr !important;
+        gap: 20px !important;
+    }
+    .about-section {
+        padding: 50px 0 !important;
+    }
+    .section-header h2 {
+        font-size: 2rem !important;
+    }
+    .header-logo {
+        width: 40px !important;
+        height: 40px !important;
+    }
+    .brand-name {
+        font-size: 1.2rem !important;
+    }
+}
+
 
 
 
