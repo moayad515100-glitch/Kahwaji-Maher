@@ -3413,6 +3413,129 @@ body.spooky-mode .btn-add-cart {
     }
 }
 
+/* App Mode Styles */
+.app-top-bar {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    background-color: var(--bg-card);
+    border-bottom: 1px solid var(--glass-border);
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    z-index: 999;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.app-top-bar .logo-area {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.app-top-bar .logo-area .brand-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.app-top-bar .logo-area .header-logo {
+    width: 35px;
+    height: 35px;
+}
+
+.app-top-actions .win95-key-btn {
+    background: transparent;
+    border: none;
+    color: var(--gold);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.app-bottom-nav {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 65px;
+    background-color: var(--bg-card);
+    border-top: 1px solid var(--glass-border);
+    justify-content: space-around;
+    align-items: center;
+    z-index: 999;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+.app-bottom-nav .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.75rem;
+    font-weight: 600;
+    gap: 4px;
+    transition: var(--transition);
+    cursor: pointer;
+    flex: 1;
+    padding: 8px 0;
+}
+
+.app-bottom-nav .nav-item i {
+    font-size: 1.25rem;
+}
+
+.app-bottom-nav .nav-item.active {
+    color: var(--gold);
+}
+
+.nav-cart-wrapper {
+    position: relative;
+}
+
+.nav-cart-count {
+    position: absolute;
+    top: -8px;
+    right: -12px;
+    background-color: var(--gold);
+    color: #120e0a;
+    font-size: 0.65rem;
+    font-weight: 700;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 5px rgba(255, 170, 0, 0.3);
+}
+
+/* Toggle App Layout when body has .is-installed-app */
+body.is-installed-app .main-header {
+    display: none !important;
+}
+
+body.is-installed-app .app-top-bar {
+    display: flex !important;
+}
+
+body.is-installed-app .app-bottom-nav {
+    display: flex !important;
+}
+
+body.is-installed-app .hero-section {
+    padding-top: 75px !important;
+}
+
+body.is-installed-app {
+    padding-bottom: 75px !important;
+}
+
 
 
 
