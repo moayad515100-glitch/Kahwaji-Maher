@@ -392,17 +392,62 @@
         </div>
     </section>
 
-    <!-- About Section -->
+    <!-- About Section (Maher Dashboard) -->
     <section id="about" class="about-section">
-        <div class="container about-grid">
-            <div class="about-text" style="display: flex; flex-direction: column; justify-content: center;">
-                <h2 style="font-size: 3rem; font-weight: 800; line-height: 1.4; margin: 0 0 10px 0;">
-                    نبذة عني
-                </h2>
-                <p style="font-size: 1.4rem; color: var(--text-muted); font-family: var(--font-arabic); line-height: 1.6;">أنا إنسان.</p>
+        <div class="container">
+            <div class="section-header">
+                <h2>لوحة معلومات المعلم ماهر</h2>
+                <div class="header-line"></div>
+                <p>تعرف على قهوجي ماهر وتفاصيل الدفع السريع والتحويل</p>
             </div>
-            <div class="about-img-container">
-                <img src="5960730354593238429.jpg" alt="عن قهوجي ماهر" class="about-img">
+            
+            <div class="dashboard-grid">
+                <!-- Card 1: Profile Card -->
+                <div class="dashboard-card profile-card">
+                    <img src="5960730354593238429.jpg" alt="المعلم ماهر" class="dashboard-avatar">
+                    <h3>نبذة عن المعلم ماهر</h3>
+                    <p class="avatar-desc">أنا إنسان. قهوجي ماهر أكرس شغفي لصناعة وتوفير أفضل تجربة تذوق للقهوة المقطرة والمشروبات الاستثنائية.</p>
+                </div>
+
+                <!-- Card 2: Bank Card -->
+                <div class="dashboard-card bank-card">
+                    <h3><i class="fa-solid fa-credit-card gold-text"></i> تفاصيل الحساب البنكي</h3>
+                    <div class="bank-details-list">
+                        <div class="bank-item"><strong>الاسم:</strong> <span>مؤيد محمد عبدالحق المهاجرى</span></div>
+                        <div class="bank-item"><strong>البنك:</strong> <span>البنك الأهلي السعودي</span></div>
+                        <div class="bank-item"><strong>رقم الحساب:</strong> <span class="mono-code" id="bank-acc-text">00200001178402</span></div>
+                        <div class="bank-item iban-item">
+                            <strong>الآيبان IBAN:</strong> 
+                            <span class="mono-code" id="iban-text" style="font-size: 0.72rem;">SA7610000000200001178402</span>
+                        </div>
+                        <div class="bank-item"><strong>رمز سويفت:</strong> <span class="mono-code">NCBKSAJE</span></div>
+                    </div>
+                    <button class="btn btn-secondary btn-block" onclick="copyIBAN()" style="margin-top: 15px; padding: 10px 15px; font-size: 0.85rem;">
+                        <i class="fa-solid fa-copy"></i> نسخ الآيبان السريع
+                    </button>
+                </div>
+
+                <!-- Card 3: Metrics Card -->
+                <div class="dashboard-card metrics-card">
+                    <h3><i class="fa-solid fa-chart-simple gold-text"></i> حالة التشغيل والمزاج</h3>
+                    <div class="metrics-list">
+                        <div class="metric-row">
+                            <span class="metric-label">حالة التحضير:</span>
+                            <span class="metric-val status-green" style="color: #39ff14; text-shadow: 0 0 10px rgba(57,255,20,0.3); font-weight: bold;">نشط وجاهز 🟢</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">ساعات العمل:</span>
+                            <span class="metric-val">24/7 لمزاجك الراقي</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">سرعة التوصيل:</span>
+                            <span class="metric-val">فورية عبر الواتساب</span>
+                        </div>
+                    </div>
+                    <div class="metrics-footer-badge">
+                        ☕ قهوتك محضرة بحب وشغف
+                    </div>
+                </div>
             </div>
         </div>
     </section>
