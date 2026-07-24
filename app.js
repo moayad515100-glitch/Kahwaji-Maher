@@ -253,6 +253,14 @@ function updateCartUI() {
     // Update Badge Count
     const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
     cartCount.textContent = totalCount;
+    const appCartCount = document.getElementById('app-cart-count');
+    if (appCartCount) {
+        appCartCount.textContent = totalCount;
+    }
+    // Haptic feedback for app users on cart additions/updates
+    if (typeof isAppMode === 'function' && isAppMode() && navigator.vibrate) {
+        navigator.vibrate(40);
+    }
 
     // Clear Container
     cartItemsContainer.innerHTML = '';
