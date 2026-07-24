@@ -11,8 +11,8 @@
 //   'grind_challenge': "Coffee Grind Speed" clicker game (click fast to win)
 //   'neon_magic'     : "Magic Glowing Coffee" neon theme (glow, mouse trails)
 // ==========================================================
-let ACTIVE_EVENT = 'none'; 
-let ACTIVE_EVENT_TIMESTAMP = 1784800000000; 
+let ACTIVE_EVENT = 'anger'; 
+let ACTIVE_EVENT_TIMESTAMP = 1784875379920; 
 
 // تحميل الفعالية النشطة من الذاكرة المحلية إذا كانت أحدث لتجاوز الكاش والتأخر للمطور
 try {
