@@ -12,6 +12,16 @@
 //   'neon_magic'     : "Magic Glowing Coffee" neon theme (glow, mouse trails)
 // ==========================================================
 let ACTIVE_EVENT = 'none'; 
+let ACTIVE_EVENT_TIMESTAMP = 1784800000000; 
+
+// تحميل الفعالية النشطة من الذاكرة المحلية إذا كانت أحدث لتجاوز الكاش والتأخر للمطور
+try {
+    const savedEvent = localStorage.getItem('maher_active_event');
+    const savedTime = parseInt(localStorage.getItem('maher_active_event_time') || '0', 10);
+    if (savedEvent && savedTime > ACTIVE_EVENT_TIMESTAMP) {
+        ACTIVE_EVENT = savedEvent;
+    }
+} catch(e) {}
 
 const IS_EVENT_POSTPONED = false;
 const POSTPONED_REASON = '';
@@ -3249,6 +3259,12 @@ function devSwitchEvent() {
     const selectedEvent = eventSelect.value;
     ACTIVE_EVENT = selectedEvent;
     
+    // حفظ محلياً لتسريع العرض للمطور
+    try {
+        localStorage.setItem('maher_active_event', selectedEvent);
+        localStorage.setItem('maher_active_event_time', String(Date.now() + 1000000000)); // نضع وقت كبير للتخطي دوماً
+    } catch(e) {}
+    
     // Trigger initialization of active event system
     initActiveEventHooks();
     
@@ -3307,13 +3323,18 @@ async function publishEventToGitHub() {
         }
         const originalContent = new TextDecoder('utf-8').decode(bytes);
         
-        // Step 2: Replace let ACTIVE_EVENT = '...'; with the new event
+        // Step 2: Replace let ACTIVE_EVENT = '...'; and let ACTIVE_EVENT_TIMESTAMP = ...; with the new event
         const regex = /let\s+ACTIVE_EVENT\s*=\s*['"][^'"]*['"]\s*;/;
+        const tsRegex = /let\s+ACTIVE_EVENT_TIMESTAMP\s*=\s*\d+\s*;/;
         if (!regex.test(originalContent)) {
             throw new Error("لم يتم العثور على متغير ACTIVE_EVENT في الملف!");
         }
         
-        const updatedContent = originalContent.replace(regex, `let ACTIVE_EVENT = '${selectedEvent}';`);
+        const now = Date.now();
+        let updatedContent = originalContent.replace(regex, `let ACTIVE_EVENT = '${selectedEvent}';`);
+        if (tsRegex.test(updatedContent)) {
+            updatedContent = updatedContent.replace(tsRegex, `let ACTIVE_EVENT_TIMESTAMP = ${now};`);
+        }
         
         // Encode back to base64 supporting UTF-8 correctly using TextEncoder
         const encoderBytes = new TextEncoder().encode(updatedContent);
@@ -3348,8 +3369,12 @@ async function publishEventToGitHub() {
         statusEl.innerHTML = '🎉 تم النشر بنجاح! سيتم تحديث الموقع خلال دقيقة.';
         statusEl.style.color = 'green';
         
-        // Locally apply the event immediately
+        // Locally apply the event immediately and save the timestamp
         ACTIVE_EVENT = selectedEvent;
+        try {
+            localStorage.setItem('maher_active_event', selectedEvent);
+            localStorage.setItem('maher_active_event_time', String(now));
+        } catch(e) {}
         initActiveEventHooks();
         checkCooldownState();
         
