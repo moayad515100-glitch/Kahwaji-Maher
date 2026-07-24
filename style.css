@@ -133,14 +133,18 @@ a {
 /* Header & Navigation */
 .main-header {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 100;
-    background-color: var(--bg-header);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(197, 168, 128, 0.1);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 92%;
+    max-width: 1200px;
+    z-index: 1000;
+    background: rgba(18, 14, 11, 0.75);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 170, 0, 0.15);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    border-radius: 50px;
     transition: var(--transition);
 }
 
@@ -148,7 +152,8 @@ a {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 85px;
+    height: 75px;
+    padding: 0 24px;
 }
 
 .logo-area {
