@@ -19,6 +19,16 @@
     <link rel="apple-touch-icon" href="icon-192.png">
 </head>
 <body>
+    <!-- App-Only Sticky Top Bar -->
+    <div class="app-top-bar">
+        <div class="logo-area">
+            <img src="5960730354593238429.jpg" alt="Logo" class="header-logo">
+            <span class="brand-name">قهوجي <span class="gold-text">ماهر</span></span>
+        </div>
+        <div class="app-top-actions">
+            <button class="win95-key-btn" onclick="openDevAuthModal()"><i class="fa-solid fa-key"></i></button>
+        </div>
+    </div>
 
     <!-- Global Prelaunch Countdown Banner -->
     <div id="prelaunch-timer-banner" class="prelaunch-banner" style="display: none;"></div>
@@ -759,5 +769,27 @@
             });
         }
     </script>
+    <!-- App-Only Sticky Bottom Navigation Bar -->
+    <div class="app-bottom-nav">
+        <a href="#home" class="nav-item active" onclick="setActiveAppNav(this, 'home')">
+            <i class="fa-solid fa-house"></i>
+            <span>الرئيسية</span>
+        </a>
+        <a href="#menu" class="nav-item" onclick="setActiveAppNav(this, 'menu')">
+            <i class="fa-solid fa-mug-hot"></i>
+            <span>القائمة</span>
+        </a>
+        <a href="#cart" class="nav-item" onclick="toggleCart(); return false;">
+            <div class="nav-cart-wrapper">
+                <i class="fa-solid fa-bag-shopping"></i>
+                <span class="cart-count nav-cart-count" id="app-cart-count">0</span>
+            </div>
+            <span>السلة</span>
+        </a>
+        <a href="#about" class="nav-item" onclick="setActiveAppNav(this, 'about')">
+            <i class="fa-solid fa-user"></i>
+            <span>عني</span>
+        </a>
+    </div>
 </body>
 </html>
