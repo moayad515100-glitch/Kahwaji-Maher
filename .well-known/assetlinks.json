@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "com.kahwajimaher.twa",
+        "sha256_cert_fingerprints": ["ED:D5:D0:59:DE:42:4D:69:A0:FB:B1:26:E5:D6:55:7B:5F:65:89:0B:BF:74:03:C2:A3:04:72:44:1C:4F:AA:B4"]
+      }
+    }]
