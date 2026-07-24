@@ -3501,4 +3501,87 @@ function copyToClipboard(text, label) {
 initTypewriter();
 initCategoryFilters();
 
+// ==========================================================
+// APP MODE UTILITIES & DETECTOR
+// ==========================================================
+function isAppMode() {
+    return window.matchMedia('(display-mode: standalone)').matches || 
+           window.navigator.standalone || 
+           document.referrer.includes('android-app://') ||
+           localStorage.getItem('force_app_mode') === 'true' ||
+           new URLSearchParams(window.location.search).get('app') === 'true';
+}
+
+function initAppMode() {
+    if (isAppMode()) {
+        document.body.classList.add('is-installed-app');
+        
+        // Welcome notification on first load of this session
+        if (!sessionStorage.getItem('app_welcome_shown')) {
+            setTimeout(() => {
+                showToast("👋 مرحباً بك في تطبيق قهوجي ماهر الرسمي! ☕✨");
+                if (navigator.vibrate) {
+                    navigator.vibrate([100, 50, 100]); // Dual tap haptic
+                }
+            }, 1500);
+            sessionStorage.setItem('app_welcome_shown', 'true');
+        }
+
+        // Add special app-only product element dynamically if not exists
+        injectAppOnlyProduct();
+    }
+}
+
+// Function to inject a secret, exclusive product visible ONLY in app mode!
+function injectAppOnlyProduct() {
+    const menuGrid = document.querySelector('.menu-grid');
+    if (!menuGrid) return;
+    
+    // Check if already injected
+    if (document.querySelector('.product-card[data-id="app-secret-drink"]')) return;
+    
+    const secretCard = document.createElement('div');
+    secretCard.className = 'product-card premium';
+    secretCard.setAttribute('data-id', 'app-secret-drink');
+    secretCard.setAttribute('data-category', 'special');
+    
+    secretCard.innerHTML = `
+        <div class="product-image-container">
+            <img src="classic_new.jpg" alt="المشروب السري" class="product-image">
+            <span class="product-tag tag-premium" style="background: linear-gradient(135deg, #10b981, #059669); color: #fff;">حصري للتطبيق / App Only</span>
+        </div>
+        <div class="product-info">
+            <h3>كورتادو ماهر الحصري ☕</h3>
+            <p class="product-desc">كورتادو محضر بخلطة بن سرية خاصة جداً، لا تظهر في قائمة الموقع العادي. هدية لمستخدمي التطبيق! 🎉</p>
+            <div class="product-price" style="color: #10b981;">0 ر.س <span class="price-suffix">/ كوب مجاني</span></div>
+            <button class="btn btn-add-cart" onclick="addToCart('app-secret-drink', 'كورتادو ماهر الحصري 🎁', 0, 'classic_new.jpg')">
+                <i class="fa-solid fa-cart-plus"></i> إضافة للسلة (مجانًا)
+            </button>
+        </div>
+    `;
+    
+    // Prepend to menu grid to make it very visible
+    menuGrid.insertBefore(secretCard, menuGrid.firstChild);
+}
+
+// Global helper for bottom nav items
+window.setActiveAppNav = (element, targetId) => {
+    document.querySelectorAll('.app-bottom-nav .nav-item').forEach(item => {
+        item.classList.remove('active');
+    });
+    element.classList.add('active');
+    
+    const targetElement = document.getElementById(targetId);
+    if (targetElement) {
+        targetElement.scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    if (navigator.vibrate) {
+        navigator.vibrate(20); // Small feedback vibration
+    }
+};
+
+// Run initialization
+initAppMode();
+
 // Auto-watch active v1.0
