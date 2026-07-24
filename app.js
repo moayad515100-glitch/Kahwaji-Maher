@@ -3475,24 +3475,18 @@ function scaleProductImage(radioInput, productId, scaleFactor) {
     }
 }
 
-// Copy IBAN to clipboard helper
-function copyIBAN() {
-    const ibanText = document.getElementById('iban-text');
-    if (!ibanText) return;
-    
-    const textToCopy = ibanText.textContent.trim();
-    
-    // Copy to clipboard
+// Copy text helper with toast confirmation
+function copyToClipboard(text, label) {
     const tempInput = document.createElement('textarea');
     tempInput.style.position = 'absolute';
     tempInput.style.left = '-9999px';
-    tempInput.value = textToCopy;
+    tempInput.value = text;
     document.body.appendChild(tempInput);
     tempInput.select();
     document.execCommand('copy');
     document.body.removeChild(tempInput);
     
-    showToast("📋 تم نسخ رقم الآيبان بنجاح!");
+    showToast(`📋 تم نسخ ${label} بنجاح!`);
 }
 
 // Initialize layout enhancements
