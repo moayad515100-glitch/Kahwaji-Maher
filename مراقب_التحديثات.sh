@@ -41,6 +41,8 @@ while true; do
         git commit -m "تحديث تلقائي عبر مراقب الملفات بتاريخ $(date '+%Y-%m-%d %H:%M:%S')"
         git pull --rebase origin main
         git push origin main
+        echo "🚀 جاري الرفع التلقائي إلى Cloudflare Pages (المستضيف السريع)..."
+        npx wrangler@3 pages deploy . --project-name=kahwaji-maher
         echo "🎉 تم تحديث الموقع بنجاح على الإنترنت!"
         echo "=================================================="
     fi

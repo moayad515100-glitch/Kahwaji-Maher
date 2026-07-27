@@ -27,10 +27,13 @@ git commit -m "$commit_msg"
 # 4. Push to remote GitHub repo
 echo "🚀 جاري رفع الملفات إلى GitHub..."
 if git push origin main; then
+    echo "🚀 جاري الرفع إلى Cloudflare Pages (المستضيف السريع)..."
+    npx wrangler@3 pages deploy . --project-name=kahwaji-maher
     echo ""
     echo "============================================="
     echo "🎉 تم تحديث الموقع بنجاح على الإنترنت!"
-    echo "🔗 الرابط: https://moayad515100-glitch.github.io/Kahwaji-Maher/"
+    echo "🔗 الرابط الأول (GitHub): https://moayad515100-glitch.github.io/Kahwaji-Maher/"
+    echo "🔗 الرابط الثاني (السريع): https://kahwaji-maher.pages.dev"
     echo "============================================="
 else
     echo ""
