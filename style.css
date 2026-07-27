@@ -3536,6 +3536,87 @@ body.is-installed-app {
     padding-bottom: 75px !important;
 }
 
+/* Samsung Z Fold 8 Goal Tracker Widget */
+.fold-goal-widget {
+    background: rgba(255, 106, 0, 0.04);
+    border: 1px solid rgba(255, 106, 0, 0.2);
+    box-shadow: 0 0 20px rgba(255, 106, 0, 0.1);
+    border-radius: 14px;
+    padding: 16px 20px;
+    margin-top: 25px;
+    margin-bottom: 10px;
+    max-width: 500px;
+    font-family: var(--font-arabic);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: var(--transition);
+}
+
+.fold-goal-widget:hover {
+    border-color: var(--gold);
+    box-shadow: 0 0 25px rgba(255, 170, 0, 0.2);
+    transform: translateY(-2px);
+}
+
+.goal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--white);
+}
+
+.goal-title i {
+    margin-left: 6px;
+    color: var(--accent);
+}
+
+.goal-amount {
+    color: var(--gold);
+    font-family: monospace;
+    font-size: 0.95rem;
+}
+
+.goal-progress-bar-container {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+
+.goal-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent) 0%, var(--gold) 100%);
+    box-shadow: 0 0 10px var(--gold-glow);
+    border-radius: 10px;
+    transition: width 1s ease-out;
+}
+
+.goal-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.goal-cta-link {
+    color: var(--gold);
+    font-weight: 700;
+    transition: var(--transition);
+    text-decoration: none;
+}
+
+.goal-cta-link:hover {
+    color: var(--gold-hover);
+    text-shadow: 0 0 8px rgba(255, 170, 0, 0.4);
+}
+
 
 
 

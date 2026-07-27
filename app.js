@@ -203,14 +203,14 @@ function addToCart(productId, name, price, image) {
         finalPrice = fluctuatedPrices[productId] !== undefined ? fluctuatedPrices[productId] : price;
         finalName = `${name} (سعر البورصة)`;
     } else if (currentEvent === 'matcha') {
-        if (productId === 'matcha' || productId === 'superpro') {
+        if (productId === 'matcha') {
             finalPrice = 0;
             finalName = `${name} (هدية الافتتاح! 🎁)`;
         }
     }
 
-    // Limit free event items (Matcha / Super Pro) to 1 cup per customer
-    if (finalPrice === 0 && (productId === 'matcha' || productId === 'superpro')) {
+    // Limit free event items (Matcha) to 1 cup per customer
+    if (finalPrice === 0 && productId === 'matcha') {
         const existingCount = cart
             .filter(item => item.productId === productId && item.price === 0)
             .reduce((sum, item) => sum + item.quantity, 0);
@@ -1603,6 +1603,19 @@ function executeBuyCmd(itemName, outputEl) {
         err.textContent = `[ERROR] Coffee '${itemName}' not found. Type 'list' for valid drink names.`;
         outputEl.appendChild(err);
         return;
+    }
+
+    if (item.id === 'matcha' && item.price === 0) {
+        const existingCount = cart
+            .filter(i => i.productId === item.id && i.price === 0)
+            .reduce((sum, i) => sum + i.quantity, 0);
+        if (existingCount >= 1) {
+            const err = document.createElement('div');
+            err.style.color = '#ff6666';
+            err.textContent = `[ERROR] Limit exceeded. Only 1 free cup of Matcha allowed!`;
+            outputEl.appendChild(err);
+            return;
+        }
     }
 
     const cartItemId = `${item.id}-وسط-بدون سكر`;
