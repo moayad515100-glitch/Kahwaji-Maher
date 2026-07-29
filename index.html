@@ -566,16 +566,12 @@
 
                 <div class="form-group" style="margin-top: 20px; margin-bottom: 20px;">
                     <label style="font-weight: 600; font-size: 0.95rem; color: var(--gold); display: block; margin-bottom: 10px; font-family: var(--font-arabic);">طريقة الدفع:</label>
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px;">
-                        <label class="payment-method-label">
-                            <input type="radio" name="payment-method" value="applepay" checked>
-                            <span>Apple Pay </span>
-                        </label>
-                        <label class="payment-method-label">
-                            <input type="radio" name="payment-method" value="whatsapp">
+                    <div style="display: flex; gap: 12px; margin-bottom: 15px;">
+                        <label class="payment-method-label" style="flex: 1;">
+                            <input type="radio" name="payment-method" value="whatsapp" checked>
                             <span>عند الاستلام 💵</span>
                         </label>
-                        <label class="payment-method-label">
+                        <label class="payment-method-label" style="flex: 1;">
                             <input type="radio" name="payment-method" value="transfer">
                             <span>التحويل 💳</span>
                         </label>
