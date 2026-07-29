@@ -776,52 +776,7 @@
     </div>
     <div class="retro-overlay" id="dev-auth-overlay" style="z-index: 10006;" onclick="closeDevAuthModal()"></div>
 
-    <!-- Simulated Apple Pay Modal/Sheet -->
-    <div class="apple-pay-overlay" id="apple-pay-overlay" style="display: none;" onclick="closeApplePaySheet()">
-        <div class="apple-pay-sheet" id="apple-pay-sheet" onclick="event.stopPropagation()">
-            <!-- Top bar indicator -->
-            <div class="apple-pay-indicator"></div>
-            
-            <div class="apple-pay-header">
-                <span class="apple-pay-logo"> Pay</span>
-                <button class="apple-pay-close-btn" onclick="closeApplePaySheet()">&times;</button>
-            </div>
-            
-            <div class="apple-pay-details">
-                <div class="pay-row">
-                    <span class="pay-label">المتجر:</span>
-                    <span class="pay-value">KAHWAJI MAHER</span>
-                </div>
-                <div class="pay-row">
-                    <span class="pay-label">البطاقة:</span>
-                    <span class="pay-value card-name"><i class="fa-solid fa-credit-card"></i> Mada **** 2030</span>
-                </div>
-                <div class="pay-row">
-                    <span class="pay-label">الشحن:</span>
-                    <span class="pay-value">توصيل فوري بالحب 🚚</span>
-                </div>
-                <div class="pay-row total-row">
-                    <span class="pay-label">المجموع الكلي:</span>
-                    <span class="pay-value" id="apple-pay-total-price">0.00 ر.س</span>
-                </div>
-            </div>
-            
-            <div class="apple-pay-auth-container">
-                <div class="fingerprint-scan-icon" id="apple-pay-fingerprint" onclick="simulateFingerprintScan()">
-                    <i class="fa-solid fa-fingerprint"></i>
-                </div>
-                <div class="apple-pay-instruction" id="apple-pay-instruction">
-                    ضع إصبعك على البصمة للدفع السريع
-                </div>
-                <div class="apple-pay-success-checkmark" id="apple-pay-success-checkmark" style="display: none;">
-                    <div class="checkmark-circle">
-                        <div class="checkmark-stem"></div>
-                        <div class="checkmark-kick"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+
 
     <!-- Script file -->
     <script src="app.js?v=1.4"></script>

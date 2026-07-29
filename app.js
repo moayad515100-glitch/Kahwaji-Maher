@@ -393,6 +393,7 @@ function submitOrder(event) {
     const name = document.getElementById('customer-name').value.trim();
     const phone = document.getElementById('customer-phone').value.trim();
     const address = document.getElementById('customer-address').value.trim();
+    const notes = document.getElementById('customer-notes').value.trim();
 
     if (!name || !address) {
         showToast('يرجى ملء جميع الحقول المطلوبة!');
@@ -401,21 +402,6 @@ function submitOrder(event) {
 
     const paymentMethodEl = document.querySelector('input[name="payment-method"]:checked');
     const paymentMethod = paymentMethodEl ? paymentMethodEl.value : 'whatsapp';
-
-    if (paymentMethod === 'applepay') {
-        // Show simulated Apple Pay sheet
-        openApplePaySheet();
-        return;
-    }
-
-    executeWhatsAppOrder(paymentMethod);
-}
-
-function executeWhatsAppOrder(paymentMethod) {
-    const name = document.getElementById('customer-name').value.trim();
-    const phone = document.getElementById('customer-phone').value.trim();
-    const address = document.getElementById('customer-address').value.trim();
-    const notes = document.getElementById('customer-notes').value.trim();
 
     // Build the WhatsApp message
     let message = `☕ *فاتورة طلب جديدة - قهوجي ماهر* ☕\n\n`;
@@ -444,10 +430,7 @@ function executeWhatsAppOrder(paymentMethod) {
     message += `-----------------------------------\n`;
     message += `💰 *المجموع الكلي:* ${total} ريال سعودي\n`;
     
-    if (paymentMethod === 'applepay') {
-        message += `💳 *طريقة الدفع:* تم الدفع بنجاح عبر Apple Pay (بصمة الإصبع/الوجه) 🟢\n`;
-        message += `✅ *حالة الدفع:* مدفوع رقمياً ومكتمل!\n`;
-    } else if (paymentMethod === 'transfer') {
+    if (paymentMethod === 'transfer') {
         message += `💳 *طريقة الدفع:* تحويل بنكي (الأهلي السعودي)\n`;
         message += `⚠️ *ملاحظة:* يرجى إرسال صورة إيصال التحويل مع هذه الرسالة.\n`;
     } else {
