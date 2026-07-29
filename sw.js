@@ -1,4 +1,4 @@
-const CACHE_NAME = 'maher-coffee-v1';
+const CACHE_NAME = 'maher-coffee-v2';
 const ASSETS = [
   './',
   './index.html',
@@ -7,6 +7,7 @@ const ASSETS = [
   './manifest.json',
   './icon-192.png',
   './icon-512.png',
+  './milkshake.png',
   './5960730354593238429.jpg'
 ];
 
