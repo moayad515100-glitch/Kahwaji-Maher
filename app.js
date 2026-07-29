@@ -393,7 +393,6 @@ function submitOrder(event) {
     const name = document.getElementById('customer-name').value.trim();
     const phone = document.getElementById('customer-phone').value.trim();
     const address = document.getElementById('customer-address').value.trim();
-    const notes = document.getElementById('customer-notes').value.trim();
 
     if (!name || !address) {
         showToast('يرجى ملء جميع الحقول المطلوبة!');
@@ -402,6 +401,21 @@ function submitOrder(event) {
 
     const paymentMethodEl = document.querySelector('input[name="payment-method"]:checked');
     const paymentMethod = paymentMethodEl ? paymentMethodEl.value : 'whatsapp';
+
+    if (paymentMethod === 'applepay') {
+        // Show simulated Apple Pay sheet
+        openApplePaySheet();
+        return;
+    }
+
+    executeWhatsAppOrder(paymentMethod);
+}
+
+function executeWhatsAppOrder(paymentMethod) {
+    const name = document.getElementById('customer-name').value.trim();
+    const phone = document.getElementById('customer-phone').value.trim();
+    const address = document.getElementById('customer-address').value.trim();
+    const notes = document.getElementById('customer-notes').value.trim();
 
     // Build the WhatsApp message
     let message = `☕ *فاتورة طلب جديدة - قهوجي ماهر* ☕\n\n`;
@@ -430,7 +444,10 @@ function submitOrder(event) {
     message += `-----------------------------------\n`;
     message += `💰 *المجموع الكلي:* ${total} ريال سعودي\n`;
     
-    if (paymentMethod === 'transfer') {
+    if (paymentMethod === 'applepay') {
+        message += `💳 *طريقة الدفع:* تم الدفع بنجاح عبر Apple Pay (بصمة الإصبع/الوجه) 🟢\n`;
+        message += `✅ *حالة الدفع:* مدفوع رقمياً ومكتمل!\n`;
+    } else if (paymentMethod === 'transfer') {
         message += `💳 *طريقة الدفع:* تحويل بنكي (الأهلي السعودي)\n`;
         message += `⚠️ *ملاحظة:* يرجى إرسال صورة إيصال التحويل مع هذه الرسالة.\n`;
     } else {
@@ -3593,6 +3610,183 @@ window.setActiveAppNav = (element, targetId) => {
         navigator.vibrate(20); // Small feedback vibration
     }
 };
+
+// ==========================================================
+//  SIMULATED APPLE PAY CONTROLS & WEB AUDIO SYNTHESIS
+// ==========================================================
+
+// Play Apple Pay initiation chime (Double tone click)
+function playApplePayBeep() {
+    try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        const ctx = new AudioContext();
+        
+        const playTone = (time, freq, dur) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.frequency.setValueAtTime(freq, time);
+            gain.gain.setValueAtTime(0.08, time);
+            gain.gain.exponentialRampToValueAtTime(0.001, time + dur);
+            osc.start(time);
+            osc.stop(time + dur);
+        };
+        
+        playTone(ctx.currentTime, 1000, 0.08);
+        playTone(ctx.currentTime + 0.12, 1000, 0.08);
+    } catch(e) {}
+}
+
+// Play ascending success chime (Ding!)
+function playApplePaySuccessSound() {
+    try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        const ctx = new AudioContext();
+        
+        const playTone = (time, freq, dur, vol = 0.15) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, time);
+            gain.gain.setValueAtTime(vol, time);
+            gain.gain.exponentialRampToValueAtTime(0.001, time + dur);
+            osc.start(time);
+            osc.stop(time + dur);
+        };
+        
+        playTone(ctx.currentTime, 1200, 0.15, 0.12);
+        playTone(ctx.currentTime + 0.08, 1500, 0.25, 0.15);
+    } catch(e) {}
+}
+
+// Play scanning soft click tick
+function playScanSound() {
+    try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        const ctx = new AudioContext();
+        
+        const playTick = (time) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(150, time);
+            osc.frequency.exponentialRampToValueAtTime(1200, time + 0.05);
+            gain.gain.setValueAtTime(0.05, time);
+            gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
+            osc.start(time);
+            osc.stop(time + 0.05);
+        };
+        
+        playTick(ctx.currentTime);
+    } catch(e) {}
+}
+
+// Open Apple Pay simulated sheet
+function openApplePaySheet() {
+    const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const priceEl = document.getElementById('apple-pay-total-price');
+    if (priceEl) {
+        priceEl.textContent = `${total}.00 ر.س`;
+    }
+    
+    // Close the standard checkout modal
+    closeCheckoutModal();
+    
+    const overlay = document.getElementById('apple-pay-overlay');
+    if (overlay) {
+        overlay.style.display = 'flex';
+        // Force reflow
+        overlay.offsetHeight;
+        overlay.classList.add('active');
+    }
+    
+    // Play Face ID scan alert beep
+    playApplePayBeep();
+    
+    // Reset scanner UI
+    const print = document.getElementById('apple-pay-fingerprint');
+    const check = document.getElementById('apple-pay-success-checkmark');
+    const instruction = document.getElementById('apple-pay-instruction');
+    if (print) {
+        print.style.display = 'flex';
+        print.classList.remove('scanning');
+    }
+    if (check) check.style.display = 'none';
+    if (instruction) {
+        instruction.textContent = "ضع إصبعك على البصمة للدفع السريع";
+        instruction.classList.remove('success');
+    }
+}
+
+// Close Apple Pay sheet
+function closeApplePaySheet() {
+    const overlay = document.getElementById('apple-pay-overlay');
+    if (overlay) {
+        overlay.classList.remove('active');
+        setTimeout(() => {
+            overlay.style.display = 'none';
+        }, 400);
+    }
+}
+
+// Simulated scan logic
+let isApplePayScanning = false;
+function simulateFingerprintScan() {
+    if (isApplePayScanning) return;
+    isApplePayScanning = true;
+    
+    const print = document.getElementById('apple-pay-fingerprint');
+    const instruction = document.getElementById('apple-pay-instruction');
+    const check = document.getElementById('apple-pay-success-checkmark');
+    
+    if (print) {
+        print.classList.add('scanning');
+    }
+    if (instruction) {
+        instruction.textContent = "جاري التحقق من البصمة...";
+    }
+    
+    // Play sound click
+    playScanSound();
+    if (navigator.vibrate) {
+        navigator.vibrate([40, 100, 40]);
+    }
+    
+    setTimeout(() => {
+        isApplePayScanning = false;
+        if (print) {
+            print.classList.remove('scanning');
+            print.style.display = 'none';
+        }
+        if (check) {
+            check.style.display = 'flex';
+        }
+        if (instruction) {
+            instruction.textContent = "تم الدفع بنجاح! 🟢";
+            instruction.classList.add('success');
+        }
+        
+        // Play success chime
+        playApplePaySuccessSound();
+        if (navigator.vibrate) {
+            navigator.vibrate([100, 50, 100]);
+        }
+        
+        setTimeout(() => {
+            closeApplePaySheet();
+            // Send the completed Apple Pay order info to WhatsApp
+            executeWhatsAppOrder('applepay');
+        }, 1500);
+    }, 1800);
+}
 
 // Run initialization
 initAppMode();
