@@ -28,7 +28,7 @@ git commit -m "$commit_msg"
 echo "🚀 جاري رفع الملفات إلى GitHub..."
 if git push origin main; then
     echo "🚀 جاري الرفع إلى Cloudflare Pages (المستضيف السريع)..."
-    npx wrangler@3 pages deploy . --project-name=kahwaji-maher
+    npx wrangler@3 pages deploy . --project-name=kahwaji-maher --branch main
     echo ""
     echo "============================================="
     echo "🎉 تم تحديث الموقع بنجاح على الإنترنت!"

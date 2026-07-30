@@ -42,7 +42,7 @@ while true; do
         git pull --rebase origin main
         git push origin main
         echo "🚀 جاري الرفع التلقائي إلى Cloudflare Pages (المستضيف السريع)..."
-        npx wrangler@3 pages deploy . --project-name=kahwaji-maher
+        npx wrangler@3 pages deploy . --project-name=kahwaji-maher --branch main
         echo "🎉 تم تحديث الموقع بنجاح على الإنترنت!"
         echo "=================================================="
     fi
