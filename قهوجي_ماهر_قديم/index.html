@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>قهوجي ماهر | القهوة الماهرة الأصيلة</title>
-    <meta name="description" content="اطلب قهوتك المفضلة من قهوجي ماهر. قهوة ماهرة أصيلة بنكهات فريدة وتوصيل سريع ومباشر عبر الواتساب.">
+    <title>قهوجي ماهر | القهوة العربية الأصيلة</title>
+    <meta name="description" content="اطلب قهوتك المفضلة من قهوجي ماهر. قهوة عربية أصيلة بنكهات فريدة وتوصيل سريع ومباشر عبر الواتساب.">
     <!-- Google Fonts: Cairo -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,16 +12,12 @@
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Stylesheet -->
-    <link rel="stylesheet" href="style.css?v=1.3">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- Global Prelaunch Countdown Banner -->
-    <div id="prelaunch-timer-banner" class="prelaunch-banner" style="display: none;"></div>
-
     <!-- Header / Navbar -->
     <header class="main-header">
-        <div id="mood-header-banner" class="mood-header-banner"></div>
         <div class="container header-container">
             <div class="logo-area">
                 <img src="../5960730354593238429.jpg" alt="شعار قهوجي ماهر" class="header-logo">
@@ -32,8 +28,7 @@
                 <ul>
                     <li><a href="#home" class="active">الرئيسية</a></li>
                     <li><a href="#menu">قائمة القهوة</a></li>
-                    <li><a href="#about">نبذة عني</a></li>
-                    <li><a href="#suggestions">اقتراحاتكم الي مارح اقراها</a></li>
+                    <li><a href="#about">قهوة في قلبك</a></li>
                 </ul>
             </nav>
 
@@ -48,41 +43,36 @@
     <section id="home" class="hero-section">
         <div class="hero-overlay"></div>
         <div class="container hero-content">
-            <div class="hero-badge">تأسس عام 2030</div>
-            <h1 class="hero-title">القهوة الماهرة <span class="gold-text">الأصيلة</span></h1>
-            
-            <!-- Hero Countdown Card -->
-            <div id="hero-countdown-container" class="hero-countdown-card" style="display: none;">
-                <div class="countdown-title">🔥 أكبر حدث في تاريخ قهوجي ماهر ينطلق خلال:</div>
-                <div class="countdown-digits">
-                    <div class="digit-box"><span id="cd-hours">00</span><label>ساعة</label></div>
-                    <div class="digit-separator">:</div>
-                    <div class="digit-box"><span id="cd-minutes">00</span><label>دقيقة</label></div>
-                    <div class="digit-separator">:</div>
-                    <div class="digit-box"><span id="cd-seconds">00</span><label>ثانية</label></div>
-                </div>
-            </div>
-
+            <div class="hero-badge">تأسس عام 2024</div>
+            <h1 class="hero-title">القهوة العربية <span class="gold-text">الأصيلة</span></h1>
+            <p class="hero-subtitle">نقدم لكم أجود أنواع البن اليمني والهرري المحمّص والمحضّر بأيدي خبراء القهوة العربية. طعمٌ يعيد تعريف الأصالة والفخامة.</p>
             <div class="hero-buttons">
                 <a href="#menu" class="btn btn-primary">اطلب الآن</a>
                 <a href="#about" class="btn btn-secondary">اكتشف المزيد</a>
             </div>
-
-            <!-- Secret Tea Finders Leaderboard -->
-            <div class="tea-finders-card" style="background: rgba(0, 0, 0, 0.65); border: 1.5px solid rgba(236, 201, 75, 0.4); border-radius: 12px; padding: 16px 20px; margin: 25px auto 0; max-width: 420px; text-align: center; font-family: var(--font-arabic); backdrop-filter: blur(5px); box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
-                <div style="font-size: 1.15rem; color: #ecc94b; font-weight: 800; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                    <span>🏆</span> أبطال الشاهي السري 🕵️‍♂️
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 6px; font-size: 0.95rem; color: #fff; text-align: right; padding-right: 15px; border-right: 2px solid #ecc94b; margin: 0 10px;">
-                    <div>🥇 المستكشف الأول: <strong>جنى</strong></div>
-                    <div>🥈 المستكشف الثاني: <strong>عبد الله</strong></div>
-                    <div>🥉 المستكشف الثالث: <strong>مروج</strong></div>
-                </div>
-            </div>
         </div>
     </section>
 
-
+    <!-- Features / Highlights -->
+    <section class="features-section">
+        <div class="container features-grid">
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fa-solid fa-mug-hot"></i></div>
+                <h3>جودة ممتازة</h3>
+                <p>بن فاخر ومختار بعناية فائقة لضمان طعم عربي أصيل غني بالنكهة.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                <h3>إضافات مخصصة</h3>
+                <p>اختر مستوى الهيل، الزعفران، الزنجبيل، والسكر المناسب لمزاجك.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fa-brands fa-whatsapp"></i></div>
+                <h3>طلب سريع</h3>
+                <p>أتمم طلبك بضغطة زر واحدة لتنتقل الفاتورة مباشرة للواتساب.</p>
+            </div>
+        </div>
+    </section>
 
     <!-- Menu Section -->
     <section id="menu" class="menu-section">
@@ -90,20 +80,19 @@
             <div class="section-header">
                 <h2>أصناف القهوة المميزة</h2>
                 <div class="header-line"></div>
-                <p>اختر ما يناسبك من باقاتنا الفاخرة للقهوة الماهرة الأصيلة</p>
+                <p>اختر ما يناسبك من باقاتنا الفاخرة للقهوة العربية الأصيلة</p>
             </div>
 
             <div class="menu-grid">
                 <!-- Product 1: Classic (Free) -->
                 <div class="product-card" data-id="classic">
                     <div class="product-image-container">
-                        <img src="../classic_new.jpg" alt="قهوجي ماهر العادي" class="product-image">
+                        <img src="../5960730354593238429.jpg" alt="قهوجي ماهر العادي" class="product-image">
                         <span class="product-tag tag-free">العادي</span>
                     </div>
                     <div class="product-info">
                         <h3>قهوجي ماهر العادي</h3>
-                        <p class="product-desc">قهوة تركية</p>
-                        <div class="product-price">مجانا <span class="old-price">1.5 ر.س</span></div>
+                        <div class="product-price">مجاناً <span class="old-price">1.5 ر.س</span></div>
                         
                         <!-- Customization Accordion -->
                         <div class="customization-section">
@@ -140,7 +129,7 @@
                             </div>
                         </div>
 
-                        <button class="btn btn-add-cart" onclick="addToCart('classic', 'قهوجي ماهر العادي', 0, '../classic_new.jpg')">
+                        <button class="btn btn-add-cart" onclick="addToCart('classic', 'قهوجي ماهر العادي', 0, '../5960730354593238429.jpg')">
                             <i class="fa-solid fa-cart-plus"></i> إضافة للسلة
                         </button>
                     </div>
@@ -149,12 +138,11 @@
                 <!-- Product 2: Pro (3 SAR) -->
                 <div class="product-card premium" data-id="pro">
                     <div class="product-image-container">
-                        <img src="../pro_new.jpg" alt="قهوجي ماهر برو" class="product-image">
+                        <img src="5960730354593238428.jpg" alt="قهوجي ماهر برو" class="product-image">
                         <span class="product-tag tag-pro">PRO برو</span>
                     </div>
                     <div class="product-info">
                         <h3>قهوجي ماهر برو</h3>
-                        <p class="product-desc">قهوة مقطرة ويمديك تضيف لها ثلج إذا تبغى</p>
                         <div class="product-price">3 ر.س <span class="price-suffix">/ كوب</span></div>
                         
                         <!-- Customization Accordion -->
@@ -192,7 +180,7 @@
                             </div>
                         </div>
 
-                        <button class="btn btn-add-cart" onclick="addToCart('pro', 'قهوجي ماهر برو', 3, '../pro_new.jpg')">
+                        <button class="btn btn-add-cart" onclick="addToCart('pro', 'قهوجي ماهر برو', 3, '5960730354593238428.jpg')">
                             <i class="fa-solid fa-cart-plus"></i> إضافة للسلة
                         </button>
                     </div>
@@ -206,7 +194,6 @@
                     </div>
                     <div class="product-info">
                         <h3>قهوجي ماهر سوبر برو</h3>
-                        <p class="product-desc">قهوة مقطرة مضاف عليها حليب وسكر</p>
                         <div class="product-price">5 ر.س <span class="price-suffix">/ كوب</span></div>
                         
                         <!-- Customization Accordion -->
@@ -249,106 +236,6 @@
                         </button>
                     </div>
                 </div>
-
-                <!-- Product 4: Juice of the Day (3 SAR) -->
-                <div class="product-card premium" data-id="juice">
-                    <div class="product-image-container">
-                        <img src="../5963013000862043793.jpg" alt="عصير اليوم" class="product-image">
-                        <span class="product-tag tag-pro">عصير اليوم</span>
-                    </div>
-                    <div class="product-info">
-                        <h3>عصير اليوم</h3>
-                        <p class="product-desc">كل يوم عصير مختلف ما يمدينا نحدده في الوصف</p>
-                        <div class="product-price">3 ر.س <span class="price-suffix">/ كوب</span></div>
-                        
-                        <!-- Customization Accordion -->
-                        <div class="customization-section">
-                            <h4 class="custom-title"><i class="fa-solid fa-sliders"></i> خصص كوبك:</h4>
-                            
-                            <div class="custom-options">
-                                <!-- Size -->
-                                <div class="option-group">
-                                    <label>الحجم:</label>
-                                    <div class="radio-buttons">
-                                        <label class="radio-label">
-                                            <input type="radio" name="size-juice" value="وسط" checked>
-                                            <span>وسط</span>
-                                        </label>
-                                        <label class="radio-label">
-                                            <input type="radio" name="size-juice" value="كبير">
-                                            <span>كبير</span>
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <!-- Sugar -->
-                                <div class="option-group">
-                                    <label>السكر:</label>
-                                    <select name="sugar-juice" class="form-select">
-                                        <option value="سكر وسط" selected>سكر وسط</option>
-                                        <option value="بدون سكر">بدون سكر (سادة)</option>
-                                        <option value="سكر خفيف">سكر خفيف</option>
-                                        <option value="سكر زيادة">سكر زيادة</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <button class="btn btn-add-cart" onclick="addToCart('juice', 'عصير اليوم', 3, '../5963013000862043793.jpg')">
-                            <i class="fa-solid fa-cart-plus"></i> إضافة للسلة
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Product 5: Matcha Mahira -->
-                <div class="product-card premium" data-id="matcha">
-                    <div class="product-image-container">
-                        <img src="../matcha.jpg" alt="ماتشا ماهرة" class="product-image">
-                        <span class="product-tag tag-pro" style="background: #2e7d32; color: #fff;">جديد / NEW</span>
-                    </div>
-                    <div class="product-info">
-                        <h3>ماتشا ماهرة</h3>
-                        <p class="product-desc">ماتشا ماهرة أصلية.. خضراء ولذيذة، يعني إيش نكتب غير كذا؟ 🍵😉</p>
-                        <div class="product-price" style="color: #2e7d32;">6 ر.س <span class="price-suffix">/ كوب</span></div>
-                        
-                        <!-- Customization Accordion -->
-                        <div class="customization-section">
-                            <h4 class="custom-title"><i class="fa-solid fa-sliders"></i> خصص كوبك:</h4>
-                            
-                            <div class="custom-options">
-                                <!-- Size -->
-                                <div class="option-group">
-                                    <label>الحجم:</label>
-                                    <div class="radio-buttons">
-                                        <label class="radio-label">
-                                            <input type="radio" name="size-matcha" value="وسط" checked>
-                                            <span>وسط</span>
-                                        </label>
-                                        <label class="radio-label">
-                                            <input type="radio" name="size-matcha" value="كبير">
-                                            <span>كبير</span>
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <!-- Sugar -->
-                                <div class="option-group">
-                                    <label>السكر:</label>
-                                    <select name="sugar-matcha" class="form-select">
-                                        <option value="بدون سكر">بدون سكر (سادة)</option>
-                                        <option value="سكر خفيف">سكر خفيف</option>
-                                        <option value="سكر وسط" selected>سكر وسط</option>
-                                        <option value="سكر زيادة">سكر زيادة</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <button class="btn btn-add-cart" onclick="addToCart('matcha', 'ماتشا ماهرة', 6, '../matcha.jpg')">
-                            <i class="fa-solid fa-cart-plus"></i> إضافة للسلة
-                        </button>
-                    </div>
-                </div>
             </div>
         </div>
     </section>
@@ -357,10 +244,9 @@
     <section id="about" class="about-section">
         <div class="container about-grid">
             <div class="about-text" style="display: flex; flex-direction: column; justify-content: center;">
-                <h2 style="font-size: 3rem; font-weight: 800; line-height: 1.4; margin: 0 0 10px 0;">
-                    نبذة عني
+                <h2 style="font-size: 3.5rem; font-weight: 800; line-height: 1.4; margin: 0;">
+                    <span class="gold-text">قهوة</span> في قلبك
                 </h2>
-                <p style="font-size: 1.4rem; color: var(--text-muted); font-family: var(--font-arabic); line-height: 1.6;">أنا إنسان.</p>
             </div>
             <div class="about-img-container">
                 <img src="../5960730354593238429.jpg" alt="عن قهوجي ماهر" class="about-img">
@@ -370,13 +256,8 @@
 
     <!-- Cart Drawer -->
     <div class="cart-drawer" id="cart-drawer">
-        <div class="cart-header" style="display: flex; align-items: center; justify-content: space-between;">
-            <div style="display: flex; align-items: center; gap: 8px;">
-                <h3><i class="fa-solid fa-bag-shopping gold-text"></i> سلة الطلبات</h3>
-                <button onclick="promptDevPanel()" style="background: none; border: none; color: var(--gold); cursor: pointer; opacity: 0.3; font-size: 0.9rem; padding: 4px; display: inline-flex; align-items: center; transition: opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.3'" title="Dev Panel">
-                    <i class="fa-solid fa-key"></i>
-                </button>
-            </div>
+        <div class="cart-header">
+            <h3><i class="fa-solid fa-bag-shopping gold-text"></i> سلة الطلبات</h3>
             <button class="close-cart" id="close-cart"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <div class="cart-items" id="cart-items">
@@ -392,9 +273,6 @@
                 <span class="total-price" id="cart-total">0 ر.س</span>
             </div>
             <button class="btn btn-checkout btn-block" id="btn-checkout" disabled>إتمام الطلب</button>
-            <div style="font-size: 0.75rem; color: var(--text-muted); text-align: center; margin-top: 10px;">
-                <i class="fa-solid fa-circle-info gold-text"></i> الحد الأقصى للطلب هو 5 أكواب فقط.
-            </div>
         </div>
     </div>
     <div class="cart-overlay" id="cart-overlay"></div>
@@ -442,47 +320,6 @@
                     </div>
                 </div>
 
-                <div class="form-group" style="margin-top: 20px; margin-bottom: 20px;">
-                    <label style="font-weight: 600; font-size: 0.95rem; color: var(--gold); display: block; margin-bottom: 10px; font-family: var(--font-arabic);">طريقة الدفع:</label>
-                    <div style="display: flex; gap: 12px; margin-bottom: 15px;">
-                        <label style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; border: 1.5px solid var(--gold); background: rgba(197, 168, 128, 0.1); border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-family: var(--font-arabic); font-weight: bold; color: var(--text-main); transition: all 0.2s ease;">
-                            <input type="radio" name="payment-method" value="whatsapp" checked style="accent-color: var(--gold); transform: scale(1.1); cursor: pointer;">
-                            <span>الدفع عند الاستلام 💵</span>
-                        </label>
-                        <label style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; border: 1.5px solid #888; background: rgba(255, 255, 255, 0.02); border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-family: var(--font-arabic); font-weight: bold; color: var(--text-main); transition: all 0.2s ease;">
-                            <input type="radio" name="payment-method" value="transfer" style="accent-color: var(--gold); transform: scale(1.1); cursor: pointer;">
-                            <span>الدفع بالتحويل 💳</span>
-                        </label>
-                    </div>
-
-                    <!-- Bank details container -->
-                    <div id="bank-details-box" style="display: none; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(197, 168, 128, 0.25); border-radius: 8px; padding: 15px; font-family: var(--font-arabic); font-size: 0.85rem; line-height: 1.6; text-align: right; color: var(--text-main); margin-top: 15px; box-shadow: inset 0 0 10px rgba(0,0,0,0.5);">
-                        <div style="font-weight: bold; color: var(--gold); border-bottom: 1px solid rgba(197, 168, 128, 0.1); padding-bottom: 6px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
-                            <span>🏦</span> بيانات التحويل (البنك الأهلي السعودي):
-                        </div>
-                        <div style="margin-bottom: 6px;">👤 <strong>الاسم:</strong> مؤيد محمد عبدالحق المهاجرى</div>
-                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
-                            <span>🔢 <strong>رقم الحساب:</strong> <code style="color: var(--gold); background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px; font-family: monospace;">00200001178402</code></span>
-                            <button type="button" onclick="copyToClipboard('00200001178402', 'تم نسخ رقم الحساب')" style="background: var(--gold); color: #000; border: none; padding: 3px 10px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; font-weight: bold; font-family: var(--font-arabic); transition: all 0.2s;">نسخ</button>
-                        </div>
-                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
-                            <span>🌐 <strong>الآيبان:</strong> <code style="color: var(--gold); background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; font-family: monospace;">SA7610000000200001178402</code></span>
-                            <button type="button" onclick="copyToClipboard('SA7610000000200001178402', 'تم نسخ الآيبان')" style="background: var(--gold); color: #000; border: none; padding: 3px 10px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; font-weight: bold; font-family: var(--font-arabic); transition: all 0.2s;">نسخ</button>
-                        </div>
-                        <div style="margin-bottom: 6px;">🌐 <strong>سويفت كود (Swift):</strong> <code style="color: var(--gold); font-family: monospace;">NCBKSAJE</code></div>
-                        
-                        <div style="margin-top: 12px; margin-bottom: 8px; text-align: center;">
-                            <a href="https://www.alahlionline.com" target="_blank" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 10px; background: #004b3c; color: #fff; border: 1px solid #007c63; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 0.85rem; font-family: var(--font-arabic); transition: all 0.2s;">
-                                🌐 فتح بوابة الأهلي أون لاين للتحويل
-                            </a>
-                        </div>
-
-                        <div style="color: #ecc94b; font-weight: bold; margin-top: 10px; font-size: 0.8rem; border-top: 1px dashed rgba(197, 168, 128, 0.15); padding-top: 8px;">
-                            ⚠️ الرجاء تحويل المبلغ ثم إرفاق صورة الإيصال في الواتساب لتأكيد طلبك.
-                        </div>
-                    </div>
-                </div>
-
                 <button type="submit" class="btn btn-primary btn-block btn-submit">
                     <i class="fa-brands fa-whatsapp"></i> تأكيد وإرسال الفاتورة عبر الواتساب
                 </button>
@@ -497,45 +334,19 @@
         <span id="toast-message">تمت إضافة القهوة للسلة بنجاح!</span>
     </div>
 
-    <!-- Suggestions Section -->
-    <section id="suggestions" class="suggestions-section">
-        <div class="container">
-            <div class="section-header">
-                <h2>يسعدنا سماع اقتراحاتكم</h2>
-                <div class="header-line"></div>
-                <p>شاركونا أفكاركم وملاحظاتكم لتطوير خدماتنا، وسنقوم باستلامها مباشرة عبر الواتساب</p>
-            </div>
-            
-            <div class="suggestion-form-container">
-                <form id="suggestion-form" onsubmit="submitSuggestion(event)">
-                    <div class="form-group">
-                        <label for="suggestion-text">اقتراحك أو ملاحظتك:</label>
-                        <textarea id="suggestion-text" rows="4" placeholder="اكتب اقتراحك هنا بكل حب وأريحية..." required></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-submit-suggestion">
-                        <i class="fa-brands fa-whatsapp"></i> إرسال الاقتراح عبر الواتساب
-                    </button>
-                </form>
-            </div>
-        </div>
-    </section>
-
-
-
     <!-- Footer -->
     <footer class="main-footer">
         <div class="container footer-grid">
             <div class="footer-col brand-col">
                 <img src="../5960730354593238429.jpg" alt="شعار قهوجي ماهر" class="footer-logo">
-                <p>قهوجي ماهر، خيارك الأول لتذوق فخامة القهوة الماهرة الأصيلة المحضرة بعناية وحرفية تامة.</p>
+                <p>قهوجي ماهر، خيارك الأول لتذوق فخامة القهوة العربية الأصيلة المحضرة بعناية وحرفية تامة.</p>
             </div>
             <div class="footer-col links-col">
                 <h4>روابط سريعة</h4>
                 <ul>
                     <li><a href="#home">الرئيسية</a></li>
                     <li><a href="#menu">قائمة القهوة</a></li>
-                    <li><a href="#about">نبذة عني</a></li>
-                    <li><a href="#suggestions">اقتراحاتكم</a></li>
+                    <li><a href="#about">قهوة في قلبك</a></li>
                 </ul>
             </div>
             <div class="footer-col contact-col">
@@ -554,124 +365,7 @@
         </div>
     </footer>
 
-    <!-- Alarm Warning Modal & Flash Overlay -->
-    <div class="alarm-overlay-screen" id="alarm-screen-flash"></div>
-    <div class="alarm-modal" id="limit-alarm">
-        <div class="alarm-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
-        <div class="alarm-text" id="alarm-text">يكفي يا حبيبي خلاص أنت ما بتشرب هذه الكمية كلها</div>
-    </div>
-
-    <!-- Retro Computer Button Widget -->
-    <div class="retro-comp-btn" id="retro-computer-btn">
-        <div class="crt-monitor">
-            <div class="crt-screen">
-                <div class="screen-glow"></div>
-                <div class="retro-face">📟</div>
-            </div>
-            <div class="monitor-stand"></div>
-            <div class="monitor-base"></div>
-        </div>
-        <div class="ping-dot"></div>
-        <div class="comp-tooltip">شاشة الفعاليات</div>
-    </div>
-
-    <!-- Retro Event Modal -->
-    <div class="retro-modal" id="retro-event-modal">
-        <div class="win95-window">
-            <div class="win95-title-bar">
-                <div class="win95-title-text" id="retro-modal-title"><i class="fa-solid fa-laptop-code"></i> لوحة الفعاليات النشطة v2.0</div>
-                <button class="win95-close-btn" id="close-retro-modal">×</button>
-            </div>
-            
-            <div id="retro-event-dynamic-body">
-                <!-- Dynamically injected from app.js based on ACTIVE_EVENT -->
-            </div>
-        </div>
-    </div>
-    <div class="retro-overlay" id="retro-modal-overlay"></div>
-
-    <!-- Secret Developer Control Panel Modal -->
-    <div class="retro-modal" id="secret-dev-panel" style="z-index: 10005;">
-        <div class="win95-window" style="max-width: 500px; width: 90%;">
-            <div class="win95-title-bar">
-                <div class="win95-title-text"><i class="fa-solid fa-user-gear"></i> لوحة التحكم السرية (المطور)</div>
-                <button class="win95-close-btn" onclick="closeSecretDevPanel()">×</button>
-            </div>
-            <div class="win95-body" style="padding: 15px; font-family: var(--font-arabic); text-align: right; background: #c0c0c0; color: #000; direction: rtl;">
-                
-                <!-- Section 1: Event Switcher -->
-                <fieldset style="border: 2px inset #fff; padding: 10px; margin-bottom: 15px; border-radius: 0;">
-                    <legend style="font-weight: bold; background: #c0c0c0; padding: 0 5px; font-size: 0.9rem;">🔥 إدارة الفعاليات النشطة</legend>
-                    <label style="display: block; margin-bottom: 5px; font-size: 0.85rem; font-weight: bold;">اختر الفعالية لتنشيطها فوراً:</label>
-                    <select id="dev-event-select" style="width: 100%; padding: 6px; background: #fff; color: #000; border: 2px inset #fff; font-family: monospace; font-size: 0.85rem; outline: none;">
-                        <option value="none">بدون فعالية (عادي)</option>
-                        <option value="neon_magic">القهوة المضيئة (neon_magic)</option>
-                        <option value="anger">غضب ماهر (anger)</option>
-                        <option value="thief">السارق المحتال (thief)</option>
-                        <option value="luck_wheel">عجلة الحظ (luck_wheel)</option>
-                        <option value="cup_strike">هجوم الأكواب الهاربة (cup_strike)</option>
-                        <option value="lie_detector">جهاز كشف كذب القهوة (lie_detector)</option>
-                        <option value="maher_vacation">بورصة المعلم ماهر (maher_vacation)</option>
-                        <option value="grind_challenge">تحدي الطحن السريع (grind_challenge)</option>
-                        <option value="matcha">الماتشا السحرية (matcha)</option>
-                    </select>
-                    <button class="win95-btn" onclick="devSwitchEvent()" style="margin-top: 10px; width: 100%; font-weight: bold; padding: 6px; font-family: var(--font-arabic); cursor: pointer;">تطبيق الفعالية ⚡</button>
-                </fieldset>
-
-                <!-- Section 2: Product Creator -->
-                <fieldset style="border: 2px inset #fff; padding: 10px; border-radius: 0;">
-                    <legend style="font-weight: bold; background: #c0c0c0; padding: 0 5px; font-size: 0.9rem;">➕ إضافة منتج جديد للمنيو</legend>
-                    
-                    <div style="margin-bottom: 8px;">
-                        <label style="display: block; font-size: 0.8rem; margin-bottom: 3px; font-weight: bold;">اسم المنتج:</label>
-                        <input type="text" id="dev-prod-name" placeholder="مثال: شاهي روقان" style="width: 100%; padding: 6px; border: 2px inset #fff; background: #fff; color: #000; outline: none; font-size: 0.85rem; font-family: var(--font-arabic);">
-                    </div>
-                    
-                    <div style="margin-bottom: 8px; display: flex; gap: 10px;">
-                        <div style="flex: 1;">
-                            <label style="display: block; font-size: 0.8rem; margin-bottom: 3px; font-weight: bold;">السعر (ر.س):</label>
-                            <input type="number" id="dev-prod-price" step="0.5" placeholder="مثال: 2.5" style="width: 100%; padding: 6px; border: 2px inset #fff; background: #fff; color: #000; outline: none; font-size: 0.85rem; font-family: monospace;">
-                        </div>
-                        <div style="flex: 1;">
-                            <label style="display: block; font-size: 0.8rem; margin-bottom: 3px; font-weight: bold;">أيقونة المنتج:</label>
-                            <input type="text" id="dev-prod-icon" placeholder="مثال: ☕ أو 🍵" style="width: 100%; padding: 6px; border: 2px inset #fff; background: #fff; color: #000; outline: none; font-size: 0.85rem; font-family: var(--font-arabic);">
-                        </div>
-                    </div>
-                    
-                    <div style="margin-bottom: 8px;">
-                        <label style="display: block; font-size: 0.8rem; margin-bottom: 3px; font-weight: bold;">وصف المنتج:</label>
-                        <textarea id="dev-prod-desc" placeholder="اكتب وصفاً مشوقاً للمنتج..." rows="2" style="width: 100%; padding: 6px; border: 2px inset #fff; background: #fff; color: #000; outline: none; font-size: 0.85rem; font-family: var(--font-arabic); resize: vertical;"></textarea>
-                    </div>
-
-                    <button class="win95-btn" onclick="devCreateProduct()" style="width: 100%; font-weight: bold; padding: 8px; background: #008000; color: #fff; border-color: #00b000 #005000 #005000 #00b000; font-family: var(--font-arabic); cursor: pointer;">إضافة المنتج للموقع ➕</button>
-                </fieldset>
-                
-            </div>
-        </div>
-    </div>
-    <div class="retro-overlay" id="dev-panel-overlay" style="z-index: 10004;" onclick="closeSecretDevPanel()"></div>
-
-    <!-- Secret Developer Login Modal -->
-    <div class="retro-modal" id="secret-dev-auth-modal" style="z-index: 10007;">
-        <div class="win95-window" style="max-width: 350px; width: 90%; margin: auto;">
-            <div class="win95-title-bar">
-                <div class="win95-title-text"><i class="fa-solid fa-key"></i> نظام التشغيل - دخول المطور</div>
-                <button class="win95-close-btn" onclick="closeDevAuthModal()">×</button>
-            </div>
-            <div class="win95-body" style="padding: 15px; font-family: var(--font-arabic); text-align: right; background: #c0c0c0; color: #000; direction: rtl;">
-                <p style="font-size: 0.85rem; margin-bottom: 12px; font-weight: bold;">الرجاء إدخال كود المطور لفتح لوحة التحكم:</p>
-                <input type="password" id="dev-auth-pass-input" placeholder="كلمة المرور..." style="width: 100%; padding: 6px; border: 2px inset #fff; background: #fff; color: #000; outline: none; margin-bottom: 12px; font-family: monospace;" onkeydown="if(event.key==='Enter') submitDevAuth()">
-                
-                <div style="display: flex; gap: 8px; justify-content: flex-end;">
-                    <button class="win95-btn" onclick="submitDevAuth()" style="padding: 5px 15px; font-weight: bold; cursor: pointer; font-family: var(--font-arabic);">موافق</button>
-                    <button class="win95-btn" onclick="closeDevAuthModal()" style="padding: 5px 15px; cursor: pointer; font-family: var(--font-arabic);">إلغاء</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="retro-overlay" id="dev-auth-overlay" style="z-index: 10006;" onclick="closeDevAuthModal()"></div>
-
     <!-- Script file -->
-    <script src="app.js?v=1.3"></script>
+    <script src="app.js"></script>
 </body>
 </html>
