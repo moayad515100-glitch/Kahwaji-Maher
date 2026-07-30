@@ -1,9 +1,13 @@
-const CACHE_NAME = 'maher-coffee-v4';
+const CACHE_NAME = 'maher-coffee-v5';
 const ASSETS = [
   './',
   './index.html',
-  './app.js',
-  './style.css',
+  './index_modern.html',
+  './app_modern.js',
+  './style_modern.css',
+  './index_old.html',
+  './app_old.js',
+  './style_old.css',
   './manifest.json',
   './icon-192.png',
   './icon-512.png',

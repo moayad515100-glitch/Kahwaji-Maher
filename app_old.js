@@ -269,3 +269,38 @@ function submitOrder(event) {
     checkoutForm.reset();
     showToast('تم إرسال الطلب بنجاح! شكراً لك.');
 }
+
+// ==========================================================
+// ⏳ COUNTDOWN TIMER FOR "THE BEGINNING" EVENT
+// ==========================================================
+(function() {
+    const EVENT_END_TIME = new Date("2026-08-06T20:47:29+03:00").getTime();
+    const timerEl = document.getElementById("countdown-timer");
+    
+    function updateTimer() {
+        const now = Date.now();
+        const diff = EVENT_END_TIME - now;
+        
+        if (diff <= 0) {
+            if (timerEl) timerEl.textContent = "00 : 00 : 00 : 00";
+            clearInterval(timerInterval);
+            window.location.replace("index_modern.html");
+            return;
+        }
+        
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+        
+        // Pad single digits with zero
+        const pad = (num) => String(num).padStart(2, '0');
+        
+        if (timerEl) {
+            timerEl.textContent = `${pad(days)} : ${pad(hours)} : ${pad(minutes)} : ${pad(seconds)}`;
+        }
+    }
+    
+    updateTimer();
+    const timerInterval = setInterval(updateTimer, 1000);
+})();

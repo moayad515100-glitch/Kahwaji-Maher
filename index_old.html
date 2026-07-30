@@ -12,12 +12,29 @@
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Stylesheet -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style_old.css?v=1.4">
+    <script>
+        const EVENT_END_TIME = new Date("2026-08-06T20:47:29+03:00").getTime();
+        if (Date.now() >= EVENT_END_TIME) {
+            window.location.replace("index_modern.html");
+        }
+    </script>
+    <!-- PWA Manifest & Meta Tags -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#ecc94b">
+    <link rel="icon" type="image/png" href="icon-192.png">
+    <link rel="shortcut icon" href="icon-192.png" type="image/x-icon">
+    <link rel="apple-touch-icon" href="icon-192.png">
 </head>
 <body>
 
     <!-- Header / Navbar -->
     <header class="main-header">
+        <!-- Event Banner: The Beginning -->
+        <div id="event-timer-banner" class="event-banner" style="background: linear-gradient(135deg, #1a0f0a, #3e271c); border-bottom: 1.5px solid #c5a880; color: #e6dfd9; text-align: center; padding: 8px; font-weight: bold; font-family: var(--font-arabic); display: flex; align-items: center; justify-content: center; gap: 15px; font-size: 0.9rem; box-shadow: 0 4px 15px rgba(0,0,0,0.5); width: 100%;">
+            <span>⏳ فعالية "البداية": يرجع الموقع لشكل زمان بنفس المنتجات! متبقي:</span>
+            <span id="countdown-timer" style="color: #ffaa00; text-shadow: 0 0 10px rgba(255,170,0,0.4); font-family: monospace; font-size: 1.1rem; letter-spacing: 1px;">00 : 00 : 00 : 00</span>
+        </div>
         <div class="container header-container">
             <div class="logo-area">
                 <img src="../5960730354593238429.jpg" alt="شعار قهوجي ماهر" class="header-logo">
@@ -236,6 +253,170 @@
                         </button>
                     </div>
                 </div>
+
+                <!-- Product 4: Special Blend (6 SAR) -->
+                <div class="product-card" data-id="special">
+                    <div class="product-image-container">
+                        <img src="../5963013000862043793.jpg" alt="خلطة ماهر الخاصة" class="product-image">
+                        <span class="product-tag">SPECIAL خلطة خاصة</span>
+                    </div>
+                    <div class="product-info">
+                        <h3>خلطة ماهر الخاصة</h3>
+                        <div class="product-price">6 ر.س <span class="price-suffix">/ كوب</span></div>
+                        
+                        <!-- Customization Accordion -->
+                        <div class="customization-section">
+                            <h4 class="custom-title"><i class="fa-solid fa-sliders"></i> خصص كوبك:</h4>
+                            
+                            <div class="custom-options">
+                                <!-- Size -->
+                                <div class="option-group">
+                                    <label>الحجم:</label>
+                                    <div class="radio-buttons">
+                                        <label class="radio-label">
+                                            <input type="radio" name="size-special" value="وسط" checked>
+                                            <span>وسط</span>
+                                        </label>
+                                        <label class="radio-label">
+                                            <input type="radio" name="size-special" value="كبير">
+                                            <span>كبير</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Sugar -->
+                                <div class="option-group">
+                                    <label>السكر:</label>
+                                    <select name="sugar-special" class="form-select">
+                                        <option value="بدون سكر" selected>بدون سكر (سادة)</option>
+                                        <option value="سكر خفيف">سكر خفيف</option>
+                                        <option value="سكر وسط">سكر وسط</option>
+                                        <option value="سكر زيادة">سكر زيادة</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-add-cart" onclick="addToCart('special', 'خلطة ماهر الخاصة', 6, '../5963013000862043793.jpg')">
+                            <i class="fa-solid fa-cart-plus"></i> إضافة للسلة
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product 5: Coffee of the Day (6 SAR) -->
+                <div class="product-card" data-id="today">
+                    <div class="product-image-container">
+                        <img src="../5960730354593238427.jpg" alt="قهوة اليوم الماهرة" class="product-image">
+                        <span class="product-tag">TODAY قهوة اليوم</span>
+                    </div>
+                    <div class="product-info">
+                        <h3>قهوة اليوم الماهرة</h3>
+                        <div class="product-price">6 ر.س <span class="price-suffix">/ كوب</span></div>
+                        
+                        <!-- Customization Accordion -->
+                        <div class="customization-section">
+                            <h4 class="custom-title"><i class="fa-solid fa-sliders"></i> خصص كوبك:</h4>
+                            
+                            <div class="custom-options">
+                                <!-- Size -->
+                                <div class="option-group">
+                                    <label>الحجم:</label>
+                                    <div class="radio-buttons">
+                                        <label class="radio-label">
+                                            <input type="radio" name="size-today" value="وسط" checked>
+                                            <span>وسط</span>
+                                        </label>
+                                        <label class="radio-label">
+                                            <input type="radio" name="size-today" value="كبير">
+                                            <span>كبير</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Sugar -->
+                                <div class="option-group">
+                                    <label>السكر:</label>
+                                    <select name="sugar-today" class="form-select">
+                                        <option value="بدون سكر" selected>بدون سكر (سادة)</option>
+                                        <option value="سكر خفيف">سكر خفيف</option>
+                                        <option value="سكر وسط">سكر وسط</option>
+                                        <option value="سكر زيادة">سكر زيادة</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-add-cart" onclick="addToCart('today', 'قهوة اليوم الماهرة', 6, '../5960730354593238427.jpg')">
+                            <i class="fa-solid fa-cart-plus"></i> إضافة للسلة
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product 6: Matcha Mahira (Out of Stock) -->
+                <div class="product-card" data-id="matcha" style="opacity: 0.75;">
+                    <div class="product-image-container">
+                        <img src="../matcha.jpg" alt="ماتشا ماهرة" class="product-image" style="filter: grayscale(80%) opacity(0.6);">
+                        <span class="product-tag" style="background: #ef4444; color: #fff;">غير متوفر حالياً / Out of Stock</span>
+                    </div>
+                    <div class="product-info">
+                        <h3>ماتشا ماهرة 🍵</h3>
+                        <div class="product-price" style="color: #ef4444; font-weight: bold;">غير متوفر حالياً 🚫</div>
+                        
+                        <!-- Customization Accordion -->
+                        <div class="customization-section" style="opacity: 0.4; pointer-events: none;">
+                            <h4 class="custom-title"><i class="fa-solid fa-sliders"></i> خصص كوبك:</h4>
+                            <div class="custom-options">
+                                <div class="option-group">
+                                    <label>الحجم:</label>
+                                    <div class="radio-buttons">
+                                        <label class="radio-label"><input type="radio" name="size-matcha" value="وسط" checked> <span>وسط</span></label>
+                                        <label class="radio-label"><input type="radio" name="size-matcha" value="كبير"> <span>كبير</span></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-add-cart" disabled style="background: rgba(255,255,255,0.05); border: 1.5px dashed rgba(239,68,68,0.3); color: #888; cursor: not-allowed; box-shadow: none;">
+                            <i class="fa-solid fa-ban"></i> غير متوفر حالياً
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product 7: Maher's Milkshake (7 SAR) -->
+                <div class="product-card" data-id="milkshake">
+                    <div class="product-image-container">
+                        <img src="../milkshake.png" alt="ميلك شيك ماهر" class="product-image">
+                        <span class="product-tag" style="background: #2e7d32; color: #fff;">NEW جديد</span>
+                    </div>
+                    <div class="product-info">
+                        <h3>ميلك شيك ماهر 🥤</h3>
+                        <div class="product-price">7 ر.س <span class="price-suffix">/ كوب</span></div>
+                        
+                        <!-- Customization Accordion -->
+                        <div class="customization-section">
+                            <h4 class="custom-title"><i class="fa-solid fa-sliders"></i> خصص كوبك:</h4>
+                            <div class="custom-options">
+                                <div class="option-group">
+                                    <label>الحجم:</label>
+                                    <div class="radio-buttons">
+                                        <label class="radio-label">
+                                            <input type="radio" name="size-milkshake" value="وسط" checked>
+                                            <span>وسط</span>
+                                        </label>
+                                        <label class="radio-label">
+                                            <input type="radio" name="size-milkshake" value="كبير">
+                                            <span>كبير (+1 ر.س)</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-add-cart" onclick="addToCart('milkshake', 'ميلك شيك ماهر 🥤', 7, '../milkshake.png')">
+                            <i class="fa-solid fa-cart-plus"></i> إضافة للسلة
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -366,6 +547,6 @@
     </footer>
 
     <!-- Script file -->
-    <script src="app.js"></script>
+    <script src="app_old.js?v=1.8"></script>
 </body>
 </html>

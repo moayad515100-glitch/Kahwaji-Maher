@@ -4,7 +4,7 @@
 # 👀 نظام مراقبة التحديثات التلقائية لمتجر قهوجي ماهر
 # ==========================================================
 
-WATCH_FILES=("index.html" "app.js" "style.css")
+WATCH_FILES=("index.html" "index_modern.html" "app_modern.js" "style_modern.css" "index_old.html" "app_old.js" "style_old.css" "sw.js")
 CHECK_INTERVAL=3
 REPO_DIR="/home/modyalhelo/Downloads/Kahwaji-Maher-main"
 
