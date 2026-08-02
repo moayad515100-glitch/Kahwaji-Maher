@@ -591,7 +591,22 @@
                         <input type="tel" id="customer-phone" placeholder="مثال: 050XXXXXXX">
                     </div>
                 </div>
+                <!-- Delivery options selector -->
                 <div class="form-group">
+                    <label style="font-weight: 600; font-size: 0.95rem; color: var(--gold); display: block; margin-bottom: 10px; font-family: var(--font-arabic);">طريقة الاستلام:</label>
+                    <div style="display: flex; gap: 12px; margin-bottom: 15px;">
+                        <label class="delivery-option-label" style="flex: 1; border: 1.5px solid rgba(255, 170, 0, 0.2); border-radius: 8px; padding: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; transition: all 0.3s; background: rgba(255,170,0,0.05);" id="delivery-option-home-container">
+                            <input type="radio" name="delivery-type" value="delivery" id="delivery-type-home" checked onchange="toggleDeliveryType()">
+                            <span style="font-family: var(--font-arabic); font-size: 0.9rem; color: white;">توصيل للمنزل 🛵</span>
+                        </label>
+                        <label class="delivery-option-label" style="flex: 1; border: 1.5px solid rgba(255, 170, 0, 0.2); border-radius: 8px; padding: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; transition: all 0.3s;" id="delivery-option-pickup-container">
+                            <input type="radio" name="delivery-type" value="pickup" id="delivery-type-pickup" onchange="toggleDeliveryType()">
+                            <span style="font-family: var(--font-arabic); font-size: 0.9rem; color: white;">استلام من المحل ☕</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group" id="address-form-group">
                     <label for="customer-address">العنوان وموقع التوصيل <span class="required">*</span></label>
                     <div class="input-wrapper">
                         <i class="fa-solid fa-location-dot"></i>
