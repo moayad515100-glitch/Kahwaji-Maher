@@ -112,11 +112,6 @@ closeModal.addEventListener('click', closeCheckoutModal);
 modalOverlay.addEventListener('click', closeCheckoutModal);
 
 function openCheckoutModal() {
-    if (userInMecca === false) {
-        closeCartDrawer();
-        showToast("📍 عذراً! التوصيل متاح لمكة المكرمة فقط. لا يمكنك إتمام الطلب.");
-        return;
-    }
     if (typeof IS_MENU_LOCKED !== 'undefined' && IS_MENU_LOCKED) {
         closeCartDrawer();
         triggerAlarm("🔒 المنيو والطلبات مغلقة حالياً لأن قهوجي ماهر غير متواجد اليوم!");
@@ -127,8 +122,38 @@ function openCheckoutModal() {
         triggerAlarm("عذراً! لا يمكنك إتمام الطلب الآن لأن قهوجي ماهر غاضب! 😡");
         return;
     }
+    
     closeCartDrawer();
-    populateModalSummary();
+    
+    // Configure delivery options based on geolocation status
+    const homeRadio = document.getElementById('delivery-type-home');
+    const pickupRadio = document.getElementById('delivery-type-pickup');
+    const homeContainer = document.getElementById('delivery-option-home-container');
+    
+    if (userInMecca === false) {
+        // Outside Mecca: Force pickup/no delivery
+        if (homeRadio) homeRadio.disabled = true;
+        if (pickupRadio) pickupRadio.checked = true;
+        if (homeContainer) {
+            homeContainer.style.opacity = '0.4';
+            homeContainer.style.cursor = 'not-allowed';
+            homeContainer.title = "التوصيل متوفر فقط في مكة المكرمة";
+        }
+    } else {
+        // Inside Mecca: Allow both options
+        if (homeRadio) homeRadio.disabled = false;
+        if (homeContainer) {
+            homeContainer.style.opacity = '1';
+            homeContainer.style.cursor = 'pointer';
+            homeContainer.title = "";
+        }
+        // Default to delivery for Mecca users
+        if (homeRadio) homeRadio.checked = true;
+    }
+    
+    // Toggle address input state
+    toggleDeliveryType();
+    
     checkoutModal.classList.add('open');
     modalOverlay.classList.add('open');
 }
@@ -333,25 +358,19 @@ function updateCartUI() {
 
     // Calculate & Display Total
     const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    if (userInMecca && cart.length > 0) {
+    const wantsDelivery = isDeliverySelected();
+    if (wantsDelivery && cart.length > 0) {
         const finalTotal = total + DELIVERY_FEE;
         cartTotal.innerHTML = `${total} ر.س + ${DELIVERY_FEE} ر.س (توصيل) = <span style="color: var(--neon-matcha);">${finalTotal} ر.س</span>`;
     } else {
         cartTotal.textContent = `${total} ر.س`;
     }
     
-    // Disable/Enable checkout button based on location
-    if (userInMecca === false) {
-        btnCheckout.disabled = true;
-        btnCheckout.style.opacity = '0.5';
-        btnCheckout.style.cursor = 'not-allowed';
-        btnCheckout.textContent = "التوصيل غير متاح لمنطقتك";
-    } else {
-        btnCheckout.disabled = cart.length === 0;
-        btnCheckout.style.opacity = cart.length === 0 ? '0.5' : '1';
-        btnCheckout.style.cursor = cart.length === 0 ? 'not-allowed' : 'pointer';
-        btnCheckout.textContent = "إتمام الطلب";
-    }
+    // Checkout button is enabled for everyone, pickup option is allowed outside Mecca
+    btnCheckout.disabled = cart.length === 0;
+    btnCheckout.style.opacity = cart.length === 0 ? '0.5' : '1';
+    btnCheckout.style.cursor = cart.length === 0 ? 'not-allowed' : 'pointer';
+    btnCheckout.textContent = "إتمام الطلب";
     
     // Persist cart to localStorage
     localStorage.setItem('maher_cart', JSON.stringify(cart));
@@ -409,7 +428,8 @@ function populateModalSummary() {
         modalSummaryItems.appendChild(row);
     });
 
-    if (userInMecca) {
+    const wantsDelivery = isDeliverySelected();
+    if (wantsDelivery) {
         const deliveryRow = document.createElement('div');
         deliveryRow.className = 'summary-item-row';
         deliveryRow.style.color = 'var(--gold)';
@@ -436,8 +456,9 @@ function submitOrder(event) {
     const phone = document.getElementById('customer-phone').value.trim();
     const address = document.getElementById('customer-address').value.trim();
     const notes = document.getElementById('customer-notes').value.trim();
+    const deliveryType = document.querySelector('input[name="delivery-type"]:checked').value;
 
-    if (!name || !address) {
+    if (!name || (deliveryType === 'delivery' && !address)) {
         showToast('يرجى ملء جميع الحقول المطلوبة!');
         return;
     }
@@ -452,7 +473,12 @@ function submitOrder(event) {
     if (phone) {
         message += `• *الجوال:* ${phone}\n`;
     }
-    message += `• *العنوان:* ${address}\n`;
+    if (deliveryType === 'delivery') {
+        message += `• *طريقة الاستلام:* توصيل للمنزل 🛵\n`;
+        message += `• *العنوان:* ${address}\n`;
+    } else {
+        message += `• *طريقة الاستلام:* استلام من المحل ☕ (مجاناً)\n`;
+    }
     if (notes) {
         message += `• *ملاحظات:* ${notes}\n`;
     }
@@ -470,7 +496,8 @@ function submitOrder(event) {
 
     const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     let finalTotal = total;
-    if (userInMecca) {
+    const wantsDelivery = isDeliverySelected();
+    if (wantsDelivery) {
         finalTotal = total + DELIVERY_FEE;
         message += `🛵 *رسوم التوصيل (مكة):* ${DELIVERY_FEE} ر.س\n`;
     }
@@ -3474,6 +3501,56 @@ window.setActiveAppNav = (element, targetId) => {
 
 // Run initialization
 initAppMode();
+
+// Check if delivery option is selected and active
+function isDeliverySelected() {
+    const el = document.querySelector('input[name="delivery-type"]:checked');
+    const type = el ? el.value : 'delivery';
+    return (type === 'delivery' && userInMecca);
+}
+
+// Toggle checkout form address visibility and validation based on delivery option choice
+function toggleDeliveryType() {
+    const el = document.querySelector('input[name="delivery-type"]:checked');
+    const deliveryType = el ? el.value : 'delivery';
+    const addressGroup = document.getElementById('address-form-group');
+    const addressInput = document.getElementById('customer-address');
+    
+    const homeContainer = document.getElementById('delivery-option-home-container');
+    const pickupContainer = document.getElementById('delivery-option-pickup-container');
+    
+    if (deliveryType === 'delivery') {
+        if (addressGroup) addressGroup.style.display = 'block';
+        if (addressInput) addressInput.required = true;
+        
+        if (homeContainer) {
+            homeContainer.style.background = 'rgba(255,170,0,0.08)';
+            homeContainer.style.borderColor = 'var(--gold)';
+        }
+        if (pickupContainer) {
+            pickupContainer.style.background = 'none';
+            pickupContainer.style.borderColor = 'rgba(255, 170, 0, 0.2)';
+        }
+    } else {
+        if (addressGroup) addressGroup.style.display = 'none';
+        if (addressInput) {
+            addressInput.required = false;
+            addressInput.value = '';
+        }
+        
+        if (pickupContainer) {
+            pickupContainer.style.background = 'rgba(255,170,0,0.08)';
+            pickupContainer.style.borderColor = 'var(--gold)';
+        }
+        if (homeContainer) {
+            homeContainer.style.background = 'none';
+            homeContainer.style.borderColor = 'rgba(255, 170, 0, 0.2)';
+        }
+    }
+    
+    updateCartUI();
+    populateModalSummary();
+}
 
 // ==========================================================
 // 📍 MECCA GEOLOCATION DELIVERY SYSTEM
