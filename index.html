@@ -128,6 +128,28 @@
                 opacity: 0;
             }
         }
+
+        /* 🍵 Matcha Algae/Leaf Particles */
+        .algae-particle {
+            position: fixed;
+            pointer-events: none;
+            background: #2e7d32;
+            border-radius: 50% 0 50% 0; 
+            box-shadow: 0 0 8px rgba(57, 255, 20, 0.45);
+            z-index: 10009;
+            animation: leafBlowAndFade 1.4s forwards cubic-bezier(0.1, 0.8, 0.3, 1);
+        }
+
+        @keyframes leafBlowAndFade {
+            0% {
+                transform: translateY(0) scale(0.3) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-135px) translateX(var(--drift)) scale(1.2) rotate(720deg);
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 <body>
