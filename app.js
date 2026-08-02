@@ -3641,13 +3641,14 @@ function fallbackIPCheck() {
 function showManualLocationSelection() {
     const loader = document.getElementById('location-loader');
     if (loader) loader.remove();
-    document.getElementById('location-title').textContent = "تأكيد الموقع يدوياً";
-    document.getElementById('location-desc').textContent = "لم نتمكن من تحديد موقعك تلقائياً. هل أنت متواجد في مدينة مكة المكرمة؟";
+    document.getElementById('location-title').textContent = "تأكيد الموقع";
+    document.getElementById('location-desc').textContent = "تعذر تحديد موقعك تلقائياً. يرجى اختيار إحدى طرق التحديد التالية للتأكد من خدمة التوصيل لمكة المكرمة:";
     
     const actions = document.getElementById('location-actions');
     actions.innerHTML = `
-        <button onclick="setDeliveryLocation(true, 'مكة المكرمة (يدوي)')" style="background: linear-gradient(135deg, #2e7d32, #1b5e20); color: white; border: none; padding: 12px; font-weight: bold; border-radius: 8px; cursor: pointer; font-family: var(--font-arabic);">نعم، أنا في مكة المكرمة 📍</button>
-        <button onclick="setDeliveryLocation(false)" style="background: linear-gradient(135deg, #c62828, #b71c1c); color: white; border: none; padding: 12px; font-weight: bold; border-radius: 8px; cursor: pointer; font-family: var(--font-arabic);">لا، أنا خارج مكة المكرمة ❌</button>
+        <button onclick="openInteractiveMap()" style="background: linear-gradient(135deg, var(--gold), var(--accent)); color: white; border: none; padding: 12px; font-weight: bold; border-radius: 8px; cursor: pointer; font-family: var(--font-arabic); font-size: 1rem; box-shadow: 0 0 15px var(--gold-glow); display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%;"><i class="fa-solid fa-map-location-dot"></i> تحديد موقعي على الخريطة 🗺️</button>
+        <button onclick="setDeliveryLocation(true, 'مكة المكرمة (تأكيد يدوي)')" style="background: linear-gradient(135deg, #2e7d32, #1b5e20); color: white; border: none; padding: 10px; font-weight: bold; border-radius: 8px; cursor: pointer; font-family: var(--font-arabic); font-size: 0.9rem; width: 100%;">أنا في مكة المكرمة 📍</button>
+        <button onclick="setDeliveryLocation(false)" style="background: linear-gradient(135deg, #c62828, #b71c1c); color: white; border: none; padding: 10px; font-weight: bold; border-radius: 8px; cursor: pointer; font-family: var(--font-arabic); font-size: 0.9rem; width: 100%;">أنا خارج مكة المكرمة ❌</button>
     `;
 }
 
@@ -3709,6 +3710,83 @@ function getDistance(lat1, lon1, lat2, lon2) {
         Math.sin(dLon/2) * Math.sin(dLon/2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
     return R * c;
+}
+
+// Open Leaflet interactive map to pick location
+function openInteractiveMap() {
+    document.getElementById('location-title').textContent = "حدد موقعك على الخريطة 🗺️";
+    document.getElementById('location-desc').textContent = "انقر على موقعك في مكة المكرمة أو قم بسحب العلامة الحمراء لتأكيد نطاق التوصيل.";
+    
+    const actions = document.getElementById('location-actions');
+    actions.innerHTML = `
+        <div id="map" style="width: 100%; height: 260px; border-radius: 12px; margin-top: 10px; border: 2px solid var(--gold); box-shadow: 0 0 15px rgba(255,170,0,0.25); z-index: 10009;"></div>
+        <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 5px; text-align: center;" id="map-coord-display">الإحداثيات المحددة: جاري التحميل...</div>
+        <button onclick="confirmMapLocation()" style="background: linear-gradient(135deg, var(--gold), var(--accent)); color: white; border: none; padding: 12px; font-weight: bold; border-radius: 8px; cursor: pointer; font-family: var(--font-arabic); font-size: 1rem; margin-top: 10px; box-shadow: 0 0 15px var(--gold-glow); width: 100%;">تأكيد الموقع المحدد 📍</button>
+        <button onclick="showManualLocationSelection()" style="background: rgba(255,255,255,0.06); color: var(--text-main); border: 1px solid rgba(255,255,255,0.2); padding: 8px; font-weight: normal; border-radius: 8px; cursor: pointer; font-family: var(--font-arabic); font-size: 0.85rem; margin-top: 5px; width: 100%;">رجوع ↩️</button>
+    `;
+    
+    // Mecca Coordinates (21.3891, 39.8579)
+    const defaultLat = 21.3891;
+    const defaultLng = 39.8579;
+    
+    setTimeout(() => {
+        // Fix Leaflet marker icon path bug in Single Page Application environments
+        delete L.Icon.Default.prototype._getIconUrl;
+        L.Icon.Default.mergeOptions({
+            iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+            iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+            shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+        });
+
+        const map = L.map('map', { zoomControl: false }).setView([defaultLat, defaultLng], 12);
+        L.control.zoom({ position: 'topright' }).addTo(map);
+        
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+        
+        const marker = L.marker([defaultLat, defaultLng], { draggable: true }).addTo(map);
+        
+        window.selectedMapCoords = { lat: defaultLat, lng: defaultLng };
+        document.getElementById('map-coord-display').textContent = `الموقع المحدد: مكة المكرمة (${defaultLat.toFixed(4)}, ${defaultLng.toFixed(4)})`;
+        
+        function updateSelectedCoords(lat, lng) {
+            window.selectedMapCoords = { lat, lng };
+            const dist = getDistance(lat, lng, 21.3891, 39.8579);
+            if (dist <= 60) {
+                document.getElementById('map-coord-display').innerHTML = `الموقع المحدد: (${lat.toFixed(4)}, ${lng.toFixed(4)}) <span style="color: var(--neon-matcha); font-weight:bold;">(داخل التغطية)</span>`;
+            } else {
+                document.getElementById('map-coord-display').innerHTML = `الموقع المحدد: (${lat.toFixed(4)}, ${lng.toFixed(4)}) <span style="color: #ff4444; font-weight:bold;">(خارج التغطية - ${dist.toFixed(1)} كم)</span>`;
+            }
+        }
+        
+        marker.on('dragend', function(e) {
+            const pos = marker.getLatLng();
+            updateSelectedCoords(pos.lat, pos.lng);
+        });
+        
+        map.on('click', function(e) {
+            marker.setLatLng(e.latlng);
+            updateSelectedCoords(e.latlng.lat, e.latlng.lng);
+        });
+    }, 200);
+}
+
+// Confirm map selection and perform range checks
+function confirmMapLocation() {
+    if (!window.selectedMapCoords) {
+        showToast("يرجى اختيار موقع على الخريطة أولاً!");
+        return;
+    }
+    const lat = window.selectedMapCoords.lat;
+    const lng = window.selectedMapCoords.lng;
+    
+    const distance = getDistance(lat, lng, 21.3891, 39.8579);
+    if (distance <= 60) {
+        setDeliveryLocation(true, "الموقع المحدد على الخريطة 🗺️");
+    } else {
+        showToast("⚠️ الموقع المحدد خارج تغطية مكة المكرمة للتوصيل!");
+    }
 }
 
 // Initialize location status on DOMContentLoaded
