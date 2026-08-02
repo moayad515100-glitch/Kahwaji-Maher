@@ -274,6 +274,13 @@ function addToCart(productId, name, price, image) {
     const cardElement = document.querySelector(`.product-card[data-id="${productId}"]`);
     if (cardElement) {
         animateFlyToCart(cardElement, image, productId);
+        
+        // Spawn foam particles if Milkshake is added
+        if (productId === 'milkshake') {
+            const btn = cardElement.querySelector('.btn-add-cart');
+            const rect = btn ? btn.getBoundingClientRect() : cardElement.getBoundingClientRect();
+            triggerMilkshakeFoamEffect(rect.left + rect.width / 2, rect.top + rect.height / 2);
+        }
     }
     
     showToast(`تمت إضافة ${name} إلى السلة!`);
@@ -374,6 +381,21 @@ function updateCartUI() {
     
     // Persist cart to localStorage
     localStorage.setItem('maher_cart', JSON.stringify(cart));
+    
+    // Toggle milkshake foam styling class on cart drawer
+    const hasMilkshake = cart.some(item => item.productId === 'milkshake');
+    if (cartDrawer) {
+        if (hasMilkshake) {
+            cartDrawer.classList.add('has-milkshake');
+        } else {
+            cartDrawer.classList.remove('has-milkshake');
+        }
+    }
+    
+    // Run background bubbles animation in cart
+    if (typeof startCartBubbles === 'function') {
+        startCartBubbles();
+    }
 }
 
 // Change Quantity of Item
@@ -3809,5 +3831,59 @@ document.addEventListener('DOMContentLoaded', () => {
         showLocationModal();
     }
 });
+
+// Spawn visual foam bubble explosion particles
+function triggerMilkshakeFoamEffect(x, y) {
+    const bubbleCount = 30;
+    for (let i = 0; i < bubbleCount; i++) {
+        const bubble = document.createElement('div');
+        bubble.className = 'foam-particle';
+        
+        const size = Math.random() * 22 + 8; // 8px to 30px
+        bubble.style.width = `${size}px`;
+        bubble.style.height = `${size}px`;
+        bubble.style.left = `${x - size / 2}px`;
+        bubble.style.top = `${y - size / 2}px`;
+        
+        const drift = (Math.random() - 0.5) * 120; // -60px to 60px drift
+        bubble.style.setProperty('--drift', `${drift}px`);
+        
+        const delay = Math.random() * 0.25;
+        bubble.style.animationDelay = `${delay}s`;
+        
+        document.body.appendChild(bubble);
+        
+        bubble.addEventListener('animationend', () => {
+            bubble.remove();
+        });
+    }
+}
+
+// Generate background rising bubble animations inside cart drawer
+function startCartBubbles() {
+    const container = document.getElementById('cart-items');
+    if (!container) return;
+    
+    // Clear existing animated bubbles
+    container.querySelectorAll('.cart-bubble').forEach(b => b.remove());
+    
+    const hasMilkshake = cart.some(item => item.productId === 'milkshake');
+    if (!hasMilkshake) return;
+    
+    // Spawn 10 rising bubbles in cart background
+    for (let i = 0; i < 10; i++) {
+        const bubble = document.createElement('div');
+        bubble.className = 'cart-bubble';
+        const size = Math.random() * 16 + 6; // 6px to 22px
+        bubble.style.width = `${size}px`;
+        bubble.style.height = `${size}px`;
+        bubble.style.left = `${Math.random() * 90}%`;
+        
+        bubble.style.animationDuration = `${Math.random() * 3.5 + 2.5}s`;
+        bubble.style.animationDelay = `${Math.random() * 3.5}s`;
+        
+        container.appendChild(bubble);
+    }
+}
 
 // Auto-watch active v1.0
