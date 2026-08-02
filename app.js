@@ -281,6 +281,12 @@ function addToCart(productId, name, price, image) {
             const rect = btn ? btn.getBoundingClientRect() : cardElement.getBoundingClientRect();
             triggerMilkshakeFoamEffect(rect.left + rect.width / 2, rect.top + rect.height / 2);
         }
+        // Spawn algae particles if Matcha is added
+        if (productId === 'matcha') {
+            const btn = cardElement.querySelector('.btn-add-cart');
+            const rect = btn ? btn.getBoundingClientRect() : cardElement.getBoundingClientRect();
+            triggerMatchaAlgaeEffect(rect.left + rect.width / 2, rect.top + rect.height / 2);
+        }
     }
     
     showToast(`تمت إضافة ${name} إلى السلة!`);
@@ -3883,6 +3889,36 @@ function startCartBubbles() {
         bubble.style.animationDelay = `${Math.random() * 3.5}s`;
         
         container.appendChild(bubble);
+    }
+}
+
+// Spawn visual Matcha algae/leaf explosion particles
+function triggerMatchaAlgaeEffect(x, y) {
+    const particleCount = 30;
+    const colors = ['#2e7d32', '#39ff14', '#1b5e20', '#4caf50', '#a3e635'];
+    
+    for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'algae-particle';
+        
+        const size = Math.random() * 14 + 6; // 6px to 20px
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+        particle.style.left = `${x - size / 2}px`;
+        particle.style.top = `${y - size / 2}px`;
+        
+        const drift = (Math.random() - 0.5) * 140; // -70px to 70px drift
+        particle.style.setProperty('--drift', `${drift}px`);
+        
+        const delay = Math.random() * 0.2;
+        particle.style.animationDelay = `${delay}s`;
+        
+        document.body.appendChild(particle);
+        
+        particle.addEventListener('animationend', () => {
+            particle.remove();
+        });
     }
 }
 
