@@ -27,6 +27,10 @@ const IS_EVENT_POSTPONED = false;
 const POSTPONED_REASON = '';
 const IS_MENU_LOCKED = false;
 
+// 📍 Mecca Geolocation variables
+let userInMecca = null; 
+const DELIVERY_FEE = 3;
+
 // Fixed synchronized launch timestamp for all users (2026-07-21 13:32:16 UTC+3)
 const EVENT_LAUNCH_TIME = 1784629936000; 
 let globalCountdownInterval = null;
@@ -108,6 +112,11 @@ closeModal.addEventListener('click', closeCheckoutModal);
 modalOverlay.addEventListener('click', closeCheckoutModal);
 
 function openCheckoutModal() {
+    if (userInMecca === false) {
+        closeCartDrawer();
+        showToast("📍 عذراً! التوصيل متاح لمكة المكرمة فقط. لا يمكنك إتمام الطلب.");
+        return;
+    }
     if (typeof IS_MENU_LOCKED !== 'undefined' && IS_MENU_LOCKED) {
         closeCartDrawer();
         triggerAlarm("🔒 المنيو والطلبات مغلقة حالياً لأن قهوجي ماهر غير متواجد اليوم!");
@@ -324,7 +333,25 @@ function updateCartUI() {
 
     // Calculate & Display Total
     const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    cartTotal.textContent = `${total} ر.س`;
+    if (userInMecca && cart.length > 0) {
+        const finalTotal = total + DELIVERY_FEE;
+        cartTotal.innerHTML = `${total} ر.س + ${DELIVERY_FEE} ر.س (توصيل) = <span style="color: var(--neon-matcha);">${finalTotal} ر.س</span>`;
+    } else {
+        cartTotal.textContent = `${total} ر.س`;
+    }
+    
+    // Disable/Enable checkout button based on location
+    if (userInMecca === false) {
+        btnCheckout.disabled = true;
+        btnCheckout.style.opacity = '0.5';
+        btnCheckout.style.cursor = 'not-allowed';
+        btnCheckout.textContent = "التوصيل غير متاح لمنطقتك";
+    } else {
+        btnCheckout.disabled = cart.length === 0;
+        btnCheckout.style.opacity = cart.length === 0 ? '0.5' : '1';
+        btnCheckout.style.cursor = cart.length === 0 ? 'not-allowed' : 'pointer';
+        btnCheckout.textContent = "إتمام الطلب";
+    }
     
     // Persist cart to localStorage
     localStorage.setItem('maher_cart', JSON.stringify(cart));
@@ -382,8 +409,23 @@ function populateModalSummary() {
         modalSummaryItems.appendChild(row);
     });
 
-    const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    modalSummaryTotal.textContent = `${total} ر.س`;
+    if (userInMecca) {
+        const deliveryRow = document.createElement('div');
+        deliveryRow.className = 'summary-item-row';
+        deliveryRow.style.color = 'var(--gold)';
+        deliveryRow.style.fontWeight = 'bold';
+        deliveryRow.innerHTML = `
+            <span>🛵 رسوم التوصيل (مكة)</span>
+            <span>${DELIVERY_FEE} ر.س</span>
+        `;
+        modalSummaryItems.appendChild(deliveryRow);
+        
+        const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0) + DELIVERY_FEE;
+        modalSummaryTotal.textContent = `${total} ر.س`;
+    } else {
+        const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        modalSummaryTotal.textContent = `${total} ر.س`;
+    }
 }
 
 // Submit Order (Send to WhatsApp)
@@ -427,8 +469,13 @@ function submitOrder(event) {
     });
 
     const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    let finalTotal = total;
+    if (userInMecca) {
+        finalTotal = total + DELIVERY_FEE;
+        message += `🛵 *رسوم التوصيل (مكة):* ${DELIVERY_FEE} ر.س\n`;
+    }
     message += `-----------------------------------\n`;
-    message += `💰 *المجموع الكلي:* ${total} ريال سعودي\n`;
+    message += `💰 *المجموع الكلي:* ${finalTotal} ريال سعودي\n`;
     
     if (paymentMethod === 'transfer') {
         message += `💳 *طريقة الدفع:* تحويل بنكي (الأهلي السعودي)\n`;
@@ -3427,5 +3474,185 @@ window.setActiveAppNav = (element, targetId) => {
 
 // Run initialization
 initAppMode();
+
+// ==========================================================
+// 📍 MECCA GEOLOCATION DELIVERY SYSTEM
+// ==========================================================
+function showLocationModal() {
+    let modal = document.getElementById('location-modal');
+    if (!modal) {
+        createLocationModal();
+        modal = document.getElementById('location-modal');
+    }
+    modal.style.display = 'flex';
+    
+    document.getElementById('location-title').textContent = "تحديد موقع التوصيل";
+    document.getElementById('location-desc').textContent = "جاري فحص موقعك للتأكد من تغطية التوصيل لمدينة مكة المكرمة... 🗺️";
+    document.getElementById('location-actions').innerHTML = `
+        <div id="location-loader" class="loader"></div>
+    `;
+    
+    runLocationCheck();
+}
+
+function createLocationModal() {
+    const modalDiv = document.createElement('div');
+    modalDiv.id = 'location-modal';
+    modalDiv.style.cssText = 'position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(5,4,3,0.9); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 10008;';
+    modalDiv.innerHTML = `
+        <div class="retro-modal-content" style="background: rgba(20,16,13,0.95); border: 2px solid var(--gold); border-radius: 20px; padding: 30px; text-align: center; max-width: 450px; width: 90%; box-shadow: 0 0 30px var(--gold-glow); font-family: var(--font-arabic); direction: rtl;">
+            <div id="location-icon" style="font-size: 3.5rem; margin-bottom: 20px; animation: bounce 2s infinite;">📍</div>
+            <h3 style="color: var(--white); font-size: 1.5rem; margin-bottom: 15px; font-family: var(--font-arabic);" id="location-title">تحديد موقع التوصيل</h3>
+            <p style="color: var(--text-main); font-size: 1rem; line-height: 1.6; margin-bottom: 25px; font-family: var(--font-arabic);" id="location-desc">جاري فحص موقعك للتأكد من تغطية التوصيل لمدينة مكة المكرمة... 🗺️</p>
+            <div id="location-actions" style="display: flex; flex-direction: column; gap: 12px;">
+                <div id="location-loader" class="loader"></div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modalDiv);
+}
+
+function runLocationCheck() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+                const distance = getDistance(lat, lon, 21.3891, 39.8579);
+                if (distance <= 60) {
+                    setDeliveryLocation(true, "مكة المكرمة (GPS)");
+                } else {
+                    fallbackIPCheck();
+                }
+            },
+            (error) => {
+                console.log("GPS error, falling back to IP:", error);
+                fallbackIPCheck();
+            },
+            { timeout: 7000 }
+        );
+    } else {
+        fallbackIPCheck();
+    }
+}
+
+function fallbackIPCheck() {
+    fetch('https://ipapi.co/json/')
+        .then(res => res.json())
+        .then(data => {
+            const city = data.city || '';
+            const region = data.region || '';
+            if (
+                city.toLowerCase().includes('mecca') || 
+                city.toLowerCase().includes('makkah') || 
+                city.includes('مكة') ||
+                region.toLowerCase().includes('makkah') ||
+                region.toLowerCase().includes('mecca') ||
+                region.includes('مكة')
+            ) {
+                setDeliveryLocation(true, city || "مكة المكرمة (IP)");
+            } else {
+                setDeliveryLocation(false);
+            }
+        })
+        .catch(err => {
+            console.log("IP Check failed, showing manual selection:", err);
+            showManualLocationSelection();
+        });
+}
+
+function showManualLocationSelection() {
+    const loader = document.getElementById('location-loader');
+    if (loader) loader.remove();
+    document.getElementById('location-title').textContent = "تأكيد الموقع يدوياً";
+    document.getElementById('location-desc').textContent = "لم نتمكن من تحديد موقعك تلقائياً. هل أنت متواجد في مدينة مكة المكرمة؟";
+    
+    const actions = document.getElementById('location-actions');
+    actions.innerHTML = `
+        <button onclick="setDeliveryLocation(true, 'مكة المكرمة (يدوي)')" style="background: linear-gradient(135deg, #2e7d32, #1b5e20); color: white; border: none; padding: 12px; font-weight: bold; border-radius: 8px; cursor: pointer; font-family: var(--font-arabic);">نعم، أنا في مكة المكرمة 📍</button>
+        <button onclick="setDeliveryLocation(false)" style="background: linear-gradient(135deg, #c62828, #b71c1c); color: white; border: none; padding: 12px; font-weight: bold; border-radius: 8px; cursor: pointer; font-family: var(--font-arabic);">لا، أنا خارج مكة المكرمة ❌</button>
+    `;
+}
+
+function setDeliveryLocation(isInMecca, cityName = "") {
+    userInMecca = isInMecca;
+    localStorage.setItem('maher_in_mecca', isInMecca);
+    
+    const title = document.getElementById('location-title');
+    const desc = document.getElementById('location-desc');
+    const actions = document.getElementById('location-actions');
+    const icon = document.getElementById('location-icon');
+    const cartLocationText = document.getElementById('cart-location-text');
+    
+    if (isInMecca) {
+        if (icon) icon.textContent = "🛵";
+        title.textContent = "التوصيل متاح لك! 🎉";
+        title.style.color = "var(--neon-matcha)";
+        desc.textContent = `موقعك: مكة المكرمة. قهوجي ماهر يوصل لجميع أحياء مكة برسم 3 ر.س فقط!`;
+        
+        actions.innerHTML = `
+            <button onclick="closeLocationModal()" style="background: linear-gradient(135deg, var(--gold), var(--accent)); color: white; border: none; padding: 12px; font-weight: bold; border-radius: 8px; cursor: pointer; font-family: var(--font-arabic); font-size: 1.1rem; box-shadow: 0 0 15px var(--gold-glow);">تصفح واطلب الآن ☕</button>
+        `;
+        
+        if (cartLocationText) {
+            cartLocationText.innerHTML = `🛵 التوصيل متاح لمكة (3 ر.س)`;
+            cartLocationText.style.color = "var(--neon-matcha)";
+        }
+    } else {
+        if (icon) icon.textContent = "❌";
+        title.textContent = "خارج منطقة التغطية";
+        title.style.color = "#ff4444";
+        desc.textContent = "عذراً! خدمة التوصيل من قهوجي ماهر تغطي فقط أحياء مدينة مكة المكرمة حالياً. يمكنك تصفح المتجر والأسعار فقط.";
+        
+        actions.innerHTML = `
+            <button onclick="closeLocationModal()" style="background: rgba(255,255,255,0.08); color: var(--text-main); border: 1px solid rgba(255,255,255,0.2); padding: 12px; font-weight: bold; border-radius: 8px; cursor: pointer; font-family: var(--font-arabic);">تصفح المتجر فقط 👁️</button>
+        `;
+        
+        if (cartLocationText) {
+            cartLocationText.innerHTML = `❌ التوصيل لمكة فقط`;
+            cartLocationText.style.color = "#ff4444";
+        }
+    }
+    
+    updateCartUI();
+}
+
+function closeLocationModal() {
+    const modal = document.getElementById('location-modal');
+    if (modal) modal.style.display = 'none';
+}
+
+function getDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = 
+        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+        Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+}
+
+// Initialize location status on DOMContentLoaded
+document.addEventListener('DOMContentLoaded', () => {
+    const cached = localStorage.getItem('maher_in_mecca');
+    if (cached !== null) {
+        userInMecca = (cached === 'true');
+        const cartLocationText = document.getElementById('cart-location-text');
+        if (cartLocationText) {
+            if (userInMecca) {
+                cartLocationText.innerHTML = `🛵 التوصيل متاح لمكة (3 ر.س)`;
+                cartLocationText.style.color = "var(--neon-matcha)";
+            } else {
+                cartLocationText.innerHTML = `❌ التوصيل لمكة فقط`;
+                cartLocationText.style.color = "#ff4444";
+            }
+        }
+        updateCartUI();
+    } else {
+        showLocationModal();
+    }
+});
 
 // Auto-watch active v1.0
