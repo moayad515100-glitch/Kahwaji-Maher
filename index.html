@@ -576,6 +576,23 @@
                     </div>
                 </div>
 
+                <!-- Product 5b: Iced Tea Maher [Soon] -->
+                <div class="product-card premium coming-soon-card" data-id="icetea_soon" data-category="matcha" style="opacity: 0.85; filter: grayscale(20%); position: relative;">
+                    <div class="product-image-container" style="position: relative; overflow: hidden;">
+                        <img src="icetea_maher.jpg" alt="ايس تي ماهر" class="product-image">
+                        <span class="product-tag tag-pro" style="background: linear-gradient(135deg, var(--gold), var(--accent)); color: #000; font-weight: bold; box-shadow: 0 0 10px rgba(255,170,0,0.4); z-index: 2;">قريباً ⏳</span>
+                    </div>
+                    <div class="product-info">
+                        <h3>ايس تي ماهر 🍋</h3>
+                        <p class="product-desc">شاي مثلج منعش بنكهة الليمون والنعناع الباردة، الخيار الأمثل لأيام الصيف الحارة!</p>
+                        <div class="product-price" style="color: var(--text-muted);">قريباً / Coming Soon</div>
+                        
+                        <button class="btn btn-add-cart" disabled style="background: rgba(255, 255, 255, 0.05); color: var(--text-muted); border: 1px dashed rgba(255, 255, 255, 0.15); cursor: not-allowed; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: none; width: 100%;">
+                            <i class="fa-solid fa-hourglass-start"></i> غير متوفر حالياً
+                        </button>
+                    </div>
+                </div>
+
                 <!-- Product 6: Maher's Milkshake -->
                 <div class="product-card premium" data-id="milkshake" data-category="juice">
                     <div class="product-image-container">
@@ -989,7 +1006,7 @@
 
 
     <!-- Script file -->
-    <script src="app.js?v=2.3"></script>
+    <script src="app.js?v=2.4"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
