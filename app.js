@@ -3930,8 +3930,7 @@ function triggerMatchaAlgaeEffect(x, y) {
 // ==================================================
 // 💬 Realtime P2P Chat System (Accounts & Direct Messaging)
 // ==================================================
-const CHAT_API = "https://extendsclass.com/api/json-storage/bin";
-const CHAT_BIN_ID = "ebbfecc";
+const CHAT_API = "/api/chat";
 
 // Local storage session keys
 const CHAT_USER_KEY = "maher_chat_username";
@@ -4026,7 +4025,7 @@ function stopChatPolling() {
 }
 
 function pollChatDatabase() {
-    fetch(`${CHAT_API}/${CHAT_BIN_ID}`)
+    fetch(CHAT_API)
         .then(res => res.json())
         .then(db => {
             chatDbCache = db;
@@ -4135,7 +4134,7 @@ function handleChatAuth(action) {
     showToast("جاري المعالجة... ⏳");
     
     // Fetch master database
-    fetch(`${CHAT_API}/${CHAT_BIN_ID}`)
+    fetch(CHAT_API)
         .then(res => res.json())
         .then(db => {
             const users = db.users || {};
