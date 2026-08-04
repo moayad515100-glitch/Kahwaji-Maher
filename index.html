@@ -1080,7 +1080,15 @@
             <div id="chat-screen-main" class="chat-screen" style="display: none;">
                 <div class="user-profile-header">
                     <span>مرحباً، <strong id="chat-my-display-name" style="color: var(--gold);">---</strong> 👋</span>
-                    <button onclick="handleChatLogout()" class="logout-btn" title="تسجيل خروج"><i class="fa-solid fa-right-from-bracket"></i></button>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <button onclick="showChatSettingsScreen()" class="logout-btn" title="إعدادات السيرفر" style="font-size: 1.05rem;"><i class="fa-solid fa-gear"></i></button>
+                        <button onclick="handleChatLogout()" class="logout-btn" title="تسجيل خروج" style="font-size: 1.05rem;"><i class="fa-solid fa-right-from-bracket"></i></button>
+                    </div>
+                </div>
+                
+                <!-- Local storage warning banner -->
+                <div id="chat-local-storage-warning" style="background: rgba(255, 170, 0, 0.08); border: 1px solid rgba(255, 170, 0, 0.2); padding: 8px 10px; border-radius: 8px; font-size: 0.72rem; color: #ffaa00; margin-bottom: 12px; line-height: 1.4; display: none; text-align: right;">
+                    ⚠️ الشات يعمل في وضع المعاينة المحلية (الرسائل على جهازك فقط). لربطه بسحابة عامة لجميع الناس، اضغط على زر ⚙️ بالأعلى وأضف رابط Firebase الخاص بك.
                 </div>
                 
                 <!-- Add Friend Section -->
@@ -1109,6 +1117,28 @@
                     <input type="text" id="chat-message-input" placeholder="اكتب رسالتك..." required class="room-message-input">
                     <button type="submit" class="room-send-btn"><i class="fa-solid fa-paper-plane"></i></button>
                 </form>
+            </div>
+
+            <!-- Screen 4: Chat Server Settings -->
+            <div id="chat-screen-settings" class="chat-screen" style="display: none;">
+                <div class="room-header">
+                    <button onclick="showChatMainScreen()" class="room-back-btn"><i class="fa-solid fa-arrow-right"></i></button>
+                    <span style="font-weight: bold; color: var(--gold);">⚙️ إعدادات السيرفر السحابي</span>
+                </div>
+                <div class="auth-box" style="margin-top: 10px;">
+                    <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 12px; text-align: right;">
+                        لجعل الشات يعمل عالمياً بين جميع الناس على أي استضافة (GitHub Pages أو محلياً)، يمكنك إنشاء مشروع مجاني في Firebase Realtime Database ووضع الرابط هنا:
+                    </p>
+                    <input type="url" id="chat-settings-firebase-url" placeholder="https://your-project-default-rtdb.firebaseio.com" class="chat-input-field" style="direction: ltr; text-align: left;">
+                    <div style="display: flex; gap: 8px; margin-top: 15px;">
+                        <button onclick="handleSaveChatSettings()" class="chat-btn btn-primary" style="flex: 1;">حفظ الإعدادات</button>
+                        <button onclick="handleClearChatSettings()" class="chat-btn btn-secondary" style="flex: 1;">حذف الرابط</button>
+                    </div>
+                    <p style="font-size: 0.72rem; color: var(--text-muted); line-height: 1.4; margin-top: 15px; text-align: right;">
+                        ℹ️ <strong>ملاحظة:</strong> تأكد من ضبط قواعد الحماية (Rules) في Firebase على وضعية الاختبار (Test Mode) لتسمح بالقراءة والكتابة العامة: 
+                        <code style="display: block; background: rgba(255,255,255,0.05); padding: 5px; border-radius: 4px; margin-top: 5px; direction: ltr; text-align: left;">".read": true, ".write": true</code>
+                    </p>
+                </div>
             </div>
         </div>
     </div>
