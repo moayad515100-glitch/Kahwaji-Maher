@@ -3931,6 +3931,7 @@ function triggerMatchaAlgaeEffect(x, y) {
 // 💬 Realtime P2P Chat System (Accounts & Direct Messaging)
 // ==================================================
 const CHAT_API = "/api/chat";
+const CHAT_DB_URL_KEY = "maher_chat_firebase_url";
 
 // Local storage session keys
 const CHAT_USER_KEY = "maher_chat_username";
@@ -3940,15 +3941,17 @@ let chatActiveRoom = null; // Username of current chat partner
 let chatInterval = null;   // Polling interval
 let chatDbCache = { users: {}, chats: {} };
 
+function getFirebaseUrl() {
+    return localStorage.getItem(CHAT_DB_URL_KEY);
+}
+
 // Initialize Chat System
 function initChatSystem() {
-    // Check if user is logged in
     const storedUser = localStorage.getItem(CHAT_USER_KEY);
     const storedPass = localStorage.getItem(CHAT_PASS_KEY);
     
     if (storedUser && storedPass) {
         showChatMainScreen();
-        // Start background polling
         startChatPolling();
     } else {
         showChatAuthScreen();
@@ -3979,6 +3982,7 @@ function showChatAuthScreen() {
     document.getElementById('chat-screen-auth').style.display = 'block';
     document.getElementById('chat-screen-main').style.display = 'none';
     document.getElementById('chat-screen-room').style.display = 'none';
+    document.getElementById('chat-screen-settings').style.display = 'none';
     stopChatPolling();
 }
 
@@ -3986,9 +3990,26 @@ function showChatMainScreen() {
     document.getElementById('chat-screen-auth').style.display = 'none';
     document.getElementById('chat-screen-main').style.display = 'block';
     document.getElementById('chat-screen-room').style.display = 'none';
+    document.getElementById('chat-screen-settings').style.display = 'none';
     
     const myUser = localStorage.getItem(CHAT_USER_KEY);
     document.getElementById('chat-my-display-name').textContent = myUser || "---";
+    
+    // Toggle local preview warning banner based on database URL setup
+    const warningBanner = document.getElementById('chat-local-storage-warning');
+    if (warningBanner) {
+        // If neither custom firebase URL nor cloud proxy is available (e.g. locally or github pages), warn the user
+        const isActuallyLocal = window.location.hostname === 'localhost' || 
+                               window.location.hostname === '127.0.0.1' || 
+                               window.location.protocol === 'file:' ||
+                               window.location.hostname.includes('github.io');
+                               
+        if (!getFirebaseUrl() && isActuallyLocal) {
+            warningBanner.style.display = 'block';
+        } else {
+            warningBanner.style.display = 'none';
+        }
+    }
     
     chatActiveRoom = null;
     loadChatMainData();
@@ -4024,13 +4045,32 @@ function stopChatPolling() {
     }
 }
 
-// Local Preview Fallback: if running on localhost or via file protocol, simulate chat in LocalStorage
+// Local Preview Fallback: if running on localhost, file protocol, or GitHub Pages (static only)
 const isLocalChat = window.location.hostname === 'localhost' || 
                     window.location.hostname === '127.0.0.1' || 
-                    window.location.protocol === 'file:';
+                    window.location.protocol === 'file:' ||
+                    window.location.hostname.includes('github.io');
 
 function getChatDb() {
-    if (isLocalChat) {
+    const firebaseUrl = getFirebaseUrl();
+    
+    if (firebaseUrl) {
+        let cleanUrl = firebaseUrl.trim();
+        if (cleanUrl.endsWith('/')) cleanUrl = cleanUrl.slice(0, -1);
+        if (!cleanUrl.endsWith('.json')) cleanUrl += '/chat.json';
+        
+        return fetch(cleanUrl).then(res => {
+            if (!res.ok) throw new Error("Firebase read error");
+            return res.json().then(data => data || { users: {}, chats: {} });
+        });
+    } else if (!isLocalChat) {
+        // Fetch from Cloudflare Pages function proxy
+        return fetch(CHAT_API).then(res => {
+            if (!res.ok) throw new Error("DB read error");
+            return res.json();
+        });
+    } else {
+        // Fallback to localStorage simulation
         return new Promise((resolve) => {
             let localDb = localStorage.getItem("maher_chat_local_db");
             if (!localDb) {
@@ -4039,21 +4079,27 @@ function getChatDb() {
             }
             resolve(JSON.parse(localDb));
         });
-    } else {
-        return fetch(CHAT_API).then(res => {
-            if (!res.ok) throw new Error("DB read error");
-            return res.json();
-        });
     }
 }
 
 function putChatDb(db) {
-    if (isLocalChat) {
-        return new Promise((resolve) => {
-            localStorage.setItem("maher_chat_local_db", JSON.stringify(db));
-            resolve();
+    const firebaseUrl = getFirebaseUrl();
+    
+    if (firebaseUrl) {
+        let cleanUrl = firebaseUrl.trim();
+        if (cleanUrl.endsWith('/')) cleanUrl = cleanUrl.slice(0, -1);
+        if (!cleanUrl.endsWith('.json')) cleanUrl += '/chat.json';
+        
+        return fetch(cleanUrl, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(db)
+        }).then(res => {
+            if (!res.ok) throw new Error("Firebase write error");
+            return res.json();
         });
-    } else {
+    } else if (!isLocalChat) {
+        // Save to Cloudflare Pages function proxy
         return fetch(CHAT_API, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
@@ -4061,6 +4107,12 @@ function putChatDb(db) {
         }).then(res => {
             if (!res.ok) throw new Error("DB write error");
             return res.json();
+        });
+    } else {
+        // Fallback to localStorage simulation
+        return new Promise((resolve) => {
+            localStorage.setItem("maher_chat_local_db", JSON.stringify(db));
+            resolve();
         });
     }
 }
@@ -4337,6 +4389,47 @@ function handleChatGuestEntry() {
             console.log("Guest login error:", err);
             showToast("❌ فشل الدخول كضيف، تحقق من الشبكة.");
         });
+}
+
+// Settings Screen Nav & Action Handlers
+function showChatSettingsScreen() {
+    document.getElementById('chat-screen-auth').style.display = 'none';
+    document.getElementById('chat-screen-main').style.display = 'none';
+    document.getElementById('chat-screen-room').style.display = 'none';
+    document.getElementById('chat-screen-settings').style.display = 'block';
+    
+    const urlField = document.getElementById('chat-settings-firebase-url');
+    if (urlField) {
+        urlField.value = getFirebaseUrl() || '';
+    }
+}
+
+function handleSaveChatSettings() {
+    const urlField = document.getElementById('chat-settings-firebase-url');
+    if (!urlField) return;
+    
+    const url = urlField.value.trim();
+    if (!url) {
+        showToast("يرجى إدخال رابط قاعدة بيانات صحيح!");
+        return;
+    }
+    
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        showToast("⚠️ يجب أن يبدأ الرابط بـ https:// أو http://");
+        return;
+    }
+    
+    localStorage.setItem(CHAT_DB_URL_KEY, url);
+    showToast("🎉 تم حفظ إعدادات السيرفر السحابي!");
+    showChatMainScreen();
+}
+
+function handleClearChatSettings() {
+    localStorage.removeItem(CHAT_DB_URL_KEY);
+    const urlField = document.getElementById('chat-settings-firebase-url');
+    if (urlField) urlField.value = '';
+    showToast("🗑️ تم حذف السيرفر السحابي والرجوع للمعاينة المحلية.");
+    showChatMainScreen();
 }
 
 // Logout Handler
