@@ -4024,9 +4024,49 @@ function stopChatPolling() {
     }
 }
 
+// Local Preview Fallback: if running on localhost or via file protocol, simulate chat in LocalStorage
+const isLocalChat = window.location.hostname === 'localhost' || 
+                    window.location.hostname === '127.0.0.1' || 
+                    window.location.protocol === 'file:';
+
+function getChatDb() {
+    if (isLocalChat) {
+        return new Promise((resolve) => {
+            let localDb = localStorage.getItem("maher_chat_local_db");
+            if (!localDb) {
+                localDb = JSON.stringify({ users: {}, chats: {} });
+                localStorage.setItem("maher_chat_local_db", localDb);
+            }
+            resolve(JSON.parse(localDb));
+        });
+    } else {
+        return fetch(CHAT_API).then(res => {
+            if (!res.ok) throw new Error("DB read error");
+            return res.json();
+        });
+    }
+}
+
+function putChatDb(db) {
+    if (isLocalChat) {
+        return new Promise((resolve) => {
+            localStorage.setItem("maher_chat_local_db", JSON.stringify(db));
+            resolve();
+        });
+    } else {
+        return fetch(CHAT_API, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(db)
+        }).then(res => {
+            if (!res.ok) throw new Error("DB write error");
+            return res.json();
+        });
+    }
+}
+
 function pollChatDatabase() {
-    fetch(CHAT_API)
-        .then(res => res.json())
+    getChatDb()
         .then(db => {
             chatDbCache = db;
             if (chatActiveRoom) {
@@ -4134,8 +4174,7 @@ function handleChatAuth(action) {
     showToast("جاري المعالجة... ⏳");
     
     // Fetch master database
-    fetch(CHAT_API)
-        .then(res => res.json())
+    getChatDb()
         .then(db => {
             const users = db.users || {};
             
@@ -4161,11 +4200,7 @@ function handleChatAuth(action) {
                     db.users = users;
                     
                     // Save back
-                    return fetch(CHAT_API, {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(db)
-                    }).then(() => {
+                    return putChatDb(db).then(() => {
                         localStorage.setItem(CHAT_USER_KEY, username);
                         localStorage.setItem(CHAT_PASS_KEY, password);
                         chatDbCache = db;
@@ -4195,8 +4230,7 @@ function handleAddFriend() {
     
     showToast("جاري البحث... 🔍");
     
-    fetch(CHAT_API)
-        .then(res => res.json())
+    getChatDb()
         .then(db => {
             const users = db.users || {};
             if (!users[friendUser]) {
@@ -4220,11 +4254,7 @@ function handleAddFriend() {
             
             db.users = users;
             
-            return fetch(CHAT_API, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(db)
-            }).then(() => {
+            return putChatDb(db).then(() => {
                 chatDbCache = db;
                 friendInput.value = '';
                 showToast("🎉 تم إضافة الصديق بنجاح!");
@@ -4262,18 +4292,13 @@ function handleSendChatMessage(event) {
     loadChatRoomMessages();
     
     // Fetch and commit to cloud DB
-    fetch(CHAT_API)
-        .then(res => res.json())
+    getChatDb()
         .then(db => {
             db.chats = db.chats || {};
             db.chats[chatKey] = db.chats[chatKey] || [];
             db.chats[chatKey].push(newMsg);
             
-            return fetch(CHAT_API, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(db)
-            }).then(() => {
+            return putChatDb(db).then(() => {
                 chatDbCache = db;
             });
         })
@@ -4289,8 +4314,7 @@ function handleChatGuestEntry() {
     const guestId = "guest_" + Math.floor(1000 + Math.random() * 9000);
     showToast("جاري تهيئة الدخول كضيف... ⏳");
     
-    fetch(CHAT_API)
-        .then(res => res.json())
+    getChatDb()
         .then(db => {
             db.users = db.users || {};
             
@@ -4301,11 +4325,7 @@ function handleChatGuestEntry() {
                 isGuest: true
             };
             
-            return fetch(CHAT_API, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(db)
-            }).then(() => {
+            return putChatDb(db).then(() => {
                 localStorage.setItem(CHAT_USER_KEY, guestId);
                 localStorage.setItem(CHAT_PASS_KEY, "");
                 chatDbCache = db;
