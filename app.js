@@ -4283,6 +4283,42 @@ function handleSendChatMessage(event) {
         });
 }
 
+// Guest Entry Handler
+function handleChatGuestEntry() {
+    // Generate a unique guest username
+    const guestId = "guest_" + Math.floor(1000 + Math.random() * 9000);
+    showToast("جاري تهيئة الدخول كضيف... ⏳");
+    
+    fetch(CHAT_API)
+        .then(res => res.json())
+        .then(db => {
+            db.users = db.users || {};
+            
+            // Register guest with blank password
+            db.users[guestId] = {
+                password: "",
+                friends: [],
+                isGuest: true
+            };
+            
+            return fetch(CHAT_API, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(db)
+            }).then(() => {
+                localStorage.setItem(CHAT_USER_KEY, guestId);
+                localStorage.setItem(CHAT_PASS_KEY, "");
+                chatDbCache = db;
+                showToast(`🎉 مرحباً بك! هويتك كضيف هي: ${guestId}`);
+                showChatMainScreen();
+            });
+        })
+        .catch(err => {
+            console.log("Guest login error:", err);
+            showToast("❌ فشل الدخول كضيف، تحقق من الشبكة.");
+        });
+}
+
 // Logout Handler
 function handleChatLogout() {
     localStorage.removeItem(CHAT_USER_KEY);
@@ -4302,6 +4338,7 @@ function escapeHTML(str) {
     );
 }
 
+// Format date to local time
 function formatTime(isoStr) {
     const date = new Date(isoStr);
     return date.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' });
