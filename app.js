@@ -3930,7 +3930,16 @@ function triggerMatchaAlgaeEffect(x, y) {
 // ==================================================
 // 💬 Realtime Customer Reviews & Comments System
 // ==================================================
-const KVDB_URL = "https://kvdb.io/maher_coffee_comments_6d7a1b";
+// COMMENTS BINS ON EXTENDSCLASS (ANONYMOUS FREE JSON STORAGE)
+const EXTENDSCLASS_API = "https://extendsclass.com/api/json-storage/bin";
+const COMMENTS_BINS = {
+    classic: "cbddaef",
+    pro: "febddbd",
+    superpro: "fecfbdf",
+    juice: "edbeded",
+    matcha: "bfbcaed",
+    milkshake: "ddbfbcd"
+};
 
 // Inject comments UI into active products
 function injectCommentsUI() {
@@ -3975,6 +3984,9 @@ function injectCommentsUI() {
 }
 
 function fetchCommentCount(productId) {
+    const binId = COMMENTS_BINS[productId];
+    if (!binId) return;
+
     const cached = localStorage.getItem(`cache_comments_${productId}`);
     if (cached) {
         try {
@@ -3983,14 +3995,15 @@ function fetchCommentCount(productId) {
         } catch(e) {}
     }
     
-    fetch(`${KVDB_URL}/comments_${productId}`)
+    fetch(`${EXTENDSCLASS_API}/${binId}`)
         .then(res => {
-            if (res.status === 404) return [];
+            if (!res.ok) return [];
             return res.json();
         })
         .then(comments => {
-            localStorage.setItem(`cache_comments_${productId}`, JSON.stringify(comments));
-            updateCommentCountBadge(productId, comments.length);
+            const list = Array.isArray(comments) ? comments : [];
+            localStorage.setItem(`cache_comments_${productId}`, JSON.stringify(list));
+            updateCommentCountBadge(productId, list.length);
         })
         .catch(err => console.log("Prefetch error:", err));
 }
@@ -4022,22 +4035,23 @@ function toggleComments(productId) {
 
 // Load comments with LocalStorage fallback
 function loadComments(productId) {
+    const binId = COMMENTS_BINS[productId];
+    if (!binId) return;
+
     const listContainer = document.querySelector(`.comments-section[data-product-id="${productId}"] .comments-list`);
     if (!listContainer) return;
     
     listContainer.innerHTML = `<div style="text-align:center; padding:15px; font-size:0.75rem; color:var(--text-muted);"><i class="fa-solid fa-spinner fa-spin"></i> جاري تحميل التعليقات...</div>`;
     
-    fetch(`${KVDB_URL}/comments_${productId}`)
+    fetch(`${EXTENDSCLASS_API}/${binId}`)
         .then(res => {
-            if (!res.ok) {
-                if (res.status === 404) return [];
-                throw new Error("DB error");
-            }
+            if (!res.ok) throw new Error("DB error");
             return res.json();
         })
         .then(comments => {
-            localStorage.setItem(`cache_comments_${productId}`, JSON.stringify(comments));
-            renderCommentsList(productId, comments);
+            const list = Array.isArray(comments) ? comments : [];
+            localStorage.setItem(`cache_comments_${productId}`, JSON.stringify(list));
+            renderCommentsList(productId, list);
         })
         .catch(err => {
             console.log("Offline comments fallback active:", err);
@@ -4078,6 +4092,9 @@ function renderCommentsList(productId, comments) {
 // Submit new comment
 function submitComment(event, productId) {
     event.preventDefault();
+    const binId = COMMENTS_BINS[productId];
+    if (!binId) return;
+
     const form = event.target;
     const nameInput = form.querySelector('.comment-name-input');
     const textInput = form.querySelector('.comment-text-input');
@@ -4100,17 +4117,18 @@ function submitComment(event, productId) {
         date: new Date().toISOString()
     };
     
-    fetch(`${KVDB_URL}/comments_${productId}`)
+    fetch(`${EXTENDSCLASS_API}/${binId}`)
         .then(res => {
-            if (res.status === 404) return [];
+            if (!res.ok) return [];
             return res.json();
         })
         .then(comments => {
-            comments.push(newComment);
-            return fetch(`${KVDB_URL}/comments_${productId}`, {
+            const list = Array.isArray(comments) ? comments : [];
+            list.push(newComment);
+            return fetch(`${EXTENDSCLASS_API}/${binId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(comments)
+                body: JSON.stringify(list)
             });
         })
         .then(() => {
