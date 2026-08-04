@@ -3928,224 +3928,373 @@ function triggerMatchaAlgaeEffect(x, y) {
 }
 
 // ==================================================
-// 💬 Realtime Customer Reviews & Comments System
+// 💬 Realtime P2P Chat System (Accounts & Direct Messaging)
 // ==================================================
-// COMMENTS BINS ON EXTENDSCLASS (ANONYMOUS FREE JSON STORAGE)
-const EXTENDSCLASS_API = "https://extendsclass.com/api/json-storage/bin";
-const COMMENTS_BINS = {
-    classic: "cbddaef",
-    pro: "febddbd",
-    superpro: "fecfbdf",
-    juice: "edbeded",
-    matcha: "bfbcaed",
-    milkshake: "ddbfbcd"
-};
+const CHAT_API = "https://extendsclass.com/api/json-storage/bin";
+const CHAT_BIN_ID = "ebbfecc";
 
-// Inject comments UI into active products
-function injectCommentsUI() {
-    const activeProducts = ['classic', 'pro', 'superpro', 'juice', 'matcha', 'milkshake'];
+// Local storage session keys
+const CHAT_USER_KEY = "maher_chat_username";
+const CHAT_PASS_KEY = "maher_chat_password";
+
+let chatActiveRoom = null; // Username of current chat partner
+let chatInterval = null;   // Polling interval
+let chatDbCache = { users: {}, chats: {} };
+
+// Initialize Chat System
+function initChatSystem() {
+    // Check if user is logged in
+    const storedUser = localStorage.getItem(CHAT_USER_KEY);
+    const storedPass = localStorage.getItem(CHAT_PASS_KEY);
     
-    activeProducts.forEach(productId => {
-        const card = document.querySelector(`.product-card[data-id="${productId}"]`);
-        if (!card) return;
-        
-        const infoDiv = card.querySelector('.product-info');
-        const btn = card.querySelector('.btn-add-cart');
-        if (!infoDiv || !btn) return;
-        
-        const commentsDiv = document.createElement('div');
-        commentsDiv.className = 'comments-section';
-        commentsDiv.setAttribute('data-product-id', productId);
-        commentsDiv.innerHTML = `
-            <h4 class="comments-toggle" onclick="toggleComments('${productId}')">
-                <span><i class="fa-regular fa-comments"></i> تعليقات وآراء (<span class="comment-count">0</span>)</span>
-                <i class="fa-solid fa-chevron-down toggle-icon"></i>
-            </h4>
-            <div class="comments-content" style="display: none;">
-                <div class="comments-list">
-                    <p class="no-comments">لا توجد تعليقات بعد. كن أول من يعلق! ✍️</p>
-                </div>
-                <form onsubmit="submitComment(event, '${productId}')" class="comment-form">
-                    <input type="text" placeholder="الاسم الكريم..." required class="comment-name-input">
-                    <div class="comment-input-row">
-                        <input type="text" placeholder="اكتب رأيك هنا..." required class="comment-text-input">
-                        <button type="submit" class="btn-comment-submit"><i class="fa-solid fa-paper-plane"></i></button>
-                    </div>
-                </form>
-            </div>
-        `;
-        
-        // Insert right above the Add-to-cart button
-        infoDiv.insertBefore(commentsDiv, btn);
-        
-        // Pre-fetch count
-        fetchCommentCount(productId);
-    });
-}
-
-function fetchCommentCount(productId) {
-    const binId = COMMENTS_BINS[productId];
-    if (!binId) return;
-
-    const cached = localStorage.getItem(`cache_comments_${productId}`);
-    if (cached) {
-        try {
-            const comments = JSON.parse(cached);
-            updateCommentCountBadge(productId, comments.length);
-        } catch(e) {}
-    }
-    
-    fetch(`${EXTENDSCLASS_API}/${binId}`)
-        .then(res => {
-            if (!res.ok) return [];
-            return res.json();
-        })
-        .then(comments => {
-            const list = Array.isArray(comments) ? comments : [];
-            localStorage.setItem(`cache_comments_${productId}`, JSON.stringify(list));
-            updateCommentCountBadge(productId, list.length);
-        })
-        .catch(err => console.log("Prefetch error:", err));
-}
-
-function updateCommentCountBadge(productId, count) {
-    const countSpan = document.querySelector(`.comments-section[data-product-id="${productId}"] .comment-count`);
-    if (countSpan) {
-        countSpan.textContent = count;
-    }
-}
-
-// Toggle comments drawer
-function toggleComments(productId) {
-    const section = document.querySelector(`.comments-section[data-product-id="${productId}"]`);
-    if (!section) return;
-    
-    const content = section.querySelector('.comments-content');
-    const isOpen = section.classList.contains('open');
-    
-    if (isOpen) {
-        section.classList.remove('open');
-        content.style.display = 'none';
+    if (storedUser && storedPass) {
+        showChatMainScreen();
+        // Start background polling
+        startChatPolling();
     } else {
-        section.classList.add('open');
-        content.style.display = 'block';
-        loadComments(productId);
+        showChatAuthScreen();
     }
 }
 
-// Load comments with LocalStorage fallback
-function loadComments(productId) {
-    const binId = COMMENTS_BINS[productId];
-    if (!binId) return;
-
-    const listContainer = document.querySelector(`.comments-section[data-product-id="${productId}"] .comments-list`);
-    if (!listContainer) return;
+// Open / Close Chat Drawer
+function toggleChatDrawer() {
+    const drawer = document.getElementById('chat-drawer');
+    if (!drawer) return;
     
-    listContainer.innerHTML = `<div style="text-align:center; padding:15px; font-size:0.75rem; color:var(--text-muted);"><i class="fa-solid fa-spinner fa-spin"></i> جاري تحميل التعليقات...</div>`;
-    
-    fetch(`${EXTENDSCLASS_API}/${binId}`)
-        .then(res => {
-            if (!res.ok) throw new Error("DB error");
-            return res.json();
-        })
-        .then(comments => {
-            const list = Array.isArray(comments) ? comments : [];
-            localStorage.setItem(`cache_comments_${productId}`, JSON.stringify(list));
-            renderCommentsList(productId, list);
-        })
-        .catch(err => {
-            console.log("Offline comments fallback active:", err);
-            const cached = localStorage.getItem(`cache_comments_${productId}`);
-            const comments = cached ? JSON.parse(cached) : [];
-            renderCommentsList(productId, comments);
-        });
+    const isOpen = drawer.classList.contains('open');
+    if (isOpen) {
+        drawer.classList.remove('open');
+        stopChatPolling();
+    } else {
+        // Close cart if open
+        const cartDrawer = document.getElementById('cart-drawer');
+        if (cartDrawer) cartDrawer.classList.remove('open');
+        
+        drawer.classList.add('open');
+        initChatSystem();
+    }
 }
 
-function renderCommentsList(productId, comments) {
-    const section = document.querySelector(`.comments-section[data-product-id="${productId}"]`);
-    if (!section) return;
+// Display specific screens
+function showChatAuthScreen() {
+    document.getElementById('chat-screen-auth').style.display = 'block';
+    document.getElementById('chat-screen-main').style.display = 'none';
+    document.getElementById('chat-screen-room').style.display = 'none';
+    stopChatPolling();
+}
+
+function showChatMainScreen() {
+    document.getElementById('chat-screen-auth').style.display = 'none';
+    document.getElementById('chat-screen-main').style.display = 'block';
+    document.getElementById('chat-screen-room').style.display = 'none';
     
-    const listContainer = section.querySelector('.comments-list');
-    const countSpan = section.querySelector('.comment-count');
+    const myUser = localStorage.getItem(CHAT_USER_KEY);
+    document.getElementById('chat-my-display-name').textContent = myUser || "---";
     
-    countSpan.textContent = comments.length;
+    chatActiveRoom = null;
+    loadChatMainData();
+    startChatPolling();
+}
+
+function openChatRoom(friendUsername) {
+    chatActiveRoom = friendUsername;
     
-    if (comments.length === 0) {
-        listContainer.innerHTML = `<p class="no-comments">لا توجد تعليقات بعد. كن أول من يعلق! ✍️</p>`;
+    document.getElementById('chat-screen-auth').style.display = 'none';
+    document.getElementById('chat-screen-main').style.display = 'none';
+    const roomScreen = document.getElementById('chat-screen-room');
+    roomScreen.style.display = 'flex';
+    
+    document.getElementById('chat-room-title').textContent = friendUsername;
+    
+    // Clear message input
+    document.getElementById('chat-message-input').value = '';
+    
+    loadChatRoomMessages();
+}
+
+// Background Polling
+function startChatPolling() {
+    stopChatPolling();
+    chatInterval = setInterval(pollChatDatabase, 4000); // Poll database every 4 seconds
+}
+
+function stopChatPolling() {
+    if (chatInterval) {
+        clearInterval(chatInterval);
+        chatInterval = null;
+    }
+}
+
+function pollChatDatabase() {
+    fetch(`${CHAT_API}/${CHAT_BIN_ID}`)
+        .then(res => res.json())
+        .then(db => {
+            chatDbCache = db;
+            if (chatActiveRoom) {
+                loadChatRoomMessages();
+            } else if (document.getElementById('chat-screen-main').style.display === 'block') {
+                loadChatMainData();
+            }
+        })
+        .catch(err => console.log("Chat sync error:", err));
+}
+
+// Fetch all database records and load friends
+function loadChatMainData() {
+    const list = document.getElementById('chat-friends-list');
+    if (!list) return;
+    
+    const myUser = localStorage.getItem(CHAT_USER_KEY);
+    if (!myUser) return;
+    
+    // Get database cache
+    const db = chatDbCache;
+    const users = db.users || {};
+    const myData = users[myUser] || { friends: [] };
+    const myFriends = myData.friends || [];
+    
+    if (myFriends.length === 0) {
+        list.innerHTML = `<div class="no-friends">لم تقم بإضافة أي أصدقاء بعد. ➕</div>`;
         return;
     }
     
-    // Newest comments on top
-    comments.sort((a, b) => new Date(b.date) - new Date(a.date));
-    
-    listContainer.innerHTML = comments.map(c => `
-        <div class="comment-bubble">
-            <div class="comment-bubble-header">
-                <span class="comment-author">${escapeHTML(c.author)}</span>
-                <span class="comment-time">${formatCommentDate(c.date)}</span>
+    list.innerHTML = myFriends.map(f => {
+        // Calculate unread count or last message
+        const chatKey = getChatRoomKey(myUser, f);
+        const messages = (db.chats && db.chats[chatKey]) ? db.chats[chatKey] : [];
+        const lastMsg = messages.length > 0 ? messages[messages.length - 1].text : "لا توجد رسائل بينكما";
+        
+        return `
+            <div class="friend-item" onclick="openChatRoom('${f}')">
+                <div>
+                    <div class="friend-name">${escapeHTML(f)}</div>
+                    <div class="friend-meta" style="margin-top: 3px; font-size: 0.75rem; color: var(--text-muted);">${escapeHTML(lastMsg)}</div>
+                </div>
+                <div class="friend-meta"><i class="fa-solid fa-chevron-left"></i></div>
             </div>
-            <div class="comment-text">${escapeHTML(c.text)}</div>
-        </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
-// Submit new comment
-function submitComment(event, productId) {
-    event.preventDefault();
-    const binId = COMMENTS_BINS[productId];
-    if (!binId) return;
+// Load messages in room
+function loadChatRoomMessages() {
+    const container = document.getElementById('chat-room-messages');
+    if (!container || !chatActiveRoom) return;
+    
+    const myUser = localStorage.getItem(CHAT_USER_KEY);
+    if (!myUser) return;
+    
+    const db = chatDbCache;
+    const chatKey = getChatRoomKey(myUser, chatActiveRoom);
+    const messages = (db.chats && db.chats[chatKey]) ? db.chats[chatKey] : [];
+    
+    if (messages.length === 0) {
+        container.innerHTML = `<div class="no-friends" style="margin-top: auto;">ابدأ المحادثة الآن! 💬</div>`;
+        return;
+    }
+    
+    const atBottom = container.scrollHeight - container.scrollTop <= container.clientHeight + 40;
+    
+    container.innerHTML = messages.map(m => {
+        const isMe = m.sender === myUser;
+        const bubbleClass = isMe ? 'sent' : 'received';
+        const time = formatTime(m.date);
+        
+        return `
+            <div class="msg-bubble ${bubbleClass}">
+                <div class="msg-text">${escapeHTML(m.text)}</div>
+                <span class="msg-time">${time}</span>
+            </div>
+        `;
+    }).join('');
+    
+    // Auto scroll to bottom
+    if (atBottom) {
+        container.scrollTop = container.scrollHeight;
+    }
+}
 
-    const form = event.target;
-    const nameInput = form.querySelector('.comment-name-input');
-    const textInput = form.querySelector('.comment-text-input');
+// User Authentication Handler
+function handleChatAuth(action) {
+    const userField = document.getElementById('chat-auth-username');
+    const passField = document.getElementById('chat-auth-password');
     
-    const author = nameInput.value.trim();
-    const text = textInput.value.trim();
+    const username = userField.value.trim().toLowerCase();
+    const password = passField.value.trim();
     
-    if (!author || !text) return;
+    if (!username || !password) {
+        showToast("يرجى تعبئة جميع الحقول!");
+        return;
+    }
     
-    nameInput.disabled = true;
-    textInput.disabled = true;
-    const btn = form.querySelector('.btn-comment-submit');
-    const origBtnHTML = btn.innerHTML;
-    btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i>`;
-    btn.disabled = true;
+    if (username.length < 3 || username.includes(' ')) {
+        showToast("اسم المستخدم يجب أن يكون 3 أحرف على الأقل وبدون مسافات!");
+        return;
+    }
     
-    const newComment = {
-        author,
-        text,
+    showToast("جاري المعالجة... ⏳");
+    
+    // Fetch master database
+    fetch(`${CHAT_API}/${CHAT_BIN_ID}`)
+        .then(res => res.json())
+        .then(db => {
+            const users = db.users || {};
+            
+            if (action === 'login') {
+                if (users[username] && users[username].password === password) {
+                    localStorage.setItem(CHAT_USER_KEY, username);
+                    localStorage.setItem(CHAT_PASS_KEY, password);
+                    chatDbCache = db;
+                    showToast("🎉 تم تسجيل الدخول بنجاح!");
+                    showChatMainScreen();
+                } else {
+                    showToast("❌ اسم المستخدم أو كلمة المرور غير صحيحة!");
+                }
+            } else if (action === 'register') {
+                if (users[username]) {
+                    showToast("❌ اسم المستخدم هذا محجوز بالفعل!");
+                } else {
+                    // Create new user account
+                    users[username] = {
+                        password: password,
+                        friends: []
+                    };
+                    db.users = users;
+                    
+                    // Save back
+                    return fetch(`${CHAT_API}/${CHAT_BIN_ID}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(db)
+                    }).then(() => {
+                        localStorage.setItem(CHAT_USER_KEY, username);
+                        localStorage.setItem(CHAT_PASS_KEY, password);
+                        chatDbCache = db;
+                        showToast("🎉 تم إنشاء الحساب بنجاح!");
+                        showChatMainScreen();
+                    });
+                }
+            }
+        })
+        .catch(err => {
+            console.log("Auth error:", err);
+            showToast("❌ حدث خطأ في الشبكة، يرجى المحاولة لاحقاً.");
+        });
+}
+
+// Add Friend Handler
+function handleAddFriend() {
+    const friendInput = document.getElementById('chat-add-friend-username');
+    const friendUser = friendInput.value.trim().toLowerCase();
+    const myUser = localStorage.getItem(CHAT_USER_KEY);
+    
+    if (!friendUser) return;
+    if (friendUser === myUser) {
+        showToast("⚠️ لا يمكنك إضافة نفسك كصديق!");
+        return;
+    }
+    
+    showToast("جاري البحث... 🔍");
+    
+    fetch(`${CHAT_API}/${CHAT_BIN_ID}`)
+        .then(res => res.json())
+        .then(db => {
+            const users = db.users || {};
+            if (!users[friendUser]) {
+                showToast("❌ اسم المستخدم هذا غير موجود!");
+                return;
+            }
+            
+            // Check if already friends
+            const myFriends = users[myUser].friends || [];
+            if (myFriends.includes(friendUser)) {
+                showToast("⚠️ هذا الصديق مضاف بالفعل!");
+                return;
+            }
+            
+            // Add friend mutually
+            users[myUser].friends = users[myUser].friends || [];
+            users[myUser].friends.push(friendUser);
+            
+            users[friendUser].friends = users[friendUser].friends || [];
+            users[friendUser].friends.push(myUser);
+            
+            db.users = users;
+            
+            return fetch(`${CHAT_API}/${CHAT_BIN_ID}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(db)
+            }).then(() => {
+                chatDbCache = db;
+                friendInput.value = '';
+                showToast("🎉 تم إضافة الصديق بنجاح!");
+                loadChatMainData();
+            });
+        })
+        .catch(err => {
+            console.log("Add friend error:", err);
+            showToast("❌ فشل إضافة الصديق، تحقق من الشبكة.");
+        });
+}
+
+// Send Message Handler
+function handleSendChatMessage(event) {
+    event.preventDefault();
+    const input = document.getElementById('chat-message-input');
+    const text = input.value.trim();
+    const myUser = localStorage.getItem(CHAT_USER_KEY);
+    
+    if (!text || !chatActiveRoom || !myUser) return;
+    
+    input.value = '';
+    
+    const newMsg = {
+        sender: myUser,
+        text: text,
         date: new Date().toISOString()
     };
     
-    fetch(`${EXTENDSCLASS_API}/${binId}`)
-        .then(res => {
-            if (!res.ok) return [];
-            return res.json();
-        })
-        .then(comments => {
-            const list = Array.isArray(comments) ? comments : [];
-            list.push(newComment);
-            return fetch(`${EXTENDSCLASS_API}/${binId}`, {
+    // Append to database in local cache first for visual speed
+    const chatKey = getChatRoomKey(myUser, chatActiveRoom);
+    chatDbCache.chats = chatDbCache.chats || {};
+    chatDbCache.chats[chatKey] = chatDbCache.chats[chatKey] || [];
+    chatDbCache.chats[chatKey].push(newMsg);
+    loadChatRoomMessages();
+    
+    // Fetch and commit to cloud DB
+    fetch(`${CHAT_API}/${CHAT_BIN_ID}`)
+        .then(res => res.json())
+        .then(db => {
+            db.chats = db.chats || {};
+            db.chats[chatKey] = db.chats[chatKey] || [];
+            db.chats[chatKey].push(newMsg);
+            
+            return fetch(`${CHAT_API}/${CHAT_BIN_ID}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(list)
+                body: JSON.stringify(db)
+            }).then(() => {
+                chatDbCache = db;
             });
         })
-        .then(() => {
-            showToast("🎉 تم نشر تعليقك بنجاح!");
-            textInput.value = '';
-            loadComments(productId);
-        })
         .catch(err => {
-            console.log("Post error:", err);
-            showToast("❌ فشل النشر، تأكد من الاتصال بالإنترنت.");
-        })
-        .finally(() => {
-            nameInput.disabled = false;
-            textInput.disabled = false;
-            btn.disabled = false;
-            btn.innerHTML = origBtnHTML;
+            console.log("Send message error:", err);
+            showToast("⚠️ فشل إرسال الرسالة، تحقق من الشبكة.");
         });
+}
+
+// Logout Handler
+function handleChatLogout() {
+    localStorage.removeItem(CHAT_USER_KEY);
+    localStorage.removeItem(CHAT_PASS_KEY);
+    showChatAuthScreen();
+    showToast("🔓 تم تسجيل الخروج.");
+}
+
+// Helper: unique sorted chat room key
+function getChatRoomKey(user1, user2) {
+    return [user1, user2].sort().join('_');
 }
 
 function escapeHTML(str) {
@@ -4154,14 +4303,9 @@ function escapeHTML(str) {
     );
 }
 
-function formatCommentDate(isoStr) {
+function formatTime(isoStr) {
     const date = new Date(isoStr);
-    return date.toLocaleDateString('ar-SA', { 
-        hour: '2-digit', 
-        minute: '2-digit',
-        day: 'numeric',
-        month: 'short'
-    });
+    return date.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' });
 }
 
 // Auto-watch active v1.0
