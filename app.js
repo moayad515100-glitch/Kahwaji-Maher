@@ -3819,9 +3819,9 @@ function confirmMapLocation() {
 
 // Initialize location status on DOMContentLoaded
 document.addEventListener('DOMContentLoaded', () => {
-    // Inject interactive product comments/review fields dynamically
-    if (typeof injectCommentsUI === 'function') {
-        injectCommentsUI();
+    // Initialize P2P Chat System
+    if (typeof initChatSystem === 'function') {
+        initChatSystem();
     }
 
     const cached = localStorage.getItem('maher_in_mecca');
