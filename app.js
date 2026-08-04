@@ -3819,6 +3819,11 @@ function confirmMapLocation() {
 
 // Initialize location status on DOMContentLoaded
 document.addEventListener('DOMContentLoaded', () => {
+    // Inject interactive product comments/review fields dynamically
+    if (typeof injectCommentsUI === 'function') {
+        injectCommentsUI();
+    }
+
     const cached = localStorage.getItem('maher_in_mecca');
     if (cached !== null) {
         userInMecca = (cached === 'true');
@@ -3920,6 +3925,225 @@ function triggerMatchaAlgaeEffect(x, y) {
             particle.remove();
         });
     }
+}
+
+// ==================================================
+// 💬 Realtime Customer Reviews & Comments System
+// ==================================================
+const KVDB_URL = "https://kvdb.io/maher_coffee_comments_6d7a1b";
+
+// Inject comments UI into active products
+function injectCommentsUI() {
+    const activeProducts = ['classic', 'pro', 'superpro', 'juice', 'matcha', 'milkshake'];
+    
+    activeProducts.forEach(productId => {
+        const card = document.querySelector(`.product-card[data-id="${productId}"]`);
+        if (!card) return;
+        
+        const infoDiv = card.querySelector('.product-info');
+        const btn = card.querySelector('.btn-add-cart');
+        if (!infoDiv || !btn) return;
+        
+        const commentsDiv = document.createElement('div');
+        commentsDiv.className = 'comments-section';
+        commentsDiv.setAttribute('data-product-id', productId);
+        commentsDiv.innerHTML = `
+            <h4 class="comments-toggle" onclick="toggleComments('${productId}')">
+                <span><i class="fa-regular fa-comments"></i> تعليقات وآراء (<span class="comment-count">0</span>)</span>
+                <i class="fa-solid fa-chevron-down toggle-icon"></i>
+            </h4>
+            <div class="comments-content" style="display: none;">
+                <div class="comments-list">
+                    <p class="no-comments">لا توجد تعليقات بعد. كن أول من يعلق! ✍️</p>
+                </div>
+                <form onsubmit="submitComment(event, '${productId}')" class="comment-form">
+                    <input type="text" placeholder="الاسم الكريم..." required class="comment-name-input">
+                    <div class="comment-input-row">
+                        <input type="text" placeholder="اكتب رأيك هنا..." required class="comment-text-input">
+                        <button type="submit" class="btn-comment-submit"><i class="fa-solid fa-paper-plane"></i></button>
+                    </div>
+                </form>
+            </div>
+        `;
+        
+        // Insert right above the Add-to-cart button
+        infoDiv.insertBefore(commentsDiv, btn);
+        
+        // Pre-fetch count
+        fetchCommentCount(productId);
+    });
+}
+
+function fetchCommentCount(productId) {
+    const cached = localStorage.getItem(`cache_comments_${productId}`);
+    if (cached) {
+        try {
+            const comments = JSON.parse(cached);
+            updateCommentCountBadge(productId, comments.length);
+        } catch(e) {}
+    }
+    
+    fetch(`${KVDB_URL}/comments_${productId}`)
+        .then(res => {
+            if (res.status === 404) return [];
+            return res.json();
+        })
+        .then(comments => {
+            localStorage.setItem(`cache_comments_${productId}`, JSON.stringify(comments));
+            updateCommentCountBadge(productId, comments.length);
+        })
+        .catch(err => console.log("Prefetch error:", err));
+}
+
+function updateCommentCountBadge(productId, count) {
+    const countSpan = document.querySelector(`.comments-section[data-product-id="${productId}"] .comment-count`);
+    if (countSpan) {
+        countSpan.textContent = count;
+    }
+}
+
+// Toggle comments drawer
+function toggleComments(productId) {
+    const section = document.querySelector(`.comments-section[data-product-id="${productId}"]`);
+    if (!section) return;
+    
+    const content = section.querySelector('.comments-content');
+    const isOpen = section.classList.contains('open');
+    
+    if (isOpen) {
+        section.classList.remove('open');
+        content.style.display = 'none';
+    } else {
+        section.classList.add('open');
+        content.style.display = 'block';
+        loadComments(productId);
+    }
+}
+
+// Load comments with LocalStorage fallback
+function loadComments(productId) {
+    const listContainer = document.querySelector(`.comments-section[data-product-id="${productId}"] .comments-list`);
+    if (!listContainer) return;
+    
+    listContainer.innerHTML = `<div style="text-align:center; padding:15px; font-size:0.75rem; color:var(--text-muted);"><i class="fa-solid fa-spinner fa-spin"></i> جاري تحميل التعليقات...</div>`;
+    
+    fetch(`${KVDB_URL}/comments_${productId}`)
+        .then(res => {
+            if (!res.ok) {
+                if (res.status === 404) return [];
+                throw new Error("DB error");
+            }
+            return res.json();
+        })
+        .then(comments => {
+            localStorage.setItem(`cache_comments_${productId}`, JSON.stringify(comments));
+            renderCommentsList(productId, comments);
+        })
+        .catch(err => {
+            console.log("Offline comments fallback active:", err);
+            const cached = localStorage.getItem(`cache_comments_${productId}`);
+            const comments = cached ? JSON.parse(cached) : [];
+            renderCommentsList(productId, comments);
+        });
+}
+
+function renderCommentsList(productId, comments) {
+    const section = document.querySelector(`.comments-section[data-product-id="${productId}"]`);
+    if (!section) return;
+    
+    const listContainer = section.querySelector('.comments-list');
+    const countSpan = section.querySelector('.comment-count');
+    
+    countSpan.textContent = comments.length;
+    
+    if (comments.length === 0) {
+        listContainer.innerHTML = `<p class="no-comments">لا توجد تعليقات بعد. كن أول من يعلق! ✍️</p>`;
+        return;
+    }
+    
+    // Newest comments on top
+    comments.sort((a, b) => new Date(b.date) - new Date(a.date));
+    
+    listContainer.innerHTML = comments.map(c => `
+        <div class="comment-bubble">
+            <div class="comment-bubble-header">
+                <span class="comment-author">${escapeHTML(c.author)}</span>
+                <span class="comment-time">${formatCommentDate(c.date)}</span>
+            </div>
+            <div class="comment-text">${escapeHTML(c.text)}</div>
+        </div>
+    `).join('');
+}
+
+// Submit new comment
+function submitComment(event, productId) {
+    event.preventDefault();
+    const form = event.target;
+    const nameInput = form.querySelector('.comment-name-input');
+    const textInput = form.querySelector('.comment-text-input');
+    
+    const author = nameInput.value.trim();
+    const text = textInput.value.trim();
+    
+    if (!author || !text) return;
+    
+    nameInput.disabled = true;
+    textInput.disabled = true;
+    const btn = form.querySelector('.btn-comment-submit');
+    const origBtnHTML = btn.innerHTML;
+    btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i>`;
+    btn.disabled = true;
+    
+    const newComment = {
+        author,
+        text,
+        date: new Date().toISOString()
+    };
+    
+    fetch(`${KVDB_URL}/comments_${productId}`)
+        .then(res => {
+            if (res.status === 404) return [];
+            return res.json();
+        })
+        .then(comments => {
+            comments.push(newComment);
+            return fetch(`${KVDB_URL}/comments_${productId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(comments)
+            });
+        })
+        .then(() => {
+            showToast("🎉 تم نشر تعليقك بنجاح!");
+            textInput.value = '';
+            loadComments(productId);
+        })
+        .catch(err => {
+            console.log("Post error:", err);
+            showToast("❌ فشل النشر، تأكد من الاتصال بالإنترنت.");
+        })
+        .finally(() => {
+            nameInput.disabled = false;
+            textInput.disabled = false;
+            btn.disabled = false;
+            btn.innerHTML = origBtnHTML;
+        });
+}
+
+function escapeHTML(str) {
+    return str.replace(/[&<>'"]/g, 
+        tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+    );
+}
+
+function formatCommentDate(isoStr) {
+    const date = new Date(isoStr);
+    return date.toLocaleDateString('ar-SA', { 
+        hour: '2-digit', 
+        minute: '2-digit',
+        day: 'numeric',
+        month: 'short'
+    });
 }
 
 // Auto-watch active v1.0
