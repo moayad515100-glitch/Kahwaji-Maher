@@ -4161,7 +4161,7 @@ function handleChatAuth(action) {
                     db.users = users;
                     
                     // Save back
-                    return fetch(`${CHAT_API}/${CHAT_BIN_ID}`, {
+                    return fetch(CHAT_API, {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(db)
@@ -4195,7 +4195,7 @@ function handleAddFriend() {
     
     showToast("جاري البحث... 🔍");
     
-    fetch(`${CHAT_API}/${CHAT_BIN_ID}`)
+    fetch(CHAT_API)
         .then(res => res.json())
         .then(db => {
             const users = db.users || {};
@@ -4220,7 +4220,7 @@ function handleAddFriend() {
             
             db.users = users;
             
-            return fetch(`${CHAT_API}/${CHAT_BIN_ID}`, {
+            return fetch(CHAT_API, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(db)
@@ -4262,14 +4262,14 @@ function handleSendChatMessage(event) {
     loadChatRoomMessages();
     
     // Fetch and commit to cloud DB
-    fetch(`${CHAT_API}/${CHAT_BIN_ID}`)
+    fetch(CHAT_API)
         .then(res => res.json())
         .then(db => {
             db.chats = db.chats || {};
             db.chats[chatKey] = db.chats[chatKey] || [];
             db.chats[chatKey].push(newMsg);
             
-            return fetch(`${CHAT_API}/${CHAT_BIN_ID}`, {
+            return fetch(CHAT_API, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(db)
