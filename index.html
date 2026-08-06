@@ -618,6 +618,17 @@
                                         <label for="size-milkshake-large" class="chip-label">كبير (+1 ر.س)</label>
                                     </div>
                                 </div>
+                                
+                                <div class="option-group" style="margin-top: 10px;">
+                                    <label>إضافات:</label>
+                                    <div class="chips-container blueberry-chips">
+                                        <input type="radio" id="extra-milkshake-plain" name="extra-milkshake" value="سادة" checked style="display:none;">
+                                        <label for="extra-milkshake-plain" class="chip-label">سادة</label>
+
+                                        <input type="radio" id="extra-milkshake-blueberry" name="extra-milkshake" value="مع توت أزرق" style="display:none;">
+                                        <label for="extra-milkshake-blueberry" class="chip-label">مع توت أزرق (+1 ر.س)</label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -1006,7 +1017,7 @@
 
 
     <!-- Script file -->
-    <script src="app.js?v=4.0"></script>
+    <script src="app.js?v=4.1"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {

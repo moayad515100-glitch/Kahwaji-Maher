@@ -206,20 +206,24 @@ function addToCart(productId, name, price, image) {
     // Get custom options dynamically based on product ID
     let size = 'وسط';
     let sugar = 'سكر وسط';
+    let extra = '';
     
     const sizeInput = document.querySelector(`input[name="size-${productId}"]:checked`);
     const sugarInput = document.querySelector(`input[name="sugar-${productId}"]:checked`) || document.querySelector(`select[name="sugar-${productId}"]`);
+    const extraInput = document.querySelector(`input[name="extra-${productId}"]:checked`);
     
     if (sizeInput) size = sizeInput.value;
     if (sugarInput) sugar = sugarInput.value;
+    if (extraInput) extra = extraInput.value;
 
     const options = {
         size,
-        sugar
+        sugar,
+        extra
     };
 
     // Create unique key for item + options combination
-    const cartItemId = `${productId}-${size}-${sugar}`;
+    const cartItemId = `${productId}-${size}-${sugar}${extra ? '-' + extra : ''}`;
 
     // Check total limit (max 5 cups)
     const currentTotalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -232,9 +236,19 @@ function addToCart(productId, name, price, image) {
     const existingItemIndex = cart.findIndex(item => item.id === cartItemId);
 
     let finalPrice = price;
+    
+    // Add size upcharge (+1 SAR for large)
+    if (size === 'كبير') {
+        finalPrice += 1;
+    }
+    // Add extra upcharge (+1 SAR for blueberry)
+    if (extra === 'مع توت أزرق') {
+        finalPrice += 1;
+    }
+
     let finalName = name;
     if (currentEvent === 'maher_vacation') {
-        finalPrice = fluctuatedPrices[productId] !== undefined ? fluctuatedPrices[productId] : price;
+        finalPrice = fluctuatedPrices[productId] !== undefined ? fluctuatedPrices[productId] : finalPrice;
         finalName = `${name} (سعر البورصة)`;
     } else if (currentEvent === 'matcha') {
         if (productId === 'matcha') {
@@ -343,7 +357,13 @@ function updateCartUI() {
         itemElement.className = 'cart-item';
         
         // Construct readable options text
-        const optionsText = `حجم ${item.options.size} • سكر: ${item.options.sugar}`;
+        let optionsText = `حجم ${item.options.size}`;
+        if (item.options.sugar) {
+            optionsText += ` • سكر: ${item.options.sugar}`;
+        }
+        if (item.options.extra && item.options.extra !== 'سادة') {
+            optionsText += ` • إضافات: ${item.options.extra}`;
+        }
         
         const priceDisplay = item.price === 0 ? 'مجاناً' : `${item.price * item.quantity} ر.س`;
 
@@ -517,6 +537,9 @@ function submitOrder(event) {
         message += `*${index + 1}. ${item.name}* (الكمية: ${item.quantity})\n`;
         message += `  🏷️ *الحجم:* ${item.options.size}\n`;
         message += `  🍬 *السكر:* ${item.options.sugar}\n`;
+        if (item.options.extra && item.options.extra !== 'سادة') {
+            message += `  🍇 *الإضافات:* ${item.options.extra}\n`;
+        }
 
         const itemTotal = item.price === 0 ? 'مجاناً' : `${item.price * item.quantity} ر.س`;
         message += `  💵 *السعر:* ${itemTotal}\n\n`;
