@@ -4088,3 +4088,74 @@ body.is-installed-app {
     transform: scale(0.98);
 }
 
+/* 👾 Boss Fight UI Styles */
+.boss-fight-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--font-arabic);
+    margin-top: 10px;
+    width: 100%;
+}
+
+.boss-health-bar-container {
+    width: 100%;
+    background: #222;
+    border: 2px solid #555;
+    height: 22px;
+    border-radius: 6px;
+    position: relative;
+    overflow: hidden;
+}
+
+.boss-health-bar {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, #ff3333, #aa0000);
+    transition: width 0.3s ease;
+}
+
+.player-health-bar {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, #00ff66, #008833);
+    transition: width 0.3s ease;
+}
+
+.health-label {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: #fff;
+    top: 50%;
+    transform: translateY(-50%);
+    text-shadow: 1px 1px 2px #000;
+}
+
+.boss-action-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.boss-log-box {
+    width: 100%;
+    height: 75px;
+    background: #080808;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 0.78rem;
+    overflow-y: auto;
+    text-align: right;
+    color: #00ff66;
+    font-family: monospace;
+    line-height: 1.45;
+    box-sizing: border-box;
+}
+

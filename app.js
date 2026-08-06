@@ -4132,12 +4132,8 @@ function renderSecretDialogStep(choiceIndex = null) {
             secretDialogStep = 2;
             renderSecretDialogStep();
         }));
-        choicesEl.appendChild(createChoiceButton("سأبلغ عنك فوراً وأغلق هذا المنيو!", () => {
-            dialogTextEl.innerHTML = `*يضحك بسخرية:* تبلغ عني؟ المتجر تكسر بالفعل، وأنا من يملك مفاتيح سلتك الآن! تذوق خلطتي أولاً.`;
-            setTimeout(() => {
-                secretDialogStep = 2;
-                renderSecretDialogStep();
-            }, 2500);
+        choicesEl.appendChild(createChoiceButton("سأبلغ عنك فوراً وأغلق هذا المنيو! 🚨", () => {
+            startSecretTeaBossFight();
         }));
     }
     else if (secretDialogStep === 2) {
@@ -4172,13 +4168,13 @@ function createChoiceButton(text, onClick) {
     return btn;
 }
 
-function addSecretTeaToCart() {
+function addSecretTeaToCart(isFree = false) {
     // Add the secret tea item to cart
     cart.push({
         id: `secret-tea-${Date.now()}`,
         productId: 'tea',
-        name: '🍵 شاهي التلقيمة المتسلل 🤫',
-        price: 5,
+        name: isFree ? '🍵 شاهي التلقيمة المتسلل (هدية الانتصار! 🏆)' : '🍵 شاهي التلقيمة المتسلل 🤫',
+        price: isFree ? 0 : 5,
         image: 'classic_new.jpg', // reuse image
         options: { size: 'متسلل جامد', sugar: 'موزون تلقيمة' },
         quantity: 1
@@ -4197,6 +4193,224 @@ function addSecretTeaToCart() {
     playSuccessSound();
     
     // Fade out and remove overlay
+    }, 2000);
+}
+
+// ==========================================================
+// 👾 Boss Fight Engine & Action Handlers
+// ==========================================================
+let bossHp = 100;
+let playerHp = 100;
+let bossFightLog = [];
+
+function startSecretTeaBossFight() {
+    bossHp = 100;
+    playerHp = 100;
+    bossFightLog = ["⚔️ بدأت المعركة! الشاهي المتسلل يستعد للهجوم!"];
+    
+    // Play sci-fi warning alarm
+    try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (AudioContext) {
+            const ctx = new AudioContext();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(300, ctx.currentTime);
+            osc.frequency.linearRampToValueAtTime(600, ctx.currentTime + 0.3);
+            gain.gain.setValueAtTime(0.3, ctx.currentTime);
+            gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start();
+            osc.stop(ctx.currentTime + 0.3);
+        }
+    } catch(e){}
+    
+    renderBossFightScreen();
+}
+
+function renderBossFightScreen() {
+    const dialogTextEl = document.getElementById('secret-dialog-text');
+    const choicesEl = document.getElementById('secret-choices-container');
+    if (!dialogTextEl || !choicesEl) return;
+    
+    dialogTextEl.innerHTML = `👾 <strong>مواجهة الزعيم: الشاهي المتسلل 🕵️‍♂️🍵</strong>`;
+    
+    choicesEl.innerHTML = `
+        <div class="boss-fight-container">
+            <!-- Boss HP -->
+            <div style="width: 100%; text-align: right; font-weight: bold; color: #ff3333; font-size: 0.85rem;">🕵️‍♂️ الشاهي المتسلل (الزعيم)</div>
+            <div class="boss-health-bar-container">
+                <div class="boss-health-bar" id="boss-hp-bar" style="width: ${bossHp}%;"></div>
+                <div class="health-label" id="boss-hp-label">${bossHp} / 100 HP</div>
+            </div>
+            
+            <!-- Player HP -->
+            <div style="width: 100%; text-align: right; font-weight: bold; color: #00ff66; font-size: 0.85rem;">👤 أنت (بطل القهوة)</div>
+            <div class="boss-health-bar-container">
+                <div class="player-health-bar" id="player-hp-bar" style="width: ${playerHp}%;"></div>
+                <div class="health-label" id="player-hp-label">${playerHp} / 100 HP</div>
+            </div>
+            
+            <!-- Battle Logs -->
+            <div class="boss-log-box" id="boss-log-box">
+                ${bossFightLog.map(line => `<div>${line}</div>`).join('')}
+            </div>
+            
+            <!-- Action Grid -->
+            <div class="boss-action-grid" id="boss-action-grid">
+                <button class="secret-choice-btn" onclick="executeBossFightTurn('sugar')" style="text-align: center;">🍬 رشة سكر زيادة</button>
+                <button class="secret-choice-btn" onclick="executeBossFightTurn('shield')" style="text-align: center;">🛡️ درع فنجان تركي</button>
+                <button class="secret-choice-btn" onclick="executeBossFightTurn('mix')" style="text-align: center; grid-column: span 2; border-color: #ffaa00; color: #ffaa00; background: rgba(255, 170, 0, 0.05);">🌀 خلطة ماهر السحرية (مخاطرة)</button>
+                <button class="secret-choice-btn" onclick="surrenderBossFight()" style="text-align: center; grid-column: span 2; border-color: #ff4444; color: #ff4444; background: rgba(255, 68, 68, 0.05); margin-top: 5px; font-size: 0.8rem; padding: 6px;">🏳️ انسحاب وتصالح</button>
+            </div>
+        </div>
+    `;
+    
+    // Auto-scroll log box to bottom
+    const logBox = document.getElementById('boss-log-box');
+    if (logBox) logBox.scrollTop = logBox.scrollHeight;
+}
+
+function executeBossFightTurn(action) {
+    if (playerHp <= 0 || bossHp <= 0) return;
+    
+    let playerDamage = 0;
+    let playerHeal = 0;
+    let logMessage = "";
+    
+    if (action === 'sugar') {
+        playerDamage = Math.floor(15 + Math.random() * 11); // 15-25
+        logMessage = `💥 رميت رشة سكر حارق! تسببت بـ ${playerDamage} ضرر للشاهي.`;
+    } 
+    else if (action === 'shield') {
+        playerHeal = Math.floor(10 + Math.random() * 6); // 10-15
+        logMessage = `🛡️ احتميت خلف فنجان تركي ثقيل واستعدت ${playerHeal} نقاط صحة.`;
+    } 
+    else if (action === 'mix') {
+        if (Math.random() < 0.55) {
+            playerDamage = 40;
+            logMessage = `🌀 خلطة ماهر السحرية نجحت! فجرت رأس الشاهي بـ 40 ضرر!`;
+        } else {
+            playerDamage = 0;
+            logMessage = `💨 فشلت خلطة ماهر السحرية وتبخرت النكهة دون ضرر!`;
+        }
+    }
+    
+    // Apply player action
+    bossHp = Math.max(0, bossHp - playerDamage);
+    playerHp = Math.min(100, playerHp + playerHeal);
+    
+    bossFightLog.push(logMessage);
+    
+    // Check if boss is dead
+    if (bossHp <= 0) {
+        bossFightLog.push("🏆 انتصرت! الشاهي المتسلل يسقط ويعترف بالهزيمة!");
+        renderBossFightScreen();
+        setTimeout(handleBossFightWin, 1800);
+        return;
+    }
+    
+    // Disable actions briefly during boss turn
+    const grid = document.getElementById('boss-action-grid');
+    if (grid) grid.style.pointerEvents = 'none';
+    
+    bossFightLog.push("⏳ دور الزعيم الشاهي...");
+    renderBossFightScreen();
+    
+    // Boss responds after 800ms
+    setTimeout(() => {
+        if (playerHp <= 0) return;
+        
+        let bossDamage = 0;
+        let bossLog = "";
+        
+        const rand = Math.random();
+        if (rand < 0.5) {
+            bossDamage = Math.floor(10 + Math.random() * 9); // 10-18
+            bossLog = `🍂 الشاهي أطلق عليك رشق أوراق شاهي تلقيمة حادة! تسبب بـ ${bossDamage} ضرر.`;
+        } else if (rand < 0.8) {
+            bossDamage = 20;
+            bossLog = `🔥 تسريب ماء مغلي! حرقك الشاهي بـ 20 ضرر!`;
+        } else {
+            bossDamage = 12;
+            bossHp = Math.min(100, bossHp + 8);
+            bossLog = `🤫 همس التسلل! امتص الشاهي 12 من طاقتك وعالج نفسه 8 نقاط.`;
+        }
+        
+        playerHp = Math.max(0, playerHp - bossDamage);
+        bossFightLog.push(bossLog);
+        
+        if (playerHp <= 0) {
+            bossFightLog.push("💀 هُزمت! الشاهي المتسلل يسيطر على ذهنك بالكامل.");
+            renderBossFightScreen();
+            setTimeout(handleBossFightLoss, 1800);
+            return;
+        }
+        
+        // Re-enable actions
+        renderBossFightScreen();
+        const gridActive = document.getElementById('boss-action-grid');
+        if (gridActive) gridActive.style.pointerEvents = 'auto';
+    }, 800);
+}
+
+function handleBossFightWin() {
+    const dialogTextEl = document.getElementById('secret-dialog-text');
+    const choicesEl = document.getElementById('secret-choices-container');
+    if (!dialogTextEl || !choicesEl) return;
+    
+    dialogTextEl.innerHTML = `🏆 <strong>انتصار ساحق لقوة القهوة!</strong><br><br>الشاهي المتسلل يركع باكياً: "آخخخ! هزمتني بخلطات ماهر القوية.. أرجوك لا تبلغ ماهر! سأعطيك الشاهي المتسلل مجاناً كفدية! 🍵🎁"`;
+    
+    choicesEl.innerHTML = '';
+    choicesEl.appendChild(createChoiceButton("قبول الفدية وإضافة الشاهي مجاناً! 🍵🎁", () => {
+        addSecretTeaToCart(true); // Free price!
+    }));
+}
+
+function handleBossFightLoss() {
+    const dialogTextEl = document.getElementById('secret-dialog-text');
+    const choicesEl = document.getElementById('secret-choices-container');
+    if (!dialogTextEl || !choicesEl) return;
+    
+    dialogTextEl.innerHTML = `💀 <strong>سقوط بطل القهوة!</strong><br><br>الشاهي المتسلل يضحك بنشوة: "هاهاها! قوة الشاهي لا تقهر! وعقوبة لمحاولتك التجسس والتبليغ عني، سأعاقب سلتك بـ 'شاهي مهزومين منفوخ' بسعر 50 ريال إجبارياً!"`;
+    
+    choicesEl.innerHTML = '';
+    choicesEl.appendChild(createChoiceButton("الاعتراف بالهزيمة والخروج مع الغرامة... 🏳️", () => {
+        addDefeatedTeaToCart();
+    }));
+}
+
+function surrenderBossFight() {
+    // Escapes fight, returns to Step 2
+    secretDialogStep = 2;
+    renderSecretDialogStep();
+}
+
+function addDefeatedTeaToCart() {
+    // Adds a 50 SAR item as a penalty for losing the boss fight
+    cart.push({
+        id: `defeated-tea-${Date.now()}`,
+        productId: 'tea',
+        name: '🍵 شاهي منفوخ للمهزومين 💀',
+        price: 50,
+        image: 'classic_new.jpg',
+        options: { size: 'كوب الهزيمة', sugar: 'مر علقم' },
+        quantity: 1
+    });
+    
+    const overlay = document.getElementById('secret-breakdown-overlay');
+    const dialogTextEl = document.getElementById('secret-dialog-text');
+    const choicesEl = document.getElementById('secret-choices-container');
+    
+    if (choicesEl) choicesEl.innerHTML = '';
+    if (dialogTextEl) {
+        dialogTextEl.innerHTML = `<span style="color:#ff3333; font-weight:bold;">💀 تمت إضافة غرامة الهزيمة إلى سلتك! جاري إعادة بناء المتجر...</span>`;
+    }
+    
+    playSadChime();
+    
     setTimeout(() => {
         if (overlay) {
             overlay.classList.remove('active');
