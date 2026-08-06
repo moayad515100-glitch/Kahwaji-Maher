@@ -458,6 +458,10 @@ function changeQuantity(itemId, change) {
                 showToast("🤫 يمديك تطلب شاهي واحد بس! لا تطمع عشان ما يكتشفنا ماهر.");
                 return;
             }
+            if (item.name === '🍪 كوكيز ماهر المتسلل السري 🤫') {
+                showToast("🤫 يمديك تطلب حبة كوكيز واحدة بس! الوصفة سرية للغاية.");
+                return;
+            }
             const currentTotalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
             if (currentTotalCount >= 5) {
                 triggerAlarm();
@@ -4449,6 +4453,14 @@ function addDefeatedTeaToCart() {
 // 🍪 Secret Cookie Unlock Event
 // ==========================================================
 function triggerSecretCookieUnlock() {
+    // Check if the cookie is already in the cart
+    const hasCookie = cart.some(item => item.name === '🍪 كوكيز ماهر المتسلل السري 🤫');
+    if (hasCookie) {
+        showToast("🍪 الكوكيز المتسلل موجود في سلتك بالفعل! يمديك تطلب حبة واحدة بس.");
+        openCartDrawer();
+        return;
+    }
+
     // 1. Play success chime sound
     playSuccessSound();
     
