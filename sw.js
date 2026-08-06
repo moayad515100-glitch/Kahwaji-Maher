@@ -1,4 +1,4 @@
-const CACHE_NAME = 'maher-coffee-v22';
+const CACHE_NAME = 'maher-coffee-v23';
 const ASSETS = [
   './',
   './index.html',
