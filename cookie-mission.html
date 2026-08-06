@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🕵️‍♂️ مهمة الكوكيز المتسلل السرية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&family=Outfit:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --neon-green: #00ff66;
+            --dark-bg: #0b0806;
+            --panel-bg: rgba(15, 10, 8, 0.92);
+            --gold: #ffaa00;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: #fff;
+            font-family: 'Tajawal', sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+            box-sizing: border-box;
+        }
+
+        /* Scanline CRT Effect */
+        body::before {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 255, 0, 0.06));
+            z-index: 9999;
+            background-size: 100% 4px, 6px 100%;
+            pointer-events: none;
+        }
+
+        .terminal-container {
+            width: 600px;
+            max-width: 100%;
+            background: var(--panel-bg);
+            border: 2px solid var(--neon-green);
+            box-shadow: 0 0 30px rgba(0, 255, 102, 0.15);
+            border-radius: 12px;
+            padding: 30px;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        .terminal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(0, 255, 102, 0.3);
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+
+        .terminal-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--neon-green);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-shadow: 0 0 10px rgba(0, 255, 102, 0.5);
+        }
+
+        .dot-group {
+            display: flex;
+            gap: 6px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #555;
+        }
+
+        .dot.red { background: #ff5555; }
+        .dot.yellow { background: #ffaa00; }
+        .dot.green { background: #00ff66; }
+
+        .terminal-body {
+            font-size: 1rem;
+            line-height: 1.7;
+            text-align: right;
+        }
+
+        .riddle-box {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px dashed rgba(0, 255, 102, 0.4);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            color: #e0e0e0;
+        }
+
+        .input-group {
+            margin-top: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--gold);
+        }
+
+        .terminal-input {
+            width: 100%;
+            background: #111;
+            border: 1px solid var(--neon-green);
+            color: #fff;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 1.05rem;
+            font-family: 'Tajawal', sans-serif;
+            box-sizing: border-box;
+            outline: none;
+            transition: box-shadow 0.2s;
+        }
+
+        .terminal-input:focus {
+            box-shadow: 0 0 10px rgba(0, 255, 102, 0.4);
+        }
+
+        .btn-submit {
+            background: var(--neon-green);
+            color: #000;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: bold;
+            font-family: 'Tajawal', sans-serif;
+            cursor: pointer;
+            margin-top: 20px;
+            width: 100%;
+            transition: transform 0.1s, background 0.2s;
+        }
+
+        .btn-submit:hover {
+            background: #00dd55;
+            transform: translateY(-2px);
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+        .error-message {
+            color: #ff3333;
+            font-size: 0.9rem;
+            margin-top: 8px;
+            display: none;
+            font-weight: bold;
+        }
+
+        .progress-dots {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .p-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #333;
+            border: 1px solid var(--neon-green);
+        }
+
+        .p-dot.active {
+            background: var(--neon-green);
+            box-shadow: 0 0 8px var(--neon-green);
+        }
+
+        .success-screen {
+            text-align: center;
+            display: none;
+        }
+
+        .success-icon {
+            font-size: 4rem;
+            color: var(--neon-green);
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(0, 255, 102, 0.8);
+            animation: bounce 2s infinite alternate;
+        }
+
+        @keyframes bounce {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <div class="dot-group">
+                <div class="dot red"></div>
+                <div class="dot yellow"></div>
+                <div class="dot green"></div>
+            </div>
+            <div class="terminal-title">
+                <i class="fa-solid fa-cookie-bite"></i> مهمة الكوكيز المتسلل 🕵️‍♂️
+            </div>
+        </div>
+
+        <div class="progress-dots" id="progress-dots">
+            <div class="p-dot active"></div>
+            <div class="p-dot"></div>
+            <div class="p-dot"></div>
+        </div>
+
+        <div class="terminal-body" id="game-body">
+            <div class="riddle-box" id="riddle-text">
+                أهلاً بك أيها المستكشف البرمجي.. لقد تمكنت من كشف سر الرابط المخفي في الأكواد! 💻<br><br>
+                لكن لكي تحصل على وصفة <strong>الكوكيز المتسلل السري 🍪</strong>، عليك حل 3 ألغاز رقمية لإثبات هويتك. هل أنت مستعد؟
+            </div>
+
+            <div class="input-group">
+                <label id="riddle-label">اللغز الأول: رفيق الصباح، يُصنع من حبات البن، لونه داكن وبدونه لا يكتمل المزاج.. فمن يكون؟</label>
+                <input type="text" class="terminal-input" id="answer-input" placeholder="اكتب إجابتك هنا..." autofocus autocomplete="off">
+                <div class="error-message" id="error-msg">❌ الإجابة خاطئة! حاول مجدداً ووزن ذهنك.</div>
+            </div>
+
+            <button class="btn-submit" id="btn-next" onclick="submitAnswer()">إرسال الإجابة 🚀</button>
+        </div>
+
+        <div class="success-screen" id="success-screen">
+            <div class="success-icon"><i class="fa-solid fa-circle-check"></i></div>
+            <h2 style="color: var(--neon-green); margin-bottom: 15px;">تم فك التشفير بنجاح! 🎉</h2>
+            <p style="font-size: 1.1rem; line-height: 1.6;">
+                لقد أجبت على جميع الألغاز بشكل صحيح! الكوكيز المتسلل فخور بمهاراتك البرمجية والتحليلية.<br>
+                جاري توجيهك فوراً إلى متجر قهوجي ماهر لإضافة الكوكيز مجاناً كجائزتك! 🍪🎁
+            </p>
+            <div style="font-size: 0.9rem; color: #888; margin-top: 15px;">يرجى الانتظار 3 ثوانٍ...</div>
+        </div>
+    </div>
+
+    <script>
+        const RIDDLES = [
+            {
+                q: "اللغز الأول: رفيق الصباح، يُصنع من حبات البن، لونه داكن وبدونه لا يكتمل المزاج.. فمن يكون؟",
+                answers: ["القهوه", "القهوة", "قهوه", "قهوة", "coffee"]
+            },
+            {
+                q: "اللغز الثاني: أوراقي خضراء أو حمراء، عدو ماهر في الليل، ويوزن الدماغ بالتلقيمة السحرية.. فمن أكون؟",
+                answers: ["الشاهي", "شاهي", "الشاي", "شاي", "tea"]
+            },
+            {
+                q: "اللغز الثالث: ما هو الرقم السري المحظور الذي نبهك الشاهي المتسلل ألا تذكره لماهر عند الدفع؟",
+                answers: ["9", "الخلطة 9", "الخلطه 9", "الخلطة رقم 9", "الخلطه رقم 9", "nine"]
+            }
+        ];
+
+        let currentStep = 0;
+
+        // Sound generator on correct/incorrect
+        function playChime(isCorrect) {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const ctx = new AudioContext();
+                const osc = ctx.createOscillator();
+                const cancel = ctx.createGain(); // gain
+                osc.type = 'sine';
+                
+                if (isCorrect) {
+                    osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
+                    osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.1); // E5
+                    cancel.gain.setValueAtTime(0.2, ctx.currentTime);
+                    cancel.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+                    osc.connect(cancel);
+                    cancel.connect(ctx.destination);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.3);
+                } else {
+                    osc.frequency.setValueAtTime(150, ctx.currentTime);
+                    osc.frequency.linearRampToValueAtTime(50, ctx.currentTime + 0.3);
+                    cancel.gain.setValueAtTime(0.3, ctx.currentTime);
+                    cancel.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+                    osc.connect(cancel);
+                    cancel.connect(ctx.destination);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.3);
+                }
+            } catch(e){}
+        }
+
+        // Handle Enter keypress
+        document.getElementById('answer-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                submitAnswer();
+            }
+        });
+
+        function submitAnswer() {
+            const inputEl = document.getElementById('answer-input');
+            const errorEl = document.getElementById('error-msg');
+            const val = inputEl.value.trim().toLowerCase();
+            
+            const currentRiddle = RIDDLES[currentStep];
+            const isMatch = currentRiddle.answers.some(ans => val === ans.toLowerCase());
+            
+            if (isMatch) {
+                // Correct!
+                playChime(true);
+                errorEl.style.display = 'none';
+                inputEl.value = '';
+                
+                currentStep++;
+                
+                // Update progress dots
+                const dots = document.getElementById('progress-dots').children;
+                if (currentStep < dots.length) {
+                    dots[currentStep].classList.add('active');
+                }
+                
+                if (currentStep < RIDDLES.length) {
+                    // Load next riddle
+                    document.getElementById('riddle-label').innerText = RIDDLES[currentStep].q;
+                    document.getElementById('riddle-text').innerHTML = `عمل رائع! تم تجاوز المرحلة بنجاح. اللغز التالي مفتوح الآن:`;
+                } else {
+                    // Show success and redirect
+                    showSuccessAndRedirect();
+                }
+            } else {
+                // Incorrect
+                playChime(false);
+                errorEl.style.display = 'block';
+            }
+        }
+
+        function showSuccessAndRedirect() {
+            document.getElementById('game-body').style.display = 'none';
+            document.getElementById('progress-dots').style.display = 'none';
+            document.getElementById('success-screen').style.display = 'block';
+            
+            setTimeout(() => {
+                window.location.href = './index.html?unlock=cookie_secret_99';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

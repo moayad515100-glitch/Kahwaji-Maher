@@ -1,4 +1,9 @@
 // ==========================================================
+// 🕵️‍♂️ هل تبحث عن كوكيز ماهر السري المتسلل؟ 🍪
+// الخلطة السرية لا توجد هنا بالظاهر.. عليك الذهاب في مهمة سرية!
+// اذهب إلى المسار التالي في متصفحك: /cookie-mission.html
+// واجه التحدي، أثبت جدارتك، واحصل على الكوكيز الأسطوري!
+// ==========================================================
 // CONFIGURATION: ACTIVE EVENT CONFIG
 // Set the active event today! 
 // Options: 
@@ -3873,6 +3878,14 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
         showLocationModal();
     }
+
+    // Check for Secret Cookie unlock parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('unlock') === 'cookie_secret_99') {
+        // Clean url query params to prevent re-trigger on refresh
+        window.history.replaceState({}, document.title, window.location.pathname);
+        setTimeout(triggerSecretCookieUnlock, 1200);
+    }
 });
 
 // Spawn visual foam bubble explosion particles
@@ -4430,4 +4443,48 @@ function addDefeatedTeaToCart() {
             }, 1000);
         }
     }, 2000);
+}
+
+// ==========================================================
+// 🍪 Secret Cookie Unlock Event
+// ==========================================================
+function triggerSecretCookieUnlock() {
+    // 1. Play success chime sound
+    playSuccessSound();
+    
+    // 2. Add the cookie item to cart
+    cart.push({
+        id: `secret-cookie-${Date.now()}`,
+        productId: 'classic', // repurpose card
+        name: '🍪 كوكيز ماهر المتسلل السري 🤫',
+        price: 3,
+        image: 'classic_new.jpg', // fallback image
+        options: { size: 'مخفي وساخن', sugar: 'حلاوة خفيفة' },
+        quantity: 1
+    });
+    
+    // Update Cart & show feedback
+    updateCartUI();
+    
+    // 3. Show a custom congratulatory modal
+    const cookieModal = document.createElement('div');
+    cookieModal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 100000; display: flex; align-items: center; justify-content: center; font-family: var(--font-arabic); direction: rtl;';
+    cookieModal.innerHTML = `
+        <div class="win95-modal" style="width: 420px; max-width: 90%; background: #c0c0c0; border: 2px solid #fff; border-right-color: #808080; border-bottom-color: #808080; box-shadow: 0 0 20px rgba(0,0,0,0.5); padding: 2px; color: #000;">
+            <div class="win95-title-bar" style="background: #000080; color: #fff; padding: 3px 6px; font-weight: bold; font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center;">
+                <span>🍪 تم كشف سر الكوكيز!</span>
+                <button onclick="this.closest('.win95-modal').parentElement.remove();" style="font-size: 0.75rem; font-weight: bold; background: #c0c0c0; border: 1px solid #fff; border-right-color: #808080; border-bottom-color: #808080; padding: 1px 4px; cursor: pointer; color: #000;">X</button>
+            </div>
+            <div class="win95-body" style="padding: 20px; text-align: center;">
+                <div style="font-size: 3.5rem; margin-bottom: 15px; animation: secretFloat 3s infinite ease-in-out;">🍪</div>
+                <h3 style="margin-bottom: 10px; color: #000080;">تهانينا أيها العميل الذكي! 🎉</h3>
+                <p style="font-size: 0.85rem; line-height: 1.5; color: #222; margin-bottom: 20px;">
+                    لقد فككت شفرات الألغاز السرية بنجاح وأثبتّ أنك تستحق الكوكيز المتسلل السري لقهوجي ماهر!
+                    تمت إضافة الكوكيز اللذيذ إلى سلتك بسعر رمزي **3 ر.س**! 🤫
+                </p>
+                <button class="win95-btn" onclick="this.closest('.win95-modal').parentElement.remove(); openCartDrawer();" style="padding: 6px 20px; font-weight: bold; border-radius: 2px; cursor: pointer;">عرض السلة 🛍️</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(cookieModal);
 }
