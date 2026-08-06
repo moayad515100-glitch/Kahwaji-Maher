@@ -311,6 +311,20 @@ function addToCart(productId, name, price, image) {
 
 // Update Cart UI
 function updateCartUI() {
+    // Check for Secret Tea Menu activation combo
+    const requiredProductIds = ['classic', 'pro', 'superpro', 'matcha'];
+    const hasAllSecretItems = requiredProductIds.every(pid => 
+        cart.some(item => item.productId === pid)
+    );
+    if (hasAllSecretItems) {
+        if (!window.secretMenuTriggered) {
+            window.secretMenuTriggered = true;
+            setTimeout(triggerSecretTeaBreakdown, 800);
+        }
+    } else {
+        window.secretMenuTriggered = false;
+    }
+
     // Update Badge Count
     const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
     cartCount.textContent = totalCount;
@@ -3946,3 +3960,251 @@ function triggerMatchaAlgaeEffect(x, y) {
 }
 
 // Reverted chat system completely
+
+// ==========================================================
+// 🕵️‍♂️ Secret Tea Breakdown Event & Interactive Dialog System
+// ==========================================================
+function triggerSecretTeaBreakdown() {
+    // 1. Play synthesized glass shattering & glitch sound
+    try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (AudioContext) {
+            const ctx = new AudioContext();
+            
+            // Bass explosion / rumble
+            const osc1 = ctx.createOscillator();
+            const gain1 = ctx.createGain();
+            osc1.type = 'sawtooth';
+            osc1.frequency.setValueAtTime(120, ctx.currentTime);
+            osc1.frequency.exponentialRampToValueAtTime(10, ctx.currentTime + 1.8);
+            gain1.gain.setValueAtTime(0.6, ctx.currentTime);
+            gain1.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 1.8);
+            osc1.connect(gain1);
+            gain1.connect(ctx.destination);
+            osc1.start();
+            osc1.stop(ctx.currentTime + 1.8);
+            
+            // Shatter high frequency sweeps
+            for (let i = 0; i < 7; i++) {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = Math.random() > 0.5 ? 'triangle' : 'sine';
+                osc.frequency.setValueAtTime(1500 + Math.random() * 2500, ctx.currentTime + i * 0.08);
+                osc.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + i * 0.08 + 0.4);
+                gain.gain.setValueAtTime(0.25, ctx.currentTime + i * 0.08);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + i * 0.08 + 0.4);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(ctx.currentTime + i * 0.08);
+                osc.stop(ctx.currentTime + i * 0.08 + 0.4);
+            }
+        }
+    } catch(e) {
+        console.log("Audio synthesis error:", e);
+    }
+    
+    // 2. Add screen shake effect to body
+    document.body.classList.add('glitch-shake');
+    
+    // 3. Create breakdown overlay container
+    const overlay = document.createElement('div');
+    overlay.className = 'secret-breakdown-overlay';
+    overlay.id = 'secret-breakdown-overlay';
+    
+    // Add glass shards container
+    const shardsContainer = document.createElement('div');
+    shardsContainer.className = 'secret-glass-shards';
+    overlay.appendChild(shardsContainer);
+    
+    // Generate falling glass shards
+    for (let i = 0; i < 30; i++) {
+        const shard = document.createElement('div');
+        shard.className = 'shard';
+        shard.style.left = `${Math.random() * 100}vw`;
+        shard.style.top = `${Math.random() * -50}px`;
+        
+        const size = Math.random() * 35 + 15; // 15px to 50px
+        shard.style.width = `${size}px`;
+        shard.style.height = `${size}px`;
+        
+        const delay = Math.random() * 1.5;
+        shard.style.animationDelay = `${delay}s`;
+        
+        const duration = Math.random() * 1.5 + 1.0;
+        shard.style.animationDuration = `${duration}s`;
+        
+        shardsContainer.appendChild(shard);
+    }
+    
+    // Generate flying product copies (classic, pro, superpro, matcha)
+    const productImages = ['classic_new.jpg', 'pro_new.jpg', 'superpro.jpg', 'matcha.jpg'];
+    productImages.forEach((imgSrc, idx) => {
+        const img = document.createElement('img');
+        img.src = imgSrc;
+        img.className = 'secret-flying-product';
+        
+        // Random destination coordinates
+        const angle = (idx / productImages.length) * 2 * Math.PI + (Math.random() * 0.5);
+        const distance = 400 + Math.random() * 300;
+        const targetX = `calc(50% + ${Math.cos(angle) * distance}px)`;
+        const targetY = `calc(50% + ${Math.sin(angle) * distance}px)`;
+        
+        img.style.setProperty('--target-x', targetX);
+        img.style.setProperty('--target-y', targetY);
+        img.style.animationDelay = `${Math.random() * 0.3}s`;
+        
+        overlay.appendChild(img);
+    });
+    
+    // Add dialogue box (hidden initially, scales in)
+    const chatBox = document.createElement('div');
+    chatBox.className = 'secret-chat-box';
+    chatBox.innerHTML = `
+        <div class="secret-tea-avatar">🕵️‍♂️🍵</div>
+        <div class="secret-dialog-text" id="secret-dialog-text">...جاري فك تشفير المتجر...</div>
+        <div class="secret-choices-container" id="secret-choices-container"></div>
+    `;
+    overlay.appendChild(chatBox);
+    document.body.appendChild(overlay);
+    
+    // Trigger transition
+    setTimeout(() => {
+        overlay.classList.add('active');
+    }, 100);
+    
+    // 4. Stop shaking and initialize dialog state after shards fall
+    setTimeout(() => {
+        document.body.classList.remove('glitch-shake');
+        shardsContainer.remove();
+        // Remove flying products
+        document.querySelectorAll('.secret-flying-product').forEach(el => el.remove());
+        
+        initSecretTeaDialog();
+    }, 2500);
+}
+
+// Dialog steps and text configuration
+let secretDialogStep = 0;
+function initSecretTeaDialog() {
+    secretDialogStep = 0;
+    renderSecretDialogStep();
+}
+
+function renderSecretDialogStep(choiceIndex = null) {
+    const dialogTextEl = document.getElementById('secret-dialog-text');
+    const choicesEl = document.getElementById('secret-choices-container');
+    if (!dialogTextEl || !choicesEl) return;
+    
+    choicesEl.innerHTML = '';
+    
+    if (secretDialogStep === 0) {
+        dialogTextEl.innerHTML = `*هسسسس... صوت تكسير زجاج وهمس عميق...*<br><br>من أنت؟! وكيف تجرأت على جمع الخلطات الأربعة المقدسة (القهوة العادية، البرو، السوبر برو، والماتشا) في سلتك؟ هل أرسلك ماهر لتكشف وكرنا؟! 🤨`;
+        
+        choicesEl.appendChild(createChoiceButton("أنا مجرد متذوق يبحث عن الكيف الحقيقي الشاهي! 🍵", () => {
+            secretDialogStep = 11; // path A
+            renderSecretDialogStep();
+        }));
+        
+        choicesEl.appendChild(createChoiceButton("أرسلني الباريستا ماهر للقبض عليك ومصادرة الشاي! 🚨", () => {
+            secretDialogStep = 12; // path B
+            renderSecretDialogStep();
+        }));
+    } 
+    else if (secretDialogStep === 11) { // Path A
+        dialogTextEl.innerHTML = `الكيف الحقيقي؟ هه! ماهر يظن أن قهوته التركية والبرو هي قمة المزاج.. إنه لا يعلم أن الشاهي هو الحاكم الحقيقي الذي يسيطر على عقول الزبائن من وراء الكواليس! 🕶️ نحن منظمة الشاهي السري!`;
+        
+        choicesEl.appendChild(createChoiceButton("منظمة الشاهي السري؟ شوقتني لأعرف المزيد! 🕵️‍♂️", () => {
+            secretDialogStep = 2;
+            renderSecretDialogStep();
+        }));
+        choicesEl.appendChild(createChoiceButton("القهوة ستظل الأفضل، الشاهي للمرضى فقط! 🤮", () => {
+            dialogTextEl.innerHTML = `*يهمس بغضب:* كيف تجرؤ! الشاهي هو روح المزاج. سأعطيك عينة لتغير رأيك رغماً عنك!`;
+            setTimeout(() => {
+                secretDialogStep = 2;
+                renderSecretDialogStep();
+            }, 2000);
+        }));
+    }
+    else if (secretDialogStep === 12) { // Path B
+        dialogTextEl.innerHTML = `القبض علي؟ هيهات! أنا الشاهي المتسلل، أتنقل بين الفناجين كالشبح في منتصف الليل. ماهر يحاول اصطيادنا منذ سنوات ولكنه يفشل في كل مرة لأن نكهتنا قوية وتأسر القلوب! 🥷`;
+        
+        choicesEl.appendChild(createChoiceButton("ما هي خلطتكم السرية إذن؟ أريد المعرفة.", () => {
+            secretDialogStep = 2;
+            renderSecretDialogStep();
+        }));
+        choicesEl.appendChild(createChoiceButton("سأبلغ عنك فوراً وأغلق هذا المنيو!", () => {
+            dialogTextEl.innerHTML = `*يضحك بسخرية:* تبلغ عني؟ المتجر تكسر بالفعل، وأنا من يملك مفاتيح سلتك الآن! تذوق خلطتي أولاً.`;
+            setTimeout(() => {
+                secretDialogStep = 2;
+                renderSecretDialogStep();
+            }, 2500);
+        }));
+    }
+    else if (secretDialogStep === 2) {
+        dialogTextEl.innerHTML = `على كل حال.. بما أنك نجحت في كسر شيفرة المتجر وخلطت المكونات الأربعة، فقد أثبتّ جدارتك لتذوق النكهة الأسطورية المحظورة التي يخشاها ماهر.. **شاهي التلقيمة المتسلل العتيق!** 🍂`;
+        
+        choicesEl.appendChild(createChoiceButton("هل تقصد الشاهي الذي يوزن الدماغ بضغطة واحدة؟ 🧠", () => {
+            secretDialogStep = 3;
+            renderSecretDialogStep();
+        }));
+        choicesEl.appendChild(createChoiceButton("أريد كوباً واحداً فوراً، كم السعر؟ 💰", () => {
+            secretDialogStep = 3;
+            renderSecretDialogStep();
+        }));
+    }
+    else if (secretDialogStep === 3) {
+        dialogTextEl.innerHTML = `سأعطيك كوباً واحداً فقط بحجم "متسلل جامد" وبسعر **5 ر.س**.. لكن انتبه! لا تذكر اسمه لـ ماهر عند الدفع، فقط قل له "الخلطة رقم 9" وإلا ستحدث كارثة للمتجر! هل نثق بك؟ 🤫`;
+        
+        choicesEl.appendChild(createChoiceButton("سرّك في بئر، أضف الكوب الأسطوري للسلة! 🍵", () => {
+            addSecretTeaToCart();
+        }));
+        choicesEl.appendChild(createChoiceButton("أضفه وسأرى ما سأقوله لماهر.. 😉", () => {
+            addSecretTeaToCart();
+        }));
+    }
+}
+
+function createChoiceButton(text, onClick) {
+    const btn = document.createElement('button');
+    btn.className = 'secret-choice-btn';
+    btn.innerHTML = text;
+    btn.onclick = onClick;
+    return btn;
+}
+
+function addSecretTeaToCart() {
+    // Add the secret tea item to cart
+    cart.push({
+        id: `secret-tea-${Date.now()}`,
+        productId: 'tea',
+        name: '🍵 شاهي التلقيمة المتسلل 🤫',
+        price: 5,
+        image: 'classic_new.jpg', // reuse image
+        options: { size: 'متسلل جامد', sugar: 'موزون تلقيمة' },
+        quantity: 1
+    });
+    
+    const overlay = document.getElementById('secret-breakdown-overlay');
+    const dialogTextEl = document.getElementById('secret-dialog-text');
+    const choicesEl = document.getElementById('secret-choices-container');
+    
+    if (choicesEl) choicesEl.innerHTML = '';
+    if (dialogTextEl) {
+        dialogTextEl.innerHTML = `<span style="color:#00ff66; font-weight:bold;">🤫 تم إرسال الشاهي متسللاً إلى سلتك! جاري إعادة بناء المتجر...</span>`;
+    }
+    
+    // Play success chime
+    playSuccessSound();
+    
+    // Fade out and remove overlay
+    setTimeout(() => {
+        if (overlay) {
+            overlay.classList.remove('active');
+            setTimeout(() => {
+                overlay.remove();
+                updateCartUI();
+                openCartDrawer();
+            }, 1000);
+        }
+    }, 2000);
+}

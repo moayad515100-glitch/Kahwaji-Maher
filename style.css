@@ -3918,3 +3918,173 @@ body.is-installed-app {
 }
 /* Reverted chat styles completely */
 
+/* 🕵️‍♂️ Secret Tea Breakdown Animations & UI */
+.glitch-shake {
+    animation: screenShake 0.15s infinite;
+}
+
+@keyframes screenShake {
+    0% { transform: translate(2px, 1px) rotate(0deg); }
+    10% { transform: translate(-1px, -2px) rotate(-1deg); }
+    20% { transform: translate(-3px, 0px) rotate(1deg); }
+    30% { transform: translate(0px, 2px) rotate(0deg); }
+    40% { transform: translate(1px, -1px) rotate(1deg); }
+    50% { transform: translate(-1px, 2px) rotate(-1deg); }
+    60% { transform: translate(-3px, 1px) rotate(0deg); }
+    70% { transform: translate(2px, 1px) rotate(-1deg); }
+    80% { transform: translate(-1px, -1px) rotate(1deg); }
+    90% { transform: translate(2px, 2px) rotate(0deg); }
+    100% { transform: translate(1px, -2px) rotate(-1deg); }
+}
+
+.secret-breakdown-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-arabic);
+    color: #fff;
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+    pointer-events: none;
+}
+
+.secret-breakdown-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.secret-glass-shards {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.shard {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(5px);
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+    animation: fallShard 2.5s forwards cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@keyframes fallShard {
+    0% {
+        transform: translateY(-100px) rotate(0deg) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(110vh) rotate(720deg) scale(0.2);
+        opacity: 0;
+    }
+}
+
+.secret-flying-product {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid var(--gold);
+    box-shadow: 0 0 15px var(--gold-glow);
+    z-index: 2;
+    animation: flyProduct 3s forwards ease-in-out;
+}
+
+@keyframes flyProduct {
+    0% {
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(1) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        top: var(--target-y);
+        left: var(--target-x);
+        transform: translate(-50%, -50%) scale(0.1) rotate(1080deg);
+        opacity: 0;
+    }
+}
+
+.secret-chat-box {
+    width: 500px;
+    max-width: 90%;
+    background: rgba(15, 10, 8, 0.9);
+    border: 2px solid #00ff66;
+    box-shadow: 0 0 30px rgba(0, 255, 102, 0.25);
+    border-radius: 12px;
+    padding: 25px;
+    z-index: 10;
+    text-align: center;
+    position: relative;
+    transform: scale(0.9);
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.secret-breakdown-overlay.active .secret-chat-box {
+    transform: scale(1);
+}
+
+.secret-tea-avatar {
+    font-size: 4rem;
+    margin-bottom: 15px;
+    animation: secretFloat 3s infinite ease-in-out;
+    text-shadow: 0 0 20px rgba(0, 255, 102, 0.8);
+    display: inline-block;
+}
+
+@keyframes secretFloat {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-12px) rotate(5deg); }
+}
+
+.secret-dialog-text {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 25px;
+    min-height: 80px;
+    text-align: right;
+    color: #e0e0e0;
+}
+
+.secret-choices-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.secret-choice-btn {
+    background: rgba(0, 255, 102, 0.08);
+    border: 1px solid #00ff66;
+    color: #00ff66;
+    padding: 12px 15px;
+    border-radius: 8px;
+    font-family: var(--font-arabic);
+    cursor: pointer;
+    font-size: 0.95rem;
+    text-align: right;
+    transition: background 0.2s, color 0.2s;
+    font-weight: bold;
+}
+
+.secret-choice-btn:hover {
+    background: #00ff66;
+    color: #000;
+}
+
+.secret-choice-btn:active {
+    transform: scale(0.98);
+}
+
