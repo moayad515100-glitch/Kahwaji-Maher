@@ -4159,3 +4159,77 @@ body.is-installed-app {
     box-sizing: border-box;
 }
 
+/* 🤝 Collaboration Badge styles */
+.collab-badge-container {
+    margin-bottom: 22px;
+    display: inline-block;
+    width: fit-content;
+}
+
+.collab-badge-link {
+    text-decoration: none;
+    display: block;
+}
+
+.collab-badge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(40, 240, 224, 0.04);
+    border: 1px dashed rgba(40, 240, 224, 0.35);
+    box-shadow: 0 0 15px rgba(40, 240, 224, 0.05);
+    padding: 8px 14px;
+    border-radius: 8px;
+    transition: background 0.25s, transform 0.2s, border-color 0.25s;
+    direction: rtl;
+}
+
+.collab-badge:hover {
+    background: rgba(40, 240, 224, 0.09);
+    transform: translateY(-2px);
+    border-color: #28f0e0;
+    box-shadow: 0 0 20px rgba(40, 240, 224, 0.18);
+}
+
+.collab-logo-mark {
+    width: 26px;
+    height: 26px;
+    border: 2px solid #28f0e0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-arabic);
+    color: #28f0e0;
+    font-weight: bold;
+    transform: rotate(45deg);
+    box-shadow: 0 0 8px rgba(40, 240, 224, 0.3);
+    flex-shrink: 0;
+}
+
+.collab-logo-mark span {
+    transform: rotate(-45deg);
+    font-size: 12px;
+    display: inline-block;
+}
+
+.collab-text {
+    display: flex;
+    flex-direction: column;
+    text-align: right;
+}
+
+.collab-label {
+    font-size: 0.7rem;
+    color: #a0a0a0;
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+.collab-brand {
+    font-size: 0.9rem;
+    color: #28f0e0;
+    font-weight: 700;
+    text-shadow: 0 0 8px rgba(40, 240, 224, 0.2);
+    line-height: 1.3;
+}
+
