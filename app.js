@@ -4193,6 +4193,15 @@ function addSecretTeaToCart(isFree = false) {
     playSuccessSound();
     
     // Fade out and remove overlay
+    setTimeout(() => {
+        if (overlay) {
+            overlay.classList.remove('active');
+            setTimeout(() => {
+                overlay.remove();
+                updateCartUI();
+                openCartDrawer();
+            }, 1000);
+        }
     }, 2000);
 }
 
