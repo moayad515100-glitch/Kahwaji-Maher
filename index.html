@@ -18,7 +18,7 @@
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Stylesheet -->
-    <link rel="stylesheet" href="style.css?v=1.9">
+    <link rel="stylesheet" href="style.css?v=1.10">
     <!-- Leaflet.js for Map Picker -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -212,17 +212,33 @@
                 </h1>
                 <p class="hero-subtitle">متعة ومذاق القهوة التركية الفاخرة والمشروبات السحرية المميزة المحضرة بدقة وعناية.</p>
 
-                <!-- Collaboration Badge -->
-                <div class="collab-badge-container">
-                    <a href="https://abdullah2036.github.io/ComputerjyMaher/" target="_blank" class="collab-badge-link">
-                        <div class="collab-badge">
-                            <div class="collab-logo-mark"><span>م</span></div>
-                            <div class="collab-text">
-                                <span class="collab-label">🤝 بالتعاون التقني مع:</span>
-                                <span class="collab-brand">كمبيوترجي ماهر</span>
+                <!-- Badges Wrapper -->
+                <div class="hero-badges-wrapper" style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 22px;">
+                    <!-- Collaboration Badge -->
+                    <div class="collab-badge-container" style="margin-bottom: 0;">
+                        <a href="https://abdullah2036.github.io/ComputerjyMaher/" target="_blank" class="collab-badge-link">
+                            <div class="collab-badge">
+                                <div class="collab-logo-mark"><span>م</span></div>
+                                <div class="collab-text">
+                                    <span class="collab-label">🤝 بالتعاون التقني مع:</span>
+                                    <span class="collab-brand">كمبيوترجي ماهر</span>
+                                </div>
                             </div>
-                        </div>
-                    </a>
+                        </a>
+                    </div>
+                    
+                    <!-- New Work Badge -->
+                    <div class="new-work-badge-container">
+                        <a href="https://detective-maher.pages.dev/" target="_blank" class="new-work-badge-link">
+                            <div class="new-work-badge">
+                                <div class="new-work-icon">🕵️‍♂️</div>
+                                <div class="new-work-text">
+                                    <span class="new-work-label">✨ عمل قهوجي ماهر الجديد:</span>
+                                    <span class="new-work-title">المحقق ماهر 🔍</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
                 </div>
 
                 <!-- Samsung Z Fold 8 Goal Tracker -->
@@ -1125,7 +1141,7 @@
 
 
     <!-- Script file -->
-    <script src="app.js?v=4.19"></script>
+    <script src="app.js?v=4.20"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {

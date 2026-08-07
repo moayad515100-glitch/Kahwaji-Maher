@@ -4578,3 +4578,61 @@ body.is-installed-app {
     }
 }
 
+/* 🕵️‍♂️ New Work Badge Styles */
+.new-work-badge-container {
+    display: inline-block;
+    width: fit-content;
+}
+
+.new-work-badge-link {
+    text-decoration: none;
+    display: block;
+}
+
+.new-work-badge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255, 51, 51, 0.05);
+    border: 1px dashed rgba(255, 51, 51, 0.35);
+    box-shadow: 0 0 15px rgba(255, 51, 51, 0.05);
+    padding: 8px 14px;
+    border-radius: 8px;
+    transition: background 0.25s, transform 0.2s, border-color 0.25s;
+    direction: rtl;
+}
+
+.new-work-badge:hover {
+    background: rgba(255, 51, 51, 0.09);
+    transform: translateY(-2px);
+    border-color: #ff3333;
+    box-shadow: 0 0 20px rgba(255, 51, 51, 0.18);
+}
+
+.new-work-icon {
+    font-size: 1.5rem;
+    filter: drop-shadow(0 0 5px rgba(255, 51, 51, 0.4));
+    flex-shrink: 0;
+}
+
+.new-work-text {
+    display: flex;
+    flex-direction: column;
+    text-align: right;
+}
+
+.new-work-label {
+    font-size: 0.7rem;
+    color: #a0a0a0;
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+.new-work-title {
+    font-size: 0.9rem;
+    color: #ff4d4d;
+    font-weight: 700;
+    text-shadow: 0 0 8px rgba(255, 51, 51, 0.2);
+    line-height: 1.3;
+}
+
