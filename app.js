@@ -962,7 +962,8 @@ let fluctuatedPrices = {
     classic: 2,
     pro: 4,
     superpro: 5,
-    juice: 4
+    juice: 4,
+    coffee_generic: 5
 };
 
 // Grind Challenge state
@@ -3059,9 +3060,10 @@ function startPriceFluctuation() {
         fluctuatedPrices.pro = Math.floor(Math.random() * 12) + 2;    // 2-13 SAR
         fluctuatedPrices.superpro = Math.floor(Math.random() * 15) + 3; // 3-17 SAR
         fluctuatedPrices.juice = Math.floor(Math.random() * 10) + 1;    // 1-10 SAR
+        fluctuatedPrices.coffee_generic = Math.floor(Math.random() * 10) + 2; // 2-11 SAR
         
         // Update product card prices on the page
-        const items = ['classic', 'pro', 'superpro', 'juice'];
+        const items = ['classic', 'pro', 'superpro', 'juice', 'coffee_generic'];
         items.forEach(id => {
             const card = document.querySelector(`.product-card[data-id="${id}"]`);
             if (card) {

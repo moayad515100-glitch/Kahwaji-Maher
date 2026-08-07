@@ -453,6 +453,60 @@
                     </div>
                 </div>
 
+                <!-- Product 3b: Coffee Generic -->
+                <div class="product-card" data-id="coffee_generic" data-category="coffee">
+                    <div class="product-image-container">
+                        <img src="classic_new.jpg" alt="قهوه coffe" class="product-image">
+                        <span class="product-tag tag-new" style="background: var(--gold); color: #000;">جديد / NEW</span>
+                    </div>
+                    <div class="product-info">
+                        <h3>قهوه coffe ☕</h3>
+                        <p class="product-desc">قهوة كلاسيكية دافئة بنكهة متوازنة ومزاج رائع ومثالي ليومك! ☕</p>
+                        <div class="product-price">5 ر.س</div>
+                        
+                        <!-- Customization Section with Chips -->
+                        <div class="customization-section">
+                            <h4 class="custom-title"><i class="fa-solid fa-sliders"></i> خصص كوبك:</h4>
+                            
+                            <div class="custom-options">
+                                <!-- Size -->
+                                <div class="option-group">
+                                    <label>الحجم:</label>
+                                    <div class="chips-container size-chips">
+                                        <input type="radio" id="size-coffee-generic-normal" name="size-coffee_generic" value="وسط" checked style="display:none;" onchange="scaleProductImage(this, 'coffee_generic', 1.0)">
+                                        <label for="size-coffee-generic-normal" class="chip-label">وسط</label>
+
+                                        <input type="radio" id="size-coffee-generic-large" name="size-coffee_generic" value="كبير" style="display:none;" onchange="scaleProductImage(this, 'coffee_generic', 1.18)">
+                                        <label for="size-coffee-generic-large" class="chip-label">كبير (+1 ر.س)</label>
+                                    </div>
+                                </div>
+
+                                <!-- Sugar -->
+                                <div class="option-group">
+                                    <label>السكر:</label>
+                                    <div class="chips-container sugar-chips">
+                                        <input type="radio" id="sugar-coffee-generic-none" name="sugar-coffee_generic" value="بدون سكر" checked style="display:none;">
+                                        <label for="sugar-coffee-generic-none" class="chip-label">سادة</label>
+
+                                        <input type="radio" id="sugar-coffee-generic-low" name="sugar-coffee_generic" value="سكر خفيف" style="display:none;">
+                                        <label for="sugar-coffee-generic-low" class="chip-label">خفيف</label>
+
+                                        <input type="radio" id="sugar-coffee-generic-medium" name="sugar-coffee_generic" value="سكر وسط" style="display:none;">
+                                        <label for="sugar-coffee-generic-medium" class="chip-label">وسط</label>
+
+                                        <input type="radio" id="sugar-coffee-generic-high" name="sugar-coffee_generic" value="سكر زيادة" style="display:none;">
+                                        <label for="sugar-coffee-generic-high" class="chip-label">زيادة</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-add-cart" onclick="addToCart('coffee_generic', 'قهوه coffe ☕', 5, 'classic_new.jpg')">
+                            <i class="fa-solid fa-cart-plus"></i> إضافة للسلة
+                        </button>
+                    </div>
+                </div>
+
                 <!-- Product 4b: Espresso Maher [Soon] -->
                 <div class="product-card premium coming-soon-card" data-id="espresso_soon" data-category="coffee" style="opacity: 0.85; filter: grayscale(20%); position: relative;">
                     <div class="product-image-container" style="position: relative; overflow: hidden;">
@@ -1036,7 +1090,7 @@
 
 
     <!-- Script file -->
-    <script src="app.js?v=4.8"></script>
+    <script src="app.js?v=4.9"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
