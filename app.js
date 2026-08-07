@@ -4672,10 +4672,6 @@ function openCrimeCase() {
             <div class="crime-screen-noise"></div>
             <div class="crime-dossier">
                 <div class="top-secret-stamp">TOP SECRET</div>
-                <div class="crime-content-wrapper">
-                    <h2 style="color: #990000; margin-bottom: 20px; border-bottom: 2px dashed #990000; padding-bottom: 8px;">🕵️‍♂️ مكتب المحقق ماهر السري 🕵️‍♂️</h2>
-                    <div id="crime-terminal-text" style="font-family: monospace; font-size: 0.95rem; line-height: 1.7; color: #1c1204; min-height: 150px; white-space: pre-line;"></div>
-                </div>
                 <div class="crime-soon-container">
                     <h1 class="crime-soon-title">قريباً 🕵️‍♂️</h1>
                     <div class="crime-soon-sub">المحقق ماهر</div>
@@ -4694,66 +4690,17 @@ function openCrimeCase() {
     overlay.classList.add('active');
     document.body.style.overflow = 'hidden';
     
-    // Typewriter terminal narration
-    const terminal = document.getElementById('crime-terminal-text');
-    terminal.textContent = '';
-    
-    const lines = [
-        "🔍 جاري قراءة تقارير مسرح الجريمة...",
-        "🚨 موقع الحادث: مقهى قهوجي ماهر الكبير.",
-        "🔍 القضية: سرقة خلطة بن ماهر الأسطورية السرية!",
-        "🕵️‍♂️ الأدلة المرفوعة: بصمات مجهولة على فنجان قهوة تركي.",
-        "📢 المتهم الرئيسي: هارب يرتدي عباءة الشاهي المتسلل.",
-        "\n🕵️‍♂️ قريباً جداً... المحقق ماهر 🕵️‍♂️"
-    ];
-    
-    let currentLine = 0;
-    let currentChar = 0;
-    
-    function typeText() {
-        if (!overlay.classList.contains('active')) return; // abort if closed early
+    // Trigger cinematic zoom and word reveal immediately after a short atmospheric delay
+    setTimeout(() => {
+        if (!overlay.classList.contains('active')) return;
+        dossier.classList.add('zoomed');
         
-        if (currentLine < lines.length) {
-            const line = lines[currentLine];
-            if (currentChar < line.length) {
-                terminal.textContent += line.charAt(currentChar);
-                currentChar++;
-                // Sound click per type
-                try {
-                    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                    const osc = ctx.createOscillator();
-                    const gain = ctx.createGain();
-                    osc.connect(gain);
-                    gain.connect(ctx.destination);
-                    osc.frequency.setValueAtTime(currentLine === lines.length - 1 ? 300 : 150, ctx.currentTime);
-                    gain.gain.setValueAtTime(0.015, ctx.currentTime);
-                    osc.start();
-                    osc.stop(ctx.currentTime + 0.02);
-                } catch(e) {}
-                
-                setTimeout(typeText, 35);
-            } else {
-                terminal.textContent += '\n';
-                currentLine++;
-                currentChar = 0;
-                setTimeout(typeText, 400);
-            }
-        } else {
-            // Narrative finished, trigger cinematic zoom and word reveal
-            setTimeout(() => {
-                if (!overlay.classList.contains('active')) return;
-                dossier.classList.add('zoomed');
-                
-                // Play dramatic explosion boom sound
-                setTimeout(() => {
-                    if (!overlay.classList.contains('active')) return;
-                    playExplosionBoomSound();
-                }, 1000);
-            }, 800);
-        }
-    }
-    
-    setTimeout(typeText, 500);
+        // Play dramatic explosion boom sound
+        setTimeout(() => {
+            if (!overlay.classList.contains('active')) return;
+            playExplosionBoomSound();
+        }, 1200);
+    }, 600);
 }
 
 function closeCrimeCase() {
