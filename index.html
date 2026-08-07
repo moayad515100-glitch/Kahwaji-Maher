@@ -18,7 +18,7 @@
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Stylesheet -->
-    <link rel="stylesheet" href="style.css?v=1.5">
+    <link rel="stylesheet" href="style.css?v=1.6">
     <!-- Leaflet.js for Map Picker -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -271,7 +271,42 @@
         </div>
     </section>
 
-
+    <!-- News Board Section -->
+    <section id="news-board" class="news-board-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>لوحة أخبار قهوجي ماهر 📌📰</h2>
+                <div class="header-line"></div>
+                <p>آخر الأخبار والتحديثات الرسمية للمحل</p>
+            </div>
+            
+            <div class="corkboard">
+                <!-- Pin 1 -->
+                <div class="pinned-note">
+                    <div class="pin"></div>
+                    <div class="note-date">📅 اليوم</div>
+                    <div class="note-title">☕ قهوة جديدة في المنيو!</div>
+                    <p class="note-content">تم إطلاق مشروب "قهوه coffe" الكلاسيكي واللذيذ بقيمة 5 ريال فقط! جربوه الآن واستمتعوا بالطعم الأصيل.</p>
+                </div>
+                
+                <!-- Pin 2 -->
+                <div class="pinned-note">
+                    <div class="pin"></div>
+                    <div class="note-date">📅 قريباً</div>
+                    <div class="note-title">🤫 قهوجي ماهر يفكر في شيء كبير!</div>
+                    <p class="note-content">الباريستا ماهر يخطط لإطلاق مفاجأة ضخمة لعشاق المتجر. ترقبوا الإعلانات القادمة لحدث أسطوري جديد!</p>
+                </div>
+                
+                <!-- Pin 3 -->
+                <div class="pinned-note">
+                    <div class="pin"></div>
+                    <div class="note-date">📅 سري للغاية</div>
+                    <div class="note-title">🕵️‍♂️ لغز غامض في الكود!</div>
+                    <p class="note-content">يُشاع أن هناك وصفة كوكيز سرية مخفية في ثنايا أكواد المتجر.. العباقرة والبرمجيون فقط سيتمكنون من كشفها!</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Menu Section -->
     <section id="menu" class="menu-section">
@@ -1090,7 +1125,7 @@
 
 
     <!-- Script file -->
-    <script src="app.js?v=4.11"></script>
+    <script src="app.js?v=4.12"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {

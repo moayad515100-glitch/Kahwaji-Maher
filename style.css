@@ -4233,3 +4233,122 @@ body.is-installed-app {
     line-height: 1.3;
 }
 
+/* 📌 News Corkboard Styles */
+.news-board-section {
+    padding: 60px 0 30px;
+    background: #110d0a;
+}
+
+.corkboard {
+    background: radial-gradient(circle, #8b5a2b 0%, #5c3a21 100%);
+    border: 15px solid #2f1d11; /* wooden frame */
+    box-shadow: inset 0 0 30px rgba(0,0,0,0.8), 0 10px 25px rgba(0,0,0,0.6);
+    border-radius: 8px;
+    padding: 50px 20px 40px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 35px;
+    justify-content: center;
+    position: relative;
+    background-image: radial-gradient(rgba(0,0,0,0.15) 15%, transparent 16%);
+    background-size: 16px 16px;
+    direction: rtl;
+    box-sizing: border-box;
+}
+
+.pinned-note {
+    background: #fff8c7; /* post-it yellow */
+    color: #333;
+    padding: 28px 20px 20px;
+    box-shadow: 2px 8px 15px rgba(0,0,0,0.4);
+    position: relative;
+    border-radius: 2px;
+    font-family: var(--font-arabic);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    box-sizing: border-box;
+}
+
+.pinned-note::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 0 16px 16px;
+    border-color: transparent transparent rgba(0,0,0,0.08) transparent;
+}
+
+.pinned-note:hover {
+    transform: rotate(0deg) scale(1.03) !important;
+    box-shadow: 4px 12px 22px rgba(0,0,0,0.5);
+    z-index: 5;
+}
+
+/* Note rotation variations */
+.corkboard .pinned-note:nth-child(1) {
+    transform: rotate(-2.5deg);
+}
+.corkboard .pinned-note:nth-child(2) {
+    transform: rotate(2deg);
+    background: #e3f2fd; /* post-it blue */
+}
+.corkboard .pinned-note:nth-child(3) {
+    transform: rotate(-1.5deg);
+    background: #e8f5e9; /* post-it green */
+}
+
+/* Push Pin element */
+.pin {
+    width: 14px;
+    height: 14px;
+    background: #d9534f; /* red pin head */
+    border-radius: 50%;
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0 4px 5px rgba(0,0,0,0.45), inset -2px -2px 4px rgba(0,0,0,0.4);
+    z-index: 10;
+}
+
+.pin::after {
+    content: '';
+    width: 3px;
+    height: 10px;
+    background: #aaa; /* metal pin needle */
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%) rotate(15deg);
+    box-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+}
+
+.note-date {
+    font-size: 0.72rem;
+    color: #666;
+    font-weight: bold;
+    margin-bottom: 8px;
+    border-bottom: 1px dashed rgba(0,0,0,0.1);
+    padding-bottom: 4px;
+    text-align: right;
+}
+
+.note-title {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #111;
+    margin-bottom: 10px;
+    line-height: 1.35;
+    text-align: right;
+}
+
+.note-content {
+    font-size: 0.88rem;
+    color: #444;
+    line-height: 1.55;
+    margin: 0;
+    text-align: right;
+}
+
