@@ -4502,3 +4502,154 @@ function triggerSecretCookieUnlock() {
     `;
     document.body.appendChild(cookieModal);
 }
+
+// ==========================================================
+// 📁 Secret Crime Case Event (Judge Maher)
+// ==========================================================
+function playGlitchArrivalSound() {
+    try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(800, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(120, ctx.currentTime + 0.6);
+        gain.gain.setValueAtTime(0.12, ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.6);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.6);
+    } catch(e) {}
+}
+
+function playCameraClickSound() {
+    try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(100, ctx.currentTime);
+        osc.frequency.setValueAtTime(1300, ctx.currentTime + 0.06);
+        gain.gain.setValueAtTime(0.2, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.35);
+    } catch(e) {}
+}
+
+function spawnCrimeNote() {
+    const corkboard = document.querySelector('.corkboard');
+    if (!corkboard) return;
+    
+    // Create note element
+    const crimeNote = document.createElement('div');
+    crimeNote.className = 'pinned-note note-crime';
+    crimeNote.innerHTML = `
+        <div class="pin" style="background: #111; box-shadow: 0 4px 5px rgba(0,0,0,0.6);"></div>
+        <div class="note-date">📅 ملف قضية سرية</div>
+        <div class="note-title" style="color: #ff4d4d;">📁 قضية جريمة!</div>
+        <p class="note-content" style="color: #ffcccc;">اضغط لفتح ملف القضية وفحص الأدلة السرية.. 🔍🕵️‍♂️</p>
+    `;
+    
+    // Add click handler
+    crimeNote.addEventListener('click', () => {
+        openCrimeCase();
+    });
+    
+    corkboard.appendChild(crimeNote);
+    
+    // Play arrival sound & add glitch spawn class
+    setTimeout(() => {
+        playGlitchArrivalSound();
+        crimeNote.classList.add('active-spawn');
+        showToast("⚠️ تم رصد اختراق أمني! ملف قضية جديد معلق على لوحة الأخبار.");
+    }, 100);
+}
+
+function openCrimeCase() {
+    playCameraClickSound();
+    
+    // Create or get overlay
+    let overlay = document.querySelector('.crime-overlay');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.className = 'crime-overlay';
+        overlay.innerHTML = `
+            <div class="crime-screen-noise"></div>
+            <div class="crime-dossier">
+                <div class="top-secret-stamp">TOP SECRET</div>
+                <h2 style="color: #990000; margin-bottom: 20px; border-bottom: 2px dashed #990000; padding-bottom: 8px;">🕵️‍♂️ مكتب المحقق ماهر السري 🕵️‍♂️</h2>
+                <div id="crime-terminal-text" style="font-family: monospace; font-size: 0.95rem; line-height: 1.7; color: #1c1204; min-height: 150px; white-space: pre-line;"></div>
+                <button class="crime-close-btn" onclick="closeCrimeCase()">إغلاق ملف القضية 📁</button>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+    }
+    
+    // Display overlay
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    
+    // Typewriter terminal narration
+    const terminal = document.getElementById('crime-terminal-text');
+    terminal.textContent = '';
+    
+    const lines = [
+        "🔍 جاري قراءة تقارير مسرح الجريمة...",
+        "🚨 موقع الحادث: مقهى قهوجي ماهر الكبير.",
+        "🔍 القضية: سرقة خلطة بن ماهر الأسطورية السرية!",
+        "🕵️‍♂️ الأدلة المرفوعة: بصمات مجهولة على فنجان قهوة تركي.",
+        "📢 المتهم الرئيسي: هارب يرتدي عباءة الشاهي المتسلل.",
+        "\n🕵️‍♂️ قريباً جداً: المحقق ماهر 🕵️‍♂️"
+    ];
+    
+    let currentLine = 0;
+    let currentChar = 0;
+    
+    function typeText() {
+        if (currentLine < lines.length) {
+            const line = lines[currentLine];
+            if (currentChar < line.length) {
+                terminal.textContent += line.charAt(currentChar);
+                currentChar++;
+                // Sound click per type
+                try {
+                    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.frequency.setValueAtTime(currentLine === lines.length - 1 ? 400 : 150, ctx.currentTime);
+                    gain.gain.setValueAtTime(0.02, ctx.currentTime);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.02);
+                } catch(e) {}
+                
+                setTimeout(typeText, 35);
+            } else {
+                terminal.textContent += '\n';
+                currentLine++;
+                currentChar = 0;
+                setTimeout(typeText, 400);
+            }
+        }
+    }
+    
+    setTimeout(typeText, 500);
+}
+
+function closeCrimeCase() {
+    const overlay = document.querySelector('.crime-overlay');
+    if (overlay) {
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+}
+
+// Start timer to spawn the crime note after 10 seconds of page load
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(spawnCrimeNote, 10000);
+});
