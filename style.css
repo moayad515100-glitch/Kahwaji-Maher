@@ -4494,3 +4494,61 @@ body.is-installed-app {
     transform: scale(0.98);
 }
 
+/* Cinematic Zoom effects inside Dossier */
+.crime-dossier.zoomed {
+    transform: scale(2.2) rotate(1deg);
+    transition: transform 3.5s cubic-bezier(0.25, 1, 0.2, 1);
+}
+
+.crime-content-wrapper {
+    transition: opacity 1.5s ease;
+    opacity: 1;
+}
+
+.crime-dossier.zoomed .crime-content-wrapper {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.crime-soon-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.3);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 2s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 1.5s ease;
+    z-index: 100;
+    text-align: center;
+    width: 100%;
+}
+
+.crime-dossier.zoomed .crime-soon-container {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.0);
+    pointer-events: auto;
+}
+
+.crime-soon-title {
+    font-size: 2.8rem;
+    color: #990000;
+    font-weight: 900;
+    text-shadow: 0 0 15px rgba(153, 0, 0, 0.6), 0 0 3px #000;
+    margin: 0;
+    animation: textRedGlitch 1s infinite alternate;
+}
+
+.crime-soon-sub {
+    font-size: 1.2rem;
+    color: #1c1204;
+    font-weight: bold;
+    margin-top: 10px;
+    letter-spacing: 1px;
+}
+
+@keyframes textRedGlitch {
+    0% { transform: skew(0deg); text-shadow: 2px 0 0 #ff0000, -2px 0 0 #00ffff; }
+    50% { transform: skew(1deg); text-shadow: -2px 0 0 #ff0000, 2px 0 0 #00ffff; }
+    100% { transform: skew(-1deg); text-shadow: 1px 0 0 #ff0000, -1px 0 0 #00ffff; }
+}
+

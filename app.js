@@ -4569,8 +4569,99 @@ function spawnCrimeNote() {
     }, 100);
 }
 
+let crimeAudioCtx = null;
+let ambientOsc = null;
+let pulseOsc = null;
+let heartbeatInterval = null;
+
+function playExplosionBoomSound() {
+    try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(80, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(10, ctx.currentTime + 1.5);
+        gain.gain.setValueAtTime(0.35, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.5);
+        osc.start();
+        osc.stop(ctx.currentTime + 1.5);
+    } catch(e) {}
+}
+
+function startCrimeAmbientSound() {
+    try {
+        crimeAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        // 1. Low ambient hum
+        ambientOsc = crimeAudioCtx.createOscillator();
+        const ambientGain = crimeAudioCtx.createGain();
+        ambientOsc.type = 'sine';
+        ambientOsc.frequency.setValueAtTime(55, crimeAudioCtx.currentTime);
+        ambientGain.gain.setValueAtTime(0.08, crimeAudioCtx.currentTime);
+        ambientOsc.connect(ambientGain);
+        ambientGain.connect(crimeAudioCtx.destination);
+        ambientOsc.start();
+        
+        // 2. Pulse LFO hum
+        pulseOsc = crimeAudioCtx.createOscillator();
+        const pulseGain = crimeAudioCtx.createGain();
+        pulseOsc.type = 'triangle';
+        pulseOsc.frequency.setValueAtTime(110, crimeAudioCtx.currentTime);
+        pulseGain.gain.setValueAtTime(0.05, crimeAudioCtx.currentTime);
+        
+        const lfo = crimeAudioCtx.createOscillator();
+        const lfoGain = crimeAudioCtx.createGain();
+        lfo.frequency.value = 0.4;
+        lfoGain.gain.value = 0.03;
+        lfo.connect(lfoGain);
+        lfoGain.connect(pulseGain.gain);
+        
+        pulseOsc.connect(pulseGain);
+        pulseGain.connect(crimeAudioCtx.destination);
+        pulseOsc.start();
+        lfo.start();
+        
+        // 3. Heartbeat sounds
+        heartbeatInterval = setInterval(() => {
+            if (!crimeAudioCtx) return;
+            playThump(60, 0.2);
+            setTimeout(() => playThump(55, 0.2), 220);
+        }, 1600);
+        
+        function playThump(freq, volume) {
+            try {
+                const thumpOsc = crimeAudioCtx.createOscillator();
+                const thumpGain = crimeAudioCtx.createGain();
+                thumpOsc.connect(thumpGain);
+                thumpGain.connect(crimeAudioCtx.destination);
+                thumpOsc.type = 'sine';
+                thumpOsc.frequency.setValueAtTime(freq, crimeAudioCtx.currentTime);
+                thumpOsc.frequency.exponentialRampToValueAtTime(10, crimeAudioCtx.currentTime + 0.35);
+                thumpGain.gain.setValueAtTime(volume, crimeAudioCtx.currentTime);
+                thumpGain.gain.exponentialRampToValueAtTime(0.01, crimeAudioCtx.currentTime + 0.35);
+                thumpOsc.start();
+                thumpOsc.stop(crimeAudioCtx.currentTime + 0.35);
+            } catch(e) {}
+        }
+    } catch(e) {}
+}
+
+function stopCrimeAmbientSound() {
+    try {
+        if (heartbeatInterval) clearInterval(heartbeatInterval);
+        if (ambientOsc) ambientOsc.stop();
+        if (pulseOsc) pulseOsc.stop();
+        if (crimeAudioCtx) crimeAudioCtx.close();
+    } catch(e) {}
+    crimeAudioCtx = null;
+}
+
 function openCrimeCase() {
     playCameraClickSound();
+    startCrimeAmbientSound();
     
     // Create or get overlay
     let overlay = document.querySelector('.crime-overlay');
@@ -4581,13 +4672,23 @@ function openCrimeCase() {
             <div class="crime-screen-noise"></div>
             <div class="crime-dossier">
                 <div class="top-secret-stamp">TOP SECRET</div>
-                <h2 style="color: #990000; margin-bottom: 20px; border-bottom: 2px dashed #990000; padding-bottom: 8px;">🕵️‍♂️ مكتب المحقق ماهر السري 🕵️‍♂️</h2>
-                <div id="crime-terminal-text" style="font-family: monospace; font-size: 0.95rem; line-height: 1.7; color: #1c1204; min-height: 150px; white-space: pre-line;"></div>
+                <div class="crime-content-wrapper">
+                    <h2 style="color: #990000; margin-bottom: 20px; border-bottom: 2px dashed #990000; padding-bottom: 8px;">🕵️‍♂️ مكتب المحقق ماهر السري 🕵️‍♂️</h2>
+                    <div id="crime-terminal-text" style="font-family: monospace; font-size: 0.95rem; line-height: 1.7; color: #1c1204; min-height: 150px; white-space: pre-line;"></div>
+                </div>
+                <div class="crime-soon-container">
+                    <h1 class="crime-soon-title">قريباً 🕵️‍♂️</h1>
+                    <div class="crime-soon-sub">المحقق ماهر</div>
+                </div>
                 <button class="crime-close-btn" onclick="closeCrimeCase()">إغلاق ملف القضية 📁</button>
             </div>
         `;
         document.body.appendChild(overlay);
     }
+    
+    // Reset classes
+    const dossier = overlay.querySelector('.crime-dossier');
+    dossier.classList.remove('zoomed');
     
     // Display overlay
     overlay.classList.add('active');
@@ -4603,13 +4704,15 @@ function openCrimeCase() {
         "🔍 القضية: سرقة خلطة بن ماهر الأسطورية السرية!",
         "🕵️‍♂️ الأدلة المرفوعة: بصمات مجهولة على فنجان قهوة تركي.",
         "📢 المتهم الرئيسي: هارب يرتدي عباءة الشاهي المتسلل.",
-        "\n🕵️‍♂️ قريباً جداً: المحقق ماهر 🕵️‍♂️"
+        "\n🕵️‍♂️ قريباً جداً... المحقق ماهر 🕵️‍♂️"
     ];
     
     let currentLine = 0;
     let currentChar = 0;
     
     function typeText() {
+        if (!overlay.classList.contains('active')) return; // abort if closed early
+        
         if (currentLine < lines.length) {
             const line = lines[currentLine];
             if (currentChar < line.length) {
@@ -4622,8 +4725,8 @@ function openCrimeCase() {
                     const gain = ctx.createGain();
                     osc.connect(gain);
                     gain.connect(ctx.destination);
-                    osc.frequency.setValueAtTime(currentLine === lines.length - 1 ? 400 : 150, ctx.currentTime);
-                    gain.gain.setValueAtTime(0.02, ctx.currentTime);
+                    osc.frequency.setValueAtTime(currentLine === lines.length - 1 ? 300 : 150, ctx.currentTime);
+                    gain.gain.setValueAtTime(0.015, ctx.currentTime);
                     osc.start();
                     osc.stop(ctx.currentTime + 0.02);
                 } catch(e) {}
@@ -4635,6 +4738,18 @@ function openCrimeCase() {
                 currentChar = 0;
                 setTimeout(typeText, 400);
             }
+        } else {
+            // Narrative finished, trigger cinematic zoom and word reveal
+            setTimeout(() => {
+                if (!overlay.classList.contains('active')) return;
+                dossier.classList.add('zoomed');
+                
+                // Play dramatic explosion boom sound
+                setTimeout(() => {
+                    if (!overlay.classList.contains('active')) return;
+                    playExplosionBoomSound();
+                }, 1000);
+            }, 800);
         }
     }
     
@@ -4646,6 +4761,7 @@ function closeCrimeCase() {
     if (overlay) {
         overlay.classList.remove('active');
         document.body.style.overflow = '';
+        stopCrimeAmbientSound();
     }
 }
 
