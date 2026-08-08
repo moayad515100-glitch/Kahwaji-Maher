@@ -18,7 +18,7 @@
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Stylesheet -->
-    <link rel="stylesheet" href="style.css?v=1.10">
+    <link rel="stylesheet" href="style.css?v=1.11">
     <!-- Leaflet.js for Map Picker -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -335,10 +335,11 @@
 
             <!-- Category Filter Tabs -->
             <div class="menu-categories">
-                <button class="category-tab active" data-category="all">كل المشروبات ☕</button>
+                <button class="category-tab active" data-category="all">كل المنتجات 🛍️</button>
                 <button class="category-tab" data-category="coffee">القهوة الماهرة 🧋</button>
                 <button class="category-tab" data-category="matcha">الماتشا السحرية 🍵</button>
                 <button class="category-tab" data-category="juice">عصائر وخلطات 🔮</button>
+                <button class="category-tab" data-category="sweets">حلويات وكوكيز 🍪</button>
             </div>
 
             <div class="menu-grid">
@@ -761,6 +762,40 @@
                         </button>
                     </div>
                 </div>
+
+                <!-- Product 7: Cookie (3 SAR, 1 Left!) -->
+                <div class="product-card premium" data-id="cookie" data-category="sweets">
+                    <div class="product-image-container">
+                        <img src="cookie.jpg" alt="كوكيز ماهر المتسلل" class="product-image">
+                        <span class="product-tag tag-pro" style="background: linear-gradient(135deg, #d9534f, #c9302c); color: #fff; font-weight: bold; box-shadow: 0 0 10px rgba(217, 83, 79, 0.4);"><i class="fa-solid fa-triangle-exclamation"></i> متبقي حبة واحدة فقط!</span>
+                    </div>
+                    <div class="product-info">
+                        <h3>كوكيز ماهر المتسلل 🍪</h3>
+                        <p class="product-desc">كوكيز الشوكولاتة الفاخر والمخبوز طازجاً.. تحذير: متبقي حبة واحدة فقط في المخزون! 🤫</p>
+                        <div class="product-price" style="color: var(--gold); font-weight: bold;">3 ر.س</div>
+                        
+                        <!-- Customization Section with Chips -->
+                        <div class="customization-section">
+                            <h4 class="custom-title"><i class="fa-solid fa-sliders"></i> خصص طلبك:</h4>
+                            <div class="custom-options">
+                                <div class="option-group">
+                                    <label>الحجم:</label>
+                                    <div class="chips-container size-chips">
+                                        <input type="radio" id="size-cookie-normal" name="size-cookie" value="وسط" checked style="display:none;">
+                                        <label for="size-cookie-normal" class="chip-label">وسط</label>
+
+                                        <input type="radio" id="size-cookie-large" name="size-cookie" value="كبير" style="display:none;">
+                                        <label for="size-cookie-large" class="chip-label">كبير (+1 ر.س)</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-add-cart" onclick="addToCart('cookie', '🍪 كوكيز ماهر المتسلل', 3, 'cookie.jpg')">
+                            <i class="fa-solid fa-cart-plus"></i> إضافة للسلة
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -1141,7 +1176,7 @@
 
 
     <!-- Script file -->
-    <script src="app.js?v=4.21"></script>
+    <script src="app.js?v=4.22"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {

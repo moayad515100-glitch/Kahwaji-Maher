@@ -273,6 +273,16 @@ function addToCart(productId, name, price, image) {
         }
     }
 
+    // Limit Cookie to 1 piece in the cart
+    if (productId === 'cookie' || name.includes('كوكيز')) {
+        const hasCookie = cart.some(item => item.productId === 'cookie' || item.name.includes('كوكيز'));
+        if (hasCookie) {
+            showToast("🍪 عذراً! متبقي حبة واحدة فقط من الكوكيز في المتجر!");
+            openCartDrawer();
+            return;
+        }
+    }
+
     if (existingItemIndex > -1) {
         cart[existingItemIndex].quantity += 1;
     } else {
@@ -386,6 +396,11 @@ function updateCartUI() {
         
         const priceDisplay = item.price === 0 ? 'مجاناً' : `${item.price * item.quantity} ر.س`;
 
+        const isQtyLocked = item.productId === 'cookie' || item.productId === 'tea' || (item.price === 0 && (item.productId === 'matcha' || item.productId === 'superpro')) || item.name.includes('كوكيز');
+        const plusButton = isQtyLocked 
+            ? `<button class="qty-btn" style="opacity: 0.4; cursor: not-allowed;" onclick="showToast('🤫 متبقي حبة واحدة فقط!')">+</button>` 
+            : `<button class="qty-btn" onclick="changeQuantity('${item.id}', 1)">+</button>`;
+
         itemElement.innerHTML = `
             <img src="${item.image}" alt="${item.name}" class="cart-item-img">
             <button class="remove-item" onclick="removeItem('${item.id}')" title="إزالة"><i class="fa-solid fa-trash-can"></i></button>
@@ -399,7 +414,7 @@ function updateCartUI() {
                     <div class="quantity-controls">
                         <button class="qty-btn" onclick="changeQuantity('${item.id}', -1)">-</button>
                         <span class="qty-val">${item.quantity}</span>
-                        <button class="qty-btn" onclick="changeQuantity('${item.id}', 1)">+</button>
+                        ${plusButton}
                     </div>
                 </div>
             </div>
@@ -458,8 +473,8 @@ function changeQuantity(itemId, change) {
                 showToast("🤫 يمديك تطلب شاهي واحد بس! لا تطمع عشان ما يكتشفنا ماهر.");
                 return;
             }
-            if (item.name === '🍪 كوكيز ماهر المتسلل السري 🤫') {
-                showToast("🤫 يمديك تطلب حبة كوكيز واحدة بس! الوصفة سرية للغاية.");
+            if (item.productId === 'cookie' || item.name.includes('كوكيز')) {
+                showToast("🤫 يمديك تطلب حبة كوكيز واحدة بس! متبقي حبة واحدة في المتجر.");
                 return;
             }
             const currentTotalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
