@@ -4518,4 +4518,59 @@ function triggerSecretCookieUnlock() {
     document.body.appendChild(cookieModal);
 }
 
+// ==========================================================
+// 💬 Testimonials & WhatsApp Review Form
+// ==========================================================
+let selectedRating = 5;
+
+function setSelectRating(rating) {
+    selectedRating = rating;
+    const labels = document.querySelectorAll('.rating-star-select label');
+    labels.forEach((label, idx) => {
+        const labelRating = 5 - idx;
+        if (labelRating <= rating) {
+            label.style.color = 'var(--gold)';
+        } else {
+            label.style.color = '#444';
+        }
+    });
+}
+
+function sendReviewToWhatsApp(event) {
+    event.preventDefault();
+    const nameEl = document.getElementById('review-user-name');
+    const textEl = document.getElementById('review-user-text');
+    if (!nameEl || !textEl) return;
+
+    const name = nameEl.value.trim();
+    const text = textEl.value.trim();
+    if (!name || !text) return;
+
+    // Build star display string
+    const stars = '⭐'.repeat(selectedRating);
+
+    // Build WhatsApp message
+    let message = `*تقييم جديد لقهوجي ماهر* 😍✍️\n\n`;
+    message += `👤 *الاسم:* ${name}\n`;
+    message += `⭐ *التقييم:* ${stars} (${selectedRating}/5)\n\n`;
+    message += `💬 *الرأي:* \n"${text}"\n\n`;
+    message += `📅 المرسل من متجر قهوجي ماهر الإلكتروني ☕`;
+
+    const encodedMessage = encodeURIComponent(message);
+    const waLink = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+
+    // Play chime sound
+    if (typeof playSuccessSound === 'function') {
+        playSuccessSound();
+    }
+
+    // Open WhatsApp in new tab
+    window.open(waLink, '_blank');
+
+    // Reset Form
+    event.target.reset();
+    setSelectRating(5);
+    showToast('تم تجهيز التقييم وفتحه في واتساب للإرسال! شكراً لك ❤️');
+}
+
 

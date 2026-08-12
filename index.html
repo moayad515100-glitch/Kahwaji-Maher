@@ -18,7 +18,7 @@
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Stylesheet -->
-    <link rel="stylesheet" href="style.css?v=1.12">
+    <link rel="stylesheet" href="style.css?v=1.13">
     <!-- Leaflet.js for Map Picker -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -835,46 +835,49 @@
                     </div>
                 </div>
 
-                <!-- Testimonial 2 -->
-                <div class="testimonial-card">
-                    <div class="testimonial-header">
-                        <div class="user-avatar-initials" style="background: linear-gradient(135deg, #10b981, #059669);">أ.ع</div>
+                <!-- Review Form Card -->
+                <div class="testimonial-card review-form-card">
+                    <div class="testimonial-header" style="margin-bottom: 12px;">
+                        <div class="user-avatar-initials" style="background: linear-gradient(135deg, var(--gold), var(--accent));"><i class="fa-solid fa-pen-to-square"></i></div>
                         <div class="user-info-meta">
-                            <h4>أحمد العتيبي</h4>
-                            <div class="rating-stars">
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
+                            <h4>أضف تقييمك الخاص ✍️</h4>
+                            <span style="font-size: 0.72rem; color: #a0a0a0;">شارك الباريستا ماهر برأيك وتجربتك</span>
+                        </div>
+                    </div>
+                    
+                    <form id="wa-review-form" onsubmit="sendReviewToWhatsApp(event)" class="review-form">
+                        <!-- Rating Stars selector -->
+                        <div class="rating-selector-group">
+                            <span class="rating-label">تقييمك:</span>
+                            <div class="rating-star-select">
+                                <input type="radio" name="review-rating" id="star-5" value="5" checked style="display:none;">
+                                <label for="star-5" class="star-label" onclick="setSelectRating(5)"><i class="fa-solid fa-star"></i></label>
+                                
+                                <input type="radio" name="review-rating" id="star-4" value="4" style="display:none;">
+                                <label for="star-4" class="star-label" onclick="setSelectRating(4)"><i class="fa-solid fa-star"></i></label>
+                                
+                                <input type="radio" name="review-rating" id="star-3" value="3" style="display:none;">
+                                <label for="star-3" class="star-label" onclick="setSelectRating(3)"><i class="fa-solid fa-star"></i></label>
+                                
+                                <input type="radio" name="review-rating" id="star-2" value="2" style="display:none;">
+                                <label for="star-2" class="star-label" onclick="setSelectRating(2)"><i class="fa-solid fa-star"></i></label>
+                                
+                                <input type="radio" name="review-rating" id="star-1" value="1" style="display:none;">
+                                <label for="star-1" class="star-label" onclick="setSelectRating(1)"><i class="fa-solid fa-star"></i></label>
                             </div>
                         </div>
-                        <div class="quote-icon"><i class="fa-solid fa-quote-left"></i></div>
-                    </div>
-                    <div class="testimonial-body">
-                        <p class="review-text">بصراحة، قهوة ماهر التركية تفوز! الطعم ثقيل ومحبوك مثل القهوة التي تشربها بقلب اسطنبول. سرعة تجهيز الطلبات وتعامل الباريستا راقي جداً. الله يوفقكم ويزيدكم من فضله ☕🔥</p>
-                    </div>
-                </div>
 
-                <!-- Testimonial 3 -->
-                <div class="testimonial-card">
-                    <div class="testimonial-header">
-                        <div class="user-avatar-initials" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">س.م</div>
-                        <div class="user-info-meta">
-                            <h4>سارة محمد</h4>
-                            <div class="rating-stars">
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                            </div>
-                        </div>
-                        <div class="quote-icon"><i class="fa-solid fa-quote-left"></i></div>
-                    </div>
-                    <div class="testimonial-body">
-                        <p class="review-text">الماتشا الباردة عندهم خياااال! توازن ممتاز بين حلاوة الحليب ونكهة الماتشا اليابانية الأصلية بدون أي مرارة. والموقع وتأثيرات القلتش تعطي متعة تصفح عجيبة للطلب! 😍🍵</p>
-                    </div>
+                        <!-- Name field -->
+                        <input type="text" id="review-user-name" placeholder="اسمك الكريم (مثال: أحمد)" required class="review-input">
+                        
+                        <!-- Review field -->
+                        <textarea id="review-user-text" placeholder="اكتب تقييمك هنا بالتفصيل (ممتاز، موزون، اقتراحاتك...)" required class="review-textarea" rows="3"></textarea>
+                        
+                        <!-- Submit button -->
+                        <button type="submit" class="btn-send-review">
+                            إرسال التقييم عبر واتساب <i class="fa-brands fa-whatsapp"></i>
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -1256,7 +1259,7 @@
 
 
     <!-- Script file -->
-    <script src="app.js?v=4.23"></script>
+    <script src="app.js?v=4.24"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
