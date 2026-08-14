@@ -4573,4 +4573,83 @@ function sendReviewToWhatsApp(event) {
     showToast('تم تجهيز التقييم وفتحه في واتساب للإرسال! شكراً لك ❤️');
 }
 
+// ==========================================================
+// 💻 Desktop Computer App Installation Engine
+// ==========================================================
+let deferredPrompt = null;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+});
+
+function openDesktopInstallModal() {
+    let modal = document.getElementById('pc-install-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'pc-install-modal';
+        modal.className = 'retro-modal-container active';
+        modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 100000; display: flex; align-items: center; justify-content: center; font-family: var(--font-arabic); direction: rtl;';
+        modal.innerHTML = `
+            <div class="win95-modal" style="width: 480px; max-width: 92%; background: #c0c0c0; border: 2px solid #fff; border-right-color: #808080; border-bottom-color: #808080; box-shadow: 0 0 25px rgba(0,0,0,0.6); padding: 2px; color: #000;">
+                <div class="win95-title-bar" style="background: linear-gradient(90deg, #000080, #1084d0); color: #fff; padding: 4px 8px; font-weight: bold; font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center;">
+                    <span>💻 تثبيت تطبيق قهوجي ماهر للكمبيوتر (PC)</span>
+                    <button onclick="closeDesktopInstallModal()" style="font-size: 0.75rem; font-weight: bold; background: #c0c0c0; border: 1px solid #fff; border-right-color: #808080; border-bottom-color: #808080; padding: 1px 6px; cursor: pointer; color: #000;">X</button>
+                </div>
+                <div class="win95-body" style="padding: 22px; text-align: center;">
+                    <div style="font-size: 3.5rem; margin-bottom: 12px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));">🖥️⚡</div>
+                    <h3 style="margin-bottom: 10px; color: #000080; font-size: 1.15rem;">اختر طريقة تشغيل التطبيق على جهازك:</h3>
+                    <p style="font-size: 0.88rem; line-height: 1.6; color: #222; margin-bottom: 20px;">
+                        يمديك تشغيل متجر قهوجي ماهر كتطبيق كمبيوتر مستقل بخيارات متعددة:
+                    </p>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
+                        <!-- Option 1: PWA Install -->
+                        <button class="win95-btn" onclick="triggerPwaDesktopPrompt()" style="padding: 10px 15px; font-weight: bold; font-size: 0.9rem; background: linear-gradient(135deg, #1084d0, #000080); color: white; border: 2px solid #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 4px;">
+                            <i class="fa-solid fa-download"></i> 1. تثبيت فوري كتطبيق كمبيوتر (PWA)
+                        </button>
+                        
+                        <!-- Option 2: Download PC ZIP Package -->
+                        <a href="Kahwaji-Maher-PC.zip" download class="win95-btn" style="padding: 10px 15px; font-weight: bold; font-size: 0.9rem; background: linear-gradient(135deg, #10b981, #059669); color: white; border: 2px solid #fff; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 4px;">
+                            <i class="fa-solid fa-file-zipper"></i> 2. تحميل حزمة تطبيق الويندوز (ZIP)
+                        </a>
+                    </div>
+                    
+                    <div style="background: #fff; border: 1px inset #808080; padding: 10px; text-align: right; font-size: 0.8rem; color: #444; line-height: 1.5; border-radius: 4px;">
+                        📌 <strong>تلميح التثبيت اليدوي:</strong><br>
+                        إذا كنت تستخدم متصفح Chrome أو Edge على الكمبيوتر، اضغط على زر <strong>(➕ التثبيت)</strong> في شريط العناوين العلوي للمتصفح ليفتح لك التطبيق بواجهة كمبيوتر مستقلة!
+                    </div>
+
+                    <button class="win95-btn" onclick="closeDesktopInstallModal()" style="margin-top: 15px; padding: 6px 20px; font-weight: bold; cursor: pointer;">إغلاق ❌</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    } else {
+        modal.style.display = 'flex';
+    }
+}
+
+function closeDesktopInstallModal() {
+    const modal = document.getElementById('pc-install-modal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+function triggerPwaDesktopPrompt() {
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+                showToast('🎉 تم تثبيت تطبيق قهوجي ماهر على جهازك بنجاح!');
+                closeDesktopInstallModal();
+            }
+            deferredPrompt = null;
+        });
+    } else {
+        showToast('💡 اضغط على زر التثبيت (➕) في شريط المتصفح العلوي لتثبيته فوراً!');
+    }
+}
+
 

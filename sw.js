@@ -1,4 +1,4 @@
-const CACHE_NAME = 'maher-coffee-v40';
+const CACHE_NAME = 'maher-coffee-v41';
 const ASSETS = [
   './',
   './index.html',
@@ -13,7 +13,8 @@ const ASSETS = [
   './espresso_maher.jpg',
   './cortado_maher.jpg',
   './cookie-mission.html',
-  './cookie.jpg'
+  './cookie.jpg',
+  './Kahwaji-Maher-PC.zip'
 ];
 
 // Install Event

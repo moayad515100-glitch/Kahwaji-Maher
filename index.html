@@ -269,10 +269,11 @@
                     </div>
                 </div>
 
-                <div class="hero-buttons" style="justify-content: flex-start;">
+                <div class="hero-buttons" style="justify-content: flex-start; gap: 10px; flex-wrap: wrap;">
                     <a href="#menu" class="btn btn-primary">اطلب الآن</a>
                     <a href="#about" class="btn btn-secondary">اكتشف المزيد</a>
-                    <a href="Kahwaji-Maher.apk" download class="btn" style="background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;"><i class="fa-brands fa-android"></i> تحميل التطبيق (APK)</a>
+                    <a href="Kahwaji-Maher.apk" download class="btn" style="background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;"><i class="fa-brands fa-android"></i> تطبيق الجوال (APK)</a>
+                    <a href="javascript:void(0)" onclick="openDesktopInstallModal()" class="btn" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; border: none; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;"><i class="fa-solid fa-desktop"></i> تطبيق الكمبيوتر (PC)</a>
                 </div>
             </div>
 
@@ -1259,7 +1260,7 @@
 
 
     <!-- Script file -->
-    <script src="app.js?v=4.24"></script>
+    <script src="app.js?v=4.25"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
