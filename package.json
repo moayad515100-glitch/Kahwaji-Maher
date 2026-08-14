@@ -1,0 +1,16 @@
+{
+  "name": "kahwaji-maher-desktop",
+  "version": "1.0.0",
+  "description": "تطبيق قهوجي ماهر الحقيقي للكمبيوتر",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "keywords": [
+    "kahwaji-maher",
+    "desktop",
+    "coffee"
+  ],
+  "author": "Barista Maher",
+  "license": "ISC"
+}
