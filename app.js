@@ -4652,4 +4652,17 @@ function triggerPwaDesktopPrompt() {
     }
 }
 
+// Dismiss Splash Screen on load
+window.addEventListener('load', () => {
+    const splash = document.getElementById('app-splash-screen');
+    if (splash) {
+        setTimeout(() => {
+            splash.classList.add('fade-out');
+            setTimeout(() => {
+                splash.remove();
+            }, 500);
+        }, 1100);
+    }
+});
+
 

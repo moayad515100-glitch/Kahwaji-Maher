@@ -2,7 +2,7 @@
   "name": "قهوجي ماهر",
   "short_name": "قهوجي ماهر",
   "description": "اطلب قهوتك المفضلة من قهوجي ماهر. قهوة ماهرة أصيلة بنكهات فريدة وتوصيل سريع ومباشر.",
-  "start_url": "./index.html",
+  "start_url": "./index.html?app=true",
   "display": "standalone",
   "background_color": "#120e0a",
   "theme_color": "#ecc94b",

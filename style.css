@@ -4765,3 +4765,171 @@ body.is-installed-app {
     }
 }
 
+/* 📱 Native Mobile Store App Styles */
+.mobile-bottom-nav {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 65px;
+    background: rgba(15, 12, 8, 0.96);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-top: 1px solid rgba(255, 170, 0, 0.15);
+    z-index: 9999;
+    justify-content: space-around;
+    align-items: center;
+    direction: rtl;
+    box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.6);
+}
+
+@media (max-width: 768px) {
+    .mobile-bottom-nav {
+        display: flex;
+    }
+    body {
+        padding-bottom: 70px;
+    }
+}
+
+.mobile-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    color: #a0a0a0;
+    text-decoration: none;
+    font-family: var(--font-arabic);
+    font-size: 0.72rem;
+    font-weight: 600;
+    width: 20%;
+    height: 100%;
+    transition: color 0.2s ease, transform 0.2s ease;
+    position: relative;
+}
+
+.mobile-nav-item i {
+    font-size: 1.25rem;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.mobile-nav-item.active,
+.mobile-nav-item:hover {
+    color: var(--gold);
+}
+
+.mobile-nav-item.active i {
+    transform: translateY(-2px) scale(1.15);
+    color: var(--gold);
+    filter: drop-shadow(0 0 8px rgba(255, 170, 0, 0.6));
+}
+
+.mobile-cart-badge-container {
+    position: relative;
+    display: inline-block;
+}
+
+.mobile-cart-badge {
+    position: absolute;
+    top: -6px;
+    right: -10px;
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: bold;
+    border-radius: 10px;
+    padding: 1px 5px;
+    min-width: 15px;
+    text-align: center;
+    border: 1px solid rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
+}
+
+/* 📱 Splash Screen Styles */
+.app-splash-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, #1a1510 0%, #0a0805 100%);
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-arabic);
+    direction: rtl;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.app-splash-screen.fade-out {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.splash-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+}
+
+.splash-logo-container {
+    position: relative;
+    width: 110px;
+    height: 110px;
+    margin-bottom: 20px;
+}
+
+.splash-logo {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--gold);
+    box-shadow: 0 0 30px rgba(255, 170, 0, 0.4);
+    animation: splashPulse 2s infinite ease-in-out;
+}
+
+@keyframes splashPulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 25px rgba(255, 170, 0, 0.4); }
+    50% { transform: scale(1.06); box-shadow: 0 0 40px rgba(255, 170, 0, 0.7); }
+}
+
+.splash-title {
+    font-size: 1.8rem;
+    color: var(--gold);
+    margin: 0 0 8px 0;
+    font-weight: 800;
+    text-shadow: 0 0 15px rgba(255, 170, 0, 0.3);
+}
+
+.splash-subtitle {
+    font-size: 0.9rem;
+    color: #a0a0a0;
+    margin: 0 0 25px 0;
+}
+
+.splash-loader {
+    width: 160px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.splash-loader-bar {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--accent));
+    animation: splashProgress 1.2s ease-in-out forwards;
+}
+
+@keyframes splashProgress {
+    0% { width: 0%; }
+    100% { width: 100%; }
+}
+
