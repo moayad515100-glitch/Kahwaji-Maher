@@ -759,8 +759,18 @@ function animateFlyToCart(cardElement, imageSrc, productId) {
         }
     }
     
-    // 2. Perform flying clone animation
-    const cartToggleBtn = document.getElementById('cart-toggle');
+    // 2. Perform flying clone animation (Target Desktop or Mobile Cart icon)
+    let cartToggleBtn = document.getElementById('cart-toggle');
+    const mobileCartTarget = document.getElementById('mobile-cart-tab-btn') || document.querySelector('.app-bottom-nav .nav-item[onclick*="Cart"]');
+    
+    if (window.innerWidth <= 768 && mobileCartTarget && mobileCartTarget.offsetParent !== null) {
+        cartToggleBtn = mobileCartTarget;
+    } else if (!cartToggleBtn || cartToggleBtn.offsetParent === null) {
+        if (mobileCartTarget && mobileCartTarget.offsetParent !== null) {
+            cartToggleBtn = mobileCartTarget;
+        }
+    }
+    
     if (!cartToggleBtn) return;
     
     const rect = cardElement.getBoundingClientRect();
@@ -4662,12 +4672,15 @@ function hideSplashScreen() {
     const splash = document.getElementById('app-splash-screen');
     if (!splash || splash.dataset.dismissed) return;
     splash.dataset.dismissed = 'true';
+    splash.style.pointerEvents = 'none';
+    splash.style.opacity = '0';
+    splash.style.visibility = 'hidden';
     splash.classList.add('fade-out');
     setTimeout(() => {
         if (splash.parentNode) {
             splash.parentNode.removeChild(splash);
         }
-    }, 500);
+    }, 400);
 }
 
 if (document.readyState === 'complete' || document.readyState === 'interactive') {

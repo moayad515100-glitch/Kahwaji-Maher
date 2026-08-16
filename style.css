@@ -4867,6 +4867,7 @@ body.is-installed-app {
 .app-splash-screen.fade-out {
     opacity: 0;
     visibility: hidden;
+    pointer-events: none !important;
 }
 
 .splash-content {

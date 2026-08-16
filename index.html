@@ -173,14 +173,24 @@
         </div>
     </div>
     <script>
-        setTimeout(function() {
-            var s = document.getElementById('app-splash-screen');
-            if (s) {
-                s.style.opacity = '0';
-                s.style.pointerEvents = 'none';
-                setTimeout(function() { if (s && s.parentNode) s.parentNode.removeChild(s); }, 400);
+        (function() {
+            function forceKillSplash() {
+                var s = document.getElementById('app-splash-screen');
+                if (s) {
+                    s.style.pointerEvents = 'none';
+                    s.style.opacity = '0';
+                    s.style.visibility = 'hidden';
+                    setTimeout(function() { if (s && s.parentNode) s.parentNode.removeChild(s); }, 300);
+                }
             }
-        }, 700);
+            if (document.readyState === 'complete' || document.readyState === 'interactive') {
+                setTimeout(forceKillSplash, 300);
+            } else {
+                window.addEventListener('load', function() { setTimeout(forceKillSplash, 300); });
+                document.addEventListener('DOMContentLoaded', function() { setTimeout(forceKillSplash, 300); });
+            }
+            setTimeout(forceKillSplash, 500);
+        })();
     </script>
 
     <!-- App-Only Sticky Top Bar -->
@@ -1293,7 +1303,7 @@
 
 
     <!-- Script file -->
-    <script src="app.js?v=4.30"></script>
+    <script src="app.js?v=4.31"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -1313,7 +1323,7 @@
             <i class="fa-solid fa-mug-hot"></i>
             <span>المنيو</span>
         </a>
-        <a href="javascript:void(0)" class="nav-item" onclick="openCartDrawer(); setActiveAppNav(this, 'cart');">
+        <a href="javascript:void(0)" class="nav-item" id="mobile-cart-tab-btn" onclick="openCartDrawer(); setActiveAppNav(this, 'cart');">
             <div class="nav-cart-wrapper">
                 <i class="fa-solid fa-cart-shopping"></i>
                 <span class="cart-count nav-cart-count" id="app-cart-count">0</span>
