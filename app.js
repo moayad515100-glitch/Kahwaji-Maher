@@ -4657,18 +4657,28 @@ function triggerPwaDesktopPrompt() {
     }
 }
 
-// Dismiss Splash Screen on load
-window.addEventListener('load', () => {
+// Bulletproof Mobile Splash Screen Dismiss Handler
+function hideSplashScreen() {
     const splash = document.getElementById('app-splash-screen');
-    if (splash) {
-        setTimeout(() => {
-            splash.classList.add('fade-out');
-            setTimeout(() => {
-                splash.remove();
-            }, 500);
-        }, 1100);
-    }
-});
+    if (!splash || splash.dataset.dismissed) return;
+    splash.dataset.dismissed = 'true';
+    splash.classList.add('fade-out');
+    setTimeout(() => {
+        if (splash.parentNode) {
+            splash.parentNode.removeChild(splash);
+        }
+    }, 500);
+}
+
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    setTimeout(hideSplashScreen, 500);
+} else {
+    window.addEventListener('load', () => setTimeout(hideSplashScreen, 500));
+    document.addEventListener('DOMContentLoaded', () => setTimeout(hideSplashScreen, 500));
+}
+
+// Absolute safety fallback timeout (700ms)
+setTimeout(hideSplashScreen, 700);
 
 // ==========================================================
 // 🔮 SECRET CODE & EASTER EGG ENGINE

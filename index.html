@@ -172,6 +172,16 @@
             </div>
         </div>
     </div>
+    <script>
+        setTimeout(function() {
+            var s = document.getElementById('app-splash-screen');
+            if (s) {
+                s.style.opacity = '0';
+                s.style.pointerEvents = 'none';
+                setTimeout(function() { if (s && s.parentNode) s.parentNode.removeChild(s); }, 400);
+            }
+        }, 700);
+    </script>
 
     <!-- App-Only Sticky Top Bar -->
     <div class="app-top-bar">
@@ -1283,7 +1293,7 @@
 
 
     <!-- Script file -->
-    <script src="app.js?v=4.28"></script>
+    <script src="app.js?v=4.29"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
