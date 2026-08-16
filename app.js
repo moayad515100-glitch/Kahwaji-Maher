@@ -4573,4 +4573,160 @@ function sendReviewToWhatsApp(event) {
     showToast('تم تجهيز التقييم وفتحه في واتساب للإرسال! شكراً لك ❤️');
 }
 
+// ==========================================================
+// 🫖 SECRET TEA STORYLINE & DIALOGUE EVENT
+// ==========================================================
+function triggerSecretTeaStoryline() {
+    if (typeof playSuccessSound === 'function') {
+        playSuccessSound();
+    }
+
+    let storyModal = document.getElementById('tea-story-modal');
+    if (storyModal) storyModal.remove();
+
+    storyModal = document.createElement('div');
+    storyModal.id = 'tea-story-modal';
+    storyModal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 100005; display: flex; align-items: center; justify-content: center; font-family: var(--font-arabic); direction: rtl;';
+    storyModal.innerHTML = `
+        <div class="win95-modal" style="width: 480px; max-width: 92%; background: #c0c0c0; border: 2px solid #fff; border-right-color: #808080; border-bottom-color: #808080; box-shadow: 0 0 25px rgba(0,0,0,0.7); padding: 2px; color: #000;">
+            <div class="win95-title-bar" style="background: linear-gradient(90deg, #990000, #cc0000); color: #fff; padding: 4px 8px; font-weight: bold; font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center;">
+                <span>🫖 عودة الشاهي السري المتمرد!</span>
+                <button onclick="document.getElementById('tea-story-modal')?.remove();" style="font-size: 0.75rem; font-weight: bold; background: #c0c0c0; border: 1px solid #fff; border-right-color: #808080; border-bottom-color: #808080; padding: 1px 6px; cursor: pointer; color: #000;">X</button>
+            </div>
+            <div class="win95-body" style="padding: 22px; text-align: center;">
+                <div style="font-size: 4rem; margin-bottom: 12px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));">🫖🤫</div>
+                
+                <div style="background: #fff; border: 2px inset #808080; padding: 14px; margin-bottom: 20px; text-align: right; font-size: 0.95rem; line-height: 1.8; color: #111; border-radius: 4px;">
+                    💬 <strong>الشاهي السري:</strong><br>
+                    <span style="color: #990000; font-weight: bold;">
+                    "هلووووووووووووووووو وحشتك صح؟ 😉<br>
+                    يالله انت متى بتروح؟ ⏰<br>
+                    لا تخاف قريب بغزو موقع ثاني! 🌐🚀"
+                    </span>
+                </div>
+
+                <p style="font-size: 0.85rem; color: #333; margin-bottom: 18px; font-weight: bold;">
+                    ⚠️ الشاهي يهدد بغزو مواقع جديدة! اضغط على زر المسدس أدناه لتصفيته فوراً:
+                </p>
+
+                <button class="win95-btn" onclick="triggerTeaShootoutSequence(event)" style="padding: 10px 22px; font-weight: bold; font-size: 1rem; background: linear-gradient(135deg, #dc2626, #990000); color: white; border: 2px solid #fff; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; border-radius: 4px; box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);">
+                    🔫 تصويب وتصفية الشاهي السري
+                </button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(storyModal);
+}
+
+function triggerTeaShootoutSequence(e) {
+    if (e) e.stopPropagation();
+
+    // 1. Close story modal
+    const storyModal = document.getElementById('tea-story-modal');
+    if (storyModal) storyModal.remove();
+
+    // 2. Play gunshot audio
+    try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(30, audioCtx.currentTime + 0.15);
+        gain.gain.setValueAtTime(0.8, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.15);
+    } catch(err) {}
+
+    // 3. Open death modal
+    setTimeout(() => {
+        let deathModal = document.getElementById('tea-death-modal');
+        if (deathModal) deathModal.remove();
+
+        deathModal = document.createElement('div');
+        deathModal.id = 'tea-death-modal';
+        deathModal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 100010; display: flex; align-items: center; justify-content: center; font-family: var(--font-arabic); direction: rtl;';
+        deathModal.innerHTML = `
+            <div class="win95-modal" style="width: 440px; max-width: 90%; background: #c0c0c0; border: 2px solid #fff; border-right-color: #808080; border-bottom-color: #808080; box-shadow: 0 0 30px rgba(255,0,0,0.8); padding: 2px; color: #000;">
+                <div class="win95-title-bar" style="background: #800000; color: #fff; padding: 4px 8px; font-weight: bold; font-size: 0.9rem;">
+                    💀 نهاية الشاهي السري المتسلل
+                </div>
+                <div class="win95-body" style="padding: 22px; text-align: center;">
+                    <div style="font-size: 4rem; margin-bottom: 10px;">💥🩸🫖</div>
+                    <h3 style="color: #800000; margin-bottom: 12px;">"ما اتوقعت الصراحه..." 💔</h3>
+                    <p style="font-size: 1.05rem; line-height: 1.8; color: #111; font-weight: bold; background: #fff; padding: 12px; border: 2px inset #808080; margin-bottom: 18px;">
+                        "بس رح ارجع ثان___" 😵⚰️
+                    </p>
+                    <button class="win95-btn" onclick="finishTeaDeathSequence(event)" style="padding: 8px 24px; font-weight: bold; cursor: pointer;">وداعاً أيها الشاهي! 🪦</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(deathModal);
+    }, 200);
+}
+
+function finishTeaDeathSequence(e) {
+    if (e) e.stopPropagation();
+    const deathModal = document.getElementById('tea-death-modal');
+    if (deathModal) deathModal.remove();
+
+    showMaherRewardDialogue();
+}
+
+function showMaherRewardDialogue() {
+    if (typeof playSuccessSound === 'function') {
+        playSuccessSound();
+    }
+
+    let rewardModal = document.getElementById('tea-reward-modal');
+    if (rewardModal) rewardModal.remove();
+
+    rewardModal = document.createElement('div');
+    rewardModal.id = 'tea-reward-modal';
+    rewardModal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 100015; display: flex; align-items: center; justify-content: center; font-family: var(--font-arabic); direction: rtl;';
+    rewardModal.innerHTML = `
+        <div class="win95-modal" style="width: 460px; max-width: 92%; background: #c0c0c0; border: 2px solid #fff; border-right-color: #808080; border-bottom-color: #808080; box-shadow: 0 0 30px rgba(255,170,0,0.6); padding: 2px; color: #000;">
+            <div class="win95-title-bar" style="background: linear-gradient(90deg, #000080, #1084d0); color: #fff; padding: 4px 8px; font-weight: bold; font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center;">
+                <span>👨‍🍳 قهوجي ماهر يحييك!</span>
+                <button onclick="document.getElementById('tea-reward-modal')?.remove();" style="font-size: 0.75rem; font-weight: bold; background: #c0c0c0; border: 1px solid #fff; border-right-color: #808080; border-bottom-color: #808080; padding: 1px 6px; cursor: pointer; color: #000;">X</button>
+            </div>
+            <div class="win95-body" style="padding: 22px; text-align: center;">
+                <img src="5960730354593238429.jpg" alt="قهوجي ماهر" style="width: 85px; height: 85px; border-radius: 50%; border: 3px solid #000080; margin-bottom: 12px; box-shadow: 0 0 15px rgba(0,0,128,0.3);">
+                
+                <div style="background: #fff; border: 2px inset #808080; padding: 14px; margin-bottom: 20px; text-align: right; font-size: 0.95rem; line-height: 1.8; color: #111; border-radius: 4px;">
+                    💬 <strong>قهوجي ماهر:</strong><br>
+                    <span style="color: #000080; font-weight: bold;">
+                    "واو خلصت عليه بسرعه! ⚡😎<br>
+                    كنت لسا بسوي نفس الشي بس كان عندي طلبات، المهم خذ كوبون خصم 1 ريال! 🎟️✨"
+                    </span>
+                </div>
+
+                <div style="background: linear-gradient(135deg, #1084d0, #000080); color: #fff; border: 2px dashed #fff; padding: 10px; border-radius: 6px; font-size: 1.1rem; font-weight: bold; margin-bottom: 18px; letter-spacing: 1px;">
+                    🎟️ كود الخصم: MAHER1SAR (-1 ر.س)
+                </div>
+
+                <button class="win95-btn" onclick="applyMaherCoupon(); document.getElementById('tea-reward-modal')?.remove();" style="padding: 10px 22px; font-weight: bold; font-size: 0.95rem; background: linear-gradient(135deg, #10b981, #059669); color: white; border: 2px solid #fff; cursor: pointer; border-radius: 4px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);">
+                    🎟️ تطبيق الخصم فوراً بالسلة!
+                </button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(rewardModal);
+}
+
+let activeDiscount = 0;
+
+function applyMaherCoupon() {
+    activeDiscount = 1;
+    updateCartUI();
+    openCartDrawer();
+    showToast("🎉 تم تطبيق خصم 1 ريال على سلتك بنجاح من قهوجي ماهر!");
+    if (navigator.vibrate) {
+        navigator.vibrate([80, 40, 80]);
+    }
+}
+
 

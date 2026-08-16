@@ -313,12 +313,12 @@
                     <p class="note-content">الباريستا ماهر يخطط لإطلاق مفاجأة ضخمة لعشاق المتجر. ترقبوا الإعلانات القادمة لحدث أسطوري جديد!</p>
                 </div>
                 
-                <!-- Pin 3 -->
-                <div class="pinned-note">
-                    <div class="pin"></div>
-                    <div class="note-date">📅 سري للغاية</div>
-                    <div class="note-title">🕵️‍♂️ لغز غامض في الكود!</div>
-                    <p class="note-content">يُشاع أن هناك وصفة كوكيز سرية مخفية في ثنايا أكواد المتجر.. العباقرة والبرمجيون فقط سيتمكنون من كشفها!</p>
+                <!-- Pin 3: Secret Tea Trigger -->
+                <div class="pinned-note secret-tea-pin" onclick="triggerSecretTeaStoryline()" style="cursor: pointer; border: 2px dashed #dc2626; box-shadow: 0 5px 15px rgba(220, 38, 38, 0.3);">
+                    <div class="pin" style="background: #dc2626;"></div>
+                    <div class="note-date" style="color: #dc2626; font-weight: bold;">📅 عودة سري للغاية</div>
+                    <div class="note-title" style="color: #b91c1c;">🫖 الشاهي السري المتمرد! (اضغط هنا 🤫)</div>
+                    <p class="note-content">"هلووووو وحشتكم صح؟ اضغط هنا الآن لكشف الحوار وسر العودة!" 💬✨</p>
                 </div>
             </div>
         </div>
@@ -343,69 +343,6 @@
             </div>
 
             <div class="menu-grid">
-                <!-- Product: Secret Tea (3 SAR) -->
-                <div class="product-card premium secret-tea-card" data-id="secret-tea" data-category="juice" style="border: 2px solid #dc2626; box-shadow: 0 0 20px rgba(220, 38, 38, 0.4);">
-                    <div class="product-image-container">
-                        <img src="icetea_maher.jpg" alt="الشاهي السري المتمرد" class="product-image">
-                        <span class="product-tag" style="background: linear-gradient(135deg, #b91c1c, #dc2626); color: #fff; font-weight: bold; box-shadow: 0 0 10px rgba(220, 38, 38, 0.6);">🫖 عودة الشاهي السري</span>
-                    </div>
-                    <div class="product-info">
-                        <h3>الشاهي السري المتمرد 🫖🤫</h3>
-                        <p class="product-desc">"هلوووو وحشتكم صح؟ راجع لكم بطعم سري مميز وموزون ع الأصول!" 😉✨</p>
-                        <div class="product-price">3 ر.س <span class="price-suffix">/ كوب</span></div>
-                        
-                        <!-- Customization Section with Chips -->
-                        <div class="customization-section">
-                            <h4 class="custom-title"><i class="fa-solid fa-sliders"></i> خصص كوبك:</h4>
-                            
-                            <div class="custom-options">
-                                <!-- Size -->
-                                <div class="option-group">
-                                    <label>الحجم:</label>
-                                    <div class="chips-container size-chips">
-                                        <input type="radio" id="size-secret-tea-normal" name="size-secret-tea" value="وسط" checked style="display:none;" onchange="scaleProductImage(this, 'secret-tea', 1.0)">
-                                        <label for="size-secret-tea-normal" class="chip-label">وسط</label>
-
-                                        <input type="radio" id="size-secret-tea-large" name="size-secret-tea" value="كبير" style="display:none;" onchange="scaleProductImage(this, 'secret-tea', 1.18)">
-                                        <label for="size-secret-tea-large" class="chip-label">كبير (+1 ر.س)</label>
-                                    </div>
-                                </div>
-
-                                <!-- Sugar -->
-                                <div class="option-group">
-                                    <label>السكر:</label>
-                                    <div class="chips-container sugar-chips">
-                                        <input type="radio" id="sugar-secret-tea-none" name="sugar-secret-tea" value="بدون سكر" style="display:none;">
-                                        <label for="sugar-secret-tea-none" class="chip-label">سادة</label>
-
-                                        <input type="radio" id="sugar-secret-tea-medium" name="sugar-secret-tea" value="سكر وسط" checked style="display:none;">
-                                        <label for="sugar-secret-tea-medium" class="chip-label">وسط</label>
-
-                                        <input type="radio" id="sugar-secret-tea-high" name="sugar-secret-tea" value="سكر زيادة" style="display:none;">
-                                        <label for="sugar-secret-tea-high" class="chip-label">زيادة</label>
-                                    </div>
-                                </div>
-
-                                <!-- Extra Flavour -->
-                                <div class="option-group">
-                                    <label>الإضافة:</label>
-                                    <div class="chips-container extra-chips">
-                                        <input type="radio" id="extra-secret-tea-mint" name="extra-secret-tea" value="مع نعناع طازج" checked style="display:none;">
-                                        <label for="extra-secret-tea-mint" class="chip-label">نعناع 🌿</label>
-
-                                        <input type="radio" id="extra-secret-tea-habaq" name="extra-secret-tea" value="مع حبق مديني" style="display:none;">
-                                        <label for="extra-secret-tea-habaq" class="chip-label">حبق 🍃</label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <button class="btn btn-add-cart" onclick="addToCart('secret-tea', 'الشاهي السري المتمرد 🫖🤫', 3, 'icetea_maher.jpg')" style="background: linear-gradient(135deg, #b91c1c, #dc2626); color: #fff;">
-                            <i class="fa-solid fa-cart-plus"></i> إضافة للسلة
-                        </button>
-                    </div>
-                </div>
-
                 <!-- Product 1: Classic (Free) -->
                 <div class="product-card" data-id="classic" data-category="coffee">
                     <div class="product-image-container">
@@ -1322,7 +1259,7 @@
 
 
     <!-- Script file -->
-    <script src="app.js?v=6.00"></script>
+    <script src="app.js?v=7.00"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -1353,6 +1290,12 @@
             <i class="fa-solid fa-user"></i>
             <span>عني</span>
         </a>
+    </div>
+
+    <!-- 🫖 Floating Secret Tea Mystery Badge -->
+    <div id="floating-secret-tea-badge" onclick="triggerSecretTeaStoryline()" style="position: fixed; bottom: 85px; right: 20px; z-index: 999; background: linear-gradient(135deg, #b91c1c, #dc2626); color: #fff; padding: 10px 18px; border-radius: 30px; font-family: var(--font-arabic); font-size: 0.9rem; font-weight: bold; cursor: pointer; box-shadow: 0 5px 20px rgba(220, 38, 38, 0.5); display: flex; align-items: center; gap: 8px; border: 2px solid #fff;">
+        <span style="font-size: 1.2rem;">🫖</span>
+        <span>الشاهي السري 🤫</span>
     </div>
 </body>
 </html>
