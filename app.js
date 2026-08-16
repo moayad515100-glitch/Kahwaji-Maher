@@ -4775,18 +4775,19 @@ function triggerSpiderManEasterEgg() {
 let teaGunModeActive = false;
 
 function triggerSecretTeaStoryline() {
-    // 1. Play dramatic entry chime
     playSuccessSound();
 
-    // 2. Open retro story modal with new dialogue
-    const storyModal = document.createElement('div');
+    let storyModal = document.getElementById('tea-story-modal');
+    if (storyModal) storyModal.remove();
+
+    storyModal = document.createElement('div');
     storyModal.id = 'tea-story-modal';
     storyModal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 100005; display: flex; align-items: center; justify-content: center; font-family: var(--font-arabic); direction: rtl;';
     storyModal.innerHTML = `
         <div class="win95-modal" style="width: 480px; max-width: 92%; background: #c0c0c0; border: 2px solid #fff; border-right-color: #808080; border-bottom-color: #808080; box-shadow: 0 0 25px rgba(0,0,0,0.7); padding: 2px; color: #000;">
             <div class="win95-title-bar" style="background: linear-gradient(90deg, #990000, #cc0000); color: #fff; padding: 4px 8px; font-weight: bold; font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center;">
                 <span>🫖 عودة الشاهي السري المتمرد!</span>
-                <button onclick="this.closest('#tea-story-modal').remove();" style="font-size: 0.75rem; font-weight: bold; background: #c0c0c0; border: 1px solid #fff; border-right-color: #808080; border-bottom-color: #808080; padding: 1px 6px; cursor: pointer; color: #000;">X</button>
+                <button onclick="closeTeaStoryModal()" style="font-size: 0.75rem; font-weight: bold; background: #c0c0c0; border: 1px solid #fff; border-right-color: #808080; border-bottom-color: #808080; padding: 1px 6px; cursor: pointer; color: #000;">X</button>
             </div>
             <div class="win95-body" style="padding: 22px; text-align: center;">
                 <div style="font-size: 3.8rem; margin-bottom: 12px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4)); animation: secretFloat 2.5s infinite ease-in-out;">🫖🤫</div>
@@ -4802,16 +4803,27 @@ function triggerSecretTeaStoryline() {
                     ⚠️ الشاهي يهدد بغزو مواقع جديدة! اضغط على المسدس أدناه واقضِ عليه فوراً:
                 </p>
 
-                <button class="win95-btn" onclick="activateTeaGunMode(); this.closest('#tea-story-modal').remove();" style="padding: 10px 22px; font-weight: bold; font-size: 1rem; background: linear-gradient(135deg, #dc2626, #990000); color: white; border: 2px solid #fff; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; border-radius: 4px; box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);">
+                <button class="win95-btn" onclick="startGunModeFromStory(event)" style="padding: 10px 22px; font-weight: bold; font-size: 1rem; background: linear-gradient(135deg, #dc2626, #990000); color: white; border: 2px solid #fff; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; border-radius: 4px; box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);">
                     🔫 تصويب وتصفية الشاهي السري
                 </button>
             </div>
         </div>
     `;
     document.body.appendChild(storyModal);
-
-    // Also add the secret tea item temporarily to the menu if not present
     injectSecretTeaCardToMenu();
+}
+
+function closeTeaStoryModal() {
+    const modal = document.getElementById('tea-story-modal');
+    if (modal) modal.remove();
+}
+
+function startGunModeFromStory(e) {
+    if (e) e.stopPropagation();
+    closeTeaStoryModal();
+    setTimeout(() => {
+        activateTeaGunMode();
+    }, 150);
 }
 
 function injectSecretTeaCardToMenu() {
@@ -4848,7 +4860,6 @@ function activateTeaGunMode() {
     teaGunModeActive = true;
     document.body.classList.add('gun-mode-active');
 
-    // Create HUD indicator
     let hud = document.getElementById('gun-hud');
     if (!hud) {
         hud = document.createElement('div');
@@ -4864,16 +4875,17 @@ function activateTeaGunMode() {
         document.body.appendChild(hud);
     }
 
-    showToast("🔫 تم تفعيل وضع التصويب! اذهب إلى المنيو واضغط على الشاهي للإطلاق!");
+    showToast("🔫 تم تفعيل وضع التصويب! اضغط على كرت الشاهي للإطلاق!");
     
-    // Add global click target listener
-    document.addEventListener('click', handleGunShotClick);
+    document.removeEventListener('click', handleGunShotClick);
+    setTimeout(() => {
+        document.addEventListener('click', handleGunShotClick);
+    }, 100);
 }
 
 function handleGunShotClick(e) {
     if (!teaGunModeActive) return;
     
-    // Check if clicked near or on tea target
     const teaCard = document.querySelector('.product-card[data-id="secret-tea-target"]');
     if (teaCard && (teaCard.contains(e.target) || e.target.closest('.secret-tea-card'))) {
         shootSecretTeaTarget(e);
@@ -4881,8 +4893,18 @@ function handleGunShotClick(e) {
 }
 
 function shootSecretTeaTarget(e) {
-    if (e) e.stopPropagation();
-    
+    if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    // Immediately stop gun mode
+    teaGunModeActive = false;
+    document.body.classList.remove('gun-mode-active');
+    document.removeEventListener('click', handleGunShotClick);
+    const hud = document.getElementById('gun-hud');
+    if (hud) hud.remove();
+
     const teaVisual = document.getElementById('tea-cup-visual');
     const teaCard = document.querySelector('.product-card[data-id="secret-tea-target"]');
     const teaTitle = document.getElementById('tea-title-text');
@@ -4914,7 +4936,11 @@ function shootSecretTeaTarget(e) {
 
     // Dying words dialogue modal
     setTimeout(() => {
-        const deathModal = document.createElement('div');
+        let deathModal = document.getElementById('tea-death-modal');
+        if (deathModal) deathModal.remove();
+
+        deathModal = document.createElement('div');
+        deathModal.id = 'tea-death-modal';
         deathModal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 100010; display: flex; align-items: center; justify-content: center; font-family: var(--font-arabic); direction: rtl;';
         deathModal.innerHTML = `
             <div class="win95-modal" style="width: 440px; max-width: 90%; background: #c0c0c0; border: 2px solid #fff; border-right-color: #808080; border-bottom-color: #808080; box-shadow: 0 0 30px rgba(255,0,0,0.8); padding: 2px; color: #000;">
@@ -4927,7 +4953,7 @@ function shootSecretTeaTarget(e) {
                     <p style="font-size: 1.05rem; line-height: 1.8; color: #111; font-weight: bold; background: #fff; padding: 12px; border: 2px inset #808080; margin-bottom: 18px;">
                         "بس رح ارجع ثان___" 😵⚰️
                     </p>
-                    <button class="win95-btn" onclick="this.closest('div[style*=\"z-index: 100010\"]').remove(); showMaherRewardDialogue();" style="padding: 8px 24px; font-weight: bold; cursor: pointer;">وداعاً أيها الشاهي! 🪦</button>
+                    <button class="win95-btn" onclick="finishTeaDeathSequence(event)" style="padding: 8px 24px; font-weight: bold; cursor: pointer;">وداعاً أيها الشاهي! 🪦</button>
                 </div>
             </div>
         `;
@@ -4937,12 +4963,13 @@ function shootSecretTeaTarget(e) {
     // Update card display after shot
     if (teaTitle) teaTitle.textContent = "الشاهي السري (تمت تصفيته) ☠️";
     if (teaDesc) teaDesc.textContent = "ما اتوقعت الصراحه بس رح ارجع ثان___ 🪦";
+}
 
-    // Deactivate Gun mode
-    teaGunModeActive = false;
-    document.body.classList.remove('gun-mode-active');
-    const hud = document.getElementById('gun-hud');
-    if (hud) hud.remove();
+function finishTeaDeathSequence(e) {
+    if (e) e.stopPropagation();
+    const deathModal = document.getElementById('tea-death-modal');
+    if (deathModal) deathModal.remove();
+    showMaherRewardDialogue();
 }
 
 // 👨‍🍳 3. Barista Maher Post-Battle Dialogue & 1 SAR Coupon Reward
@@ -4951,13 +4978,17 @@ function showMaherRewardDialogue() {
         playSuccessSound();
     }
 
-    const rewardModal = document.createElement('div');
+    let rewardModal = document.getElementById('tea-reward-modal');
+    if (rewardModal) rewardModal.remove();
+
+    rewardModal = document.createElement('div');
+    rewardModal.id = 'tea-reward-modal';
     rewardModal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 100015; display: flex; align-items: center; justify-content: center; font-family: var(--font-arabic); direction: rtl;';
     rewardModal.innerHTML = `
         <div class="win95-modal" style="width: 460px; max-width: 92%; background: #c0c0c0; border: 2px solid #fff; border-right-color: #808080; border-bottom-color: #808080; box-shadow: 0 0 30px rgba(255,170,0,0.6); padding: 2px; color: #000;">
             <div class="win95-title-bar" style="background: linear-gradient(90deg, #000080, #1084d0); color: #fff; padding: 4px 8px; font-weight: bold; font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center;">
                 <span>👨‍🍳 قهوجي ماهر يحييك!</span>
-                <button onclick="this.closest('div[style*=\"z-index: 100015\"]').remove();" style="font-size: 0.75rem; font-weight: bold; background: #c0c0c0; border: 1px solid #fff; border-right-color: #808080; border-bottom-color: #808080; padding: 1px 6px; cursor: pointer; color: #000;">X</button>
+                <button onclick="document.getElementById('tea-reward-modal')?.remove();" style="font-size: 0.75rem; font-weight: bold; background: #c0c0c0; border: 1px solid #fff; border-right-color: #808080; border-bottom-color: #808080; padding: 1px 6px; cursor: pointer; color: #000;">X</button>
             </div>
             <div class="win95-body" style="padding: 22px; text-align: center;">
                 <img src="5960730354593238429.jpg" alt="قهوجي ماهر" style="width: 85px; height: 85px; border-radius: 50%; border: 3px solid #000080; margin-bottom: 12px; box-shadow: 0 0 15px rgba(0,0,128,0.3);">
@@ -4974,7 +5005,7 @@ function showMaherRewardDialogue() {
                     🎟️ كود الخصم: MAHER1SAR (-1 ر.س)
                 </div>
 
-                <button class="win95-btn" onclick="applyMaherCoupon(); this.closest('div[style*=\"z-index: 100015\"]').remove();" style="padding: 10px 22px; font-weight: bold; font-size: 0.95rem; background: linear-gradient(135deg, #10b981, #059669); color: white; border: 2px solid #fff; cursor: pointer; border-radius: 4px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);">
+                <button class="win95-btn" onclick="applyMaherCoupon(); document.getElementById('tea-reward-modal')?.remove();" style="padding: 10px 22px; font-weight: bold; font-size: 0.95rem; background: linear-gradient(135deg, #10b981, #059669); color: white; border: 2px solid #fff; cursor: pointer; border-radius: 4px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);">
                     🎟️ تطبيق الخصم فوراً بالسلة!
                 </button>
             </div>
