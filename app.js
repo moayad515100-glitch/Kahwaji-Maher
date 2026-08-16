@@ -424,13 +424,18 @@ function updateCartUI() {
     });
 
     // Calculate & Display Total
-    const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const rawTotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const discountAmount = (typeof activeDiscount !== 'undefined' && activeDiscount > 0 && rawTotal > 0) ? activeDiscount : 0;
+    const total = Math.max(0, rawTotal - discountAmount);
+
     const wantsDelivery = isDeliverySelected();
+    let discountNotice = discountAmount > 0 ? ` <small style="color: var(--gold);">(خصم ${discountAmount} ر.س 🎟️)</small>` : '';
+
     if (wantsDelivery && cart.length > 0) {
         const finalTotal = total + DELIVERY_FEE;
-        cartTotal.innerHTML = `${total} ر.س + ${DELIVERY_FEE} ر.س (توصيل) = <span style="color: var(--neon-matcha);">${finalTotal} ر.س</span>`;
+        cartTotal.innerHTML = `${total} ر.س${discountNotice} + ${DELIVERY_FEE} ر.س (توصيل) = <span style="color: var(--neon-matcha);">${finalTotal} ر.س</span>`;
     } else {
-        cartTotal.textContent = `${total} ر.س`;
+        cartTotal.innerHTML = `${total} ر.س${discountNotice}`;
     }
     
     // Checkout button is enabled for everyone, pickup option is allowed outside Mecca
@@ -4912,7 +4917,7 @@ function shootSecretTeaTarget(e) {
                     <p style="font-size: 1.05rem; line-height: 1.8; color: #111; font-weight: bold; background: #fff; padding: 12px; border: 2px inset #808080; margin-bottom: 18px;">
                         "بس رح ارجع ثان___" 😵⚰️
                     </p>
-                    <button class="win95-btn" onclick="this.closest('div[style*=\"z-index: 100010\"]').remove();" style="padding: 8px 24px; font-weight: bold; cursor: pointer;">وداعاً أيها الشاهي! 🪦</button>
+                    <button class="win95-btn" onclick="this.closest('div[style*=\"z-index: 100010\"]').remove(); showMaherRewardDialogue();" style="padding: 8px 24px; font-weight: bold; cursor: pointer;">وداعاً أيها الشاهي! 🪦</button>
                 </div>
             </div>
         `;
@@ -4928,6 +4933,56 @@ function shootSecretTeaTarget(e) {
     document.body.classList.remove('gun-mode-active');
     const hud = document.getElementById('gun-hud');
     if (hud) hud.remove();
+}
+
+// 👨‍🍳 3. Barista Maher Post-Battle Dialogue & 1 SAR Coupon Reward
+function showMaherRewardDialogue() {
+    if (typeof playSuccessSound === 'function') {
+        playSuccessSound();
+    }
+
+    const rewardModal = document.createElement('div');
+    rewardModal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 100015; display: flex; align-items: center; justify-content: center; font-family: var(--font-arabic); direction: rtl;';
+    rewardModal.innerHTML = `
+        <div class="win95-modal" style="width: 460px; max-width: 92%; background: #c0c0c0; border: 2px solid #fff; border-right-color: #808080; border-bottom-color: #808080; box-shadow: 0 0 30px rgba(255,170,0,0.6); padding: 2px; color: #000;">
+            <div class="win95-title-bar" style="background: linear-gradient(90deg, #000080, #1084d0); color: #fff; padding: 4px 8px; font-weight: bold; font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center;">
+                <span>👨‍🍳 قهوجي ماهر يحييك!</span>
+                <button onclick="this.closest('div[style*=\"z-index: 100015\"]').remove();" style="font-size: 0.75rem; font-weight: bold; background: #c0c0c0; border: 1px solid #fff; border-right-color: #808080; border-bottom-color: #808080; padding: 1px 6px; cursor: pointer; color: #000;">X</button>
+            </div>
+            <div class="win95-body" style="padding: 22px; text-align: center;">
+                <img src="5960730354593238429.jpg" alt="قهوجي ماهر" style="width: 85px; height: 85px; border-radius: 50%; border: 3px solid #000080; margin-bottom: 12px; box-shadow: 0 0 15px rgba(0,0,128,0.3);">
+                
+                <div style="background: #fff; border: 2px inset #808080; padding: 14px; margin-bottom: 20px; text-align: right; font-size: 0.95rem; line-height: 1.8; color: #111; border-radius: 4px;">
+                    💬 <strong>قهوجي ماهر:</strong><br>
+                    <span style="color: #000080; font-weight: bold;">
+                    "واو خلصت عليه بسرعه! ⚡😎<br>
+                    كنت لسا بسوي نفس الشي بس كان عندي طلبات، المهم خذ كوبون خصم 1 ريال! 🎟️✨"
+                    </span>
+                </div>
+
+                <div style="background: linear-gradient(135deg, #1084d0, #000080); color: #fff; border: 2px dashed #fff; padding: 10px; border-radius: 6px; font-size: 1.1rem; font-weight: bold; margin-bottom: 18px; letter-spacing: 1px;">
+                    🎟️ كود الخصم: MAHER1SAR (-1 ر.س)
+                </div>
+
+                <button class="win95-btn" onclick="applyMaherCoupon(); this.closest('div[style*=\"z-index: 100015\"]').remove();" style="padding: 10px 22px; font-weight: bold; font-size: 0.95rem; background: linear-gradient(135deg, #10b981, #059669); color: white; border: 2px solid #fff; cursor: pointer; border-radius: 4px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);">
+                    🎟️ تطبيق الخصم فوراً بالسلة!
+                </button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(rewardModal);
+}
+
+let activeDiscount = 0;
+
+function applyMaherCoupon() {
+    activeDiscount = 1;
+    updateCartUI();
+    openCartDrawer();
+    showToast("🎉 تم تطبيق خصم 1 ريال على سلتك بنجاح من قهوجي ماهر!");
+    if (navigator.vibrate) {
+        navigator.vibrate([80, 40, 80]);
+    }
 }
 
 
