@@ -18,7 +18,7 @@
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Stylesheet -->
-    <link rel="stylesheet" href="style.css?v=1.14">
+    <link rel="stylesheet" href="style.css?v=1.15">
     <!-- Leaflet.js for Map Picker -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -355,6 +355,15 @@
                 <button class="category-tab" data-category="matcha">الماتشا السحرية 🍵</button>
                 <button class="category-tab" data-category="juice">عصائر وخلطات 🔮</button>
                 <button class="category-tab" data-category="sweets">حلويات وكوكيز 🍪</button>
+            </div>
+
+            <!-- 🔮 Secret Code Input Bar -->
+            <div class="secret-code-container">
+                <div class="secret-code-wrapper">
+                    <i class="fa-solid fa-wand-magic-sparkles secret-code-icon"></i>
+                    <input type="text" id="secret-code-input" placeholder="اكتب شفرة أو شي عشوائي.. يمكن يصير شي! 🕵️‍♂️" onkeyup="handleSecretCodeInput(event)" autocomplete="off">
+                    <button class="secret-code-btn" onclick="checkSecretCodeSubmit()"><i class="fa-solid fa-bolt"></i> جرب</button>
+                </div>
             </div>
 
             <div class="menu-grid">
@@ -1274,7 +1283,7 @@
 
 
     <!-- Script file -->
-    <script src="app.js?v=4.26"></script>
+    <script src="app.js?v=4.27"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
