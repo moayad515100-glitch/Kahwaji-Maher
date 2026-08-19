@@ -313,12 +313,12 @@
                     <p class="note-content">الباريستا ماهر يخطط لإطلاق مفاجأة ضخمة لعشاق المتجر. ترقبوا الإعلانات القادمة لحدث أسطوري جديد!</p>
                 </div>
                 
-                <!-- Pin 3: Secret Tea Trigger -->
-                <div class="pinned-note secret-tea-pin" onclick="triggerSecretTeaStoryline()" style="cursor: pointer; border: 2px dashed #dc2626; box-shadow: 0 5px 15px rgba(220, 38, 38, 0.3);">
-                    <div class="pin" style="background: #dc2626;"></div>
-                    <div class="note-date" style="color: #dc2626; font-weight: bold;">📅 عودة سري للغاية</div>
-                    <div class="note-title" style="color: #b91c1c;">🫖 الشاهي السري المتمرد! (اضغط هنا 🤫)</div>
-                    <p class="note-content">"هلووووو وحشتكم صح؟ اضغط هنا الآن لكشف الحوار وسر العودة!" 💬✨</p>
+                <!-- Pin 3 -->
+                <div class="pinned-note">
+                    <div class="pin"></div>
+                    <div class="note-date">📅 تحديث جديد</div>
+                    <div class="note-title">☕ أصناف جديدة ومتنوعة بالمنيو!</div>
+                    <p class="note-content">جرب الآن الإسبريسو غني النكهة والكولد برو المنعش مع باقة خيارات التخصيص الكاملة لكل كوب!</p>
                 </div>
             </div>
         </div>
@@ -822,39 +822,6 @@
                     </div>
                 </div>
 
-                <!-- Product 7: Cookie (3 SAR, 1 Left!) -->
-                <div class="product-card premium" data-id="cookie" data-category="sweets">
-                    <div class="product-image-container">
-                        <img src="cookie.jpg" alt="كوكيز ماهر المتسلل" class="product-image">
-                        <span class="product-tag tag-pro" style="background: linear-gradient(135deg, #d9534f, #c9302c); color: #fff; font-weight: bold; box-shadow: 0 0 10px rgba(217, 83, 79, 0.4);"><i class="fa-solid fa-triangle-exclamation"></i> متبقي حبة واحدة فقط!</span>
-                    </div>
-                    <div class="product-info">
-                        <h3>كوكيز ماهر المتسلل 🍪</h3>
-                        <p class="product-desc">كوكيز الشوكولاتة الفاخر والمخبوز طازجاً.. تحذير: متبقي حبة واحدة فقط في المخزون! 🤫</p>
-                        <div class="product-price" style="color: var(--gold); font-weight: bold;">3 ر.س</div>
-                        
-                        <!-- Customization Section with Chips -->
-                        <div class="customization-section">
-                            <h4 class="custom-title"><i class="fa-solid fa-sliders"></i> خصص طلبك:</h4>
-                            <div class="custom-options">
-                                <div class="option-group">
-                                    <label>الحجم:</label>
-                                    <div class="chips-container size-chips">
-                                        <input type="radio" id="size-cookie-normal" name="size-cookie" value="وسط" checked style="display:none;">
-                                        <label for="size-cookie-normal" class="chip-label">وسط</label>
-
-                                        <input type="radio" id="size-cookie-large" name="size-cookie" value="كبير" style="display:none;">
-                                        <label for="size-cookie-large" class="chip-label">كبير (+1 ر.س)</label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <button class="btn btn-add-cart" onclick="addToCart('cookie', '🍪 كوكيز ماهر المتسلل', 3, 'cookie.jpg')">
-                            <i class="fa-solid fa-cart-plus"></i> إضافة للسلة
-                        </button>
-                    </div>
-                </div>
             </div>
         </div>
     </section>
@@ -1318,7 +1285,7 @@
 
 
     <!-- Script file -->
-    <script src="app.js?v=8.00"></script>
+    <script src="app.js?v=9.00"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -1351,10 +1318,5 @@
         </a>
     </div>
 
-    <!-- 🫖 Floating Secret Tea Mystery Badge -->
-    <div id="floating-secret-tea-badge" onclick="triggerSecretTeaStoryline()" style="position: fixed; bottom: 85px; right: 20px; z-index: 999; background: linear-gradient(135deg, #b91c1c, #dc2626); color: #fff; padding: 10px 18px; border-radius: 30px; font-family: var(--font-arabic); font-size: 0.9rem; font-weight: bold; cursor: pointer; box-shadow: 0 5px 20px rgba(220, 38, 38, 0.5); display: flex; align-items: center; gap: 8px; border: 2px solid #fff;">
-        <span style="font-size: 1.2rem;">🫖</span>
-        <span>الشاهي السري 🤫</span>
-    </div>
 </body>
 </html>
