@@ -283,6 +283,16 @@ function addToCart(productId, name, price, image) {
         }
     }
 
+    // Limit Cold Brew to 1 cup in the cart (long prep time)
+    if (productId === 'cold_brew' || name.includes('كولد برو')) {
+        const hasColdBrew = cart.some(item => item.productId === 'cold_brew' || item.name.includes('كولد برو'));
+        if (hasColdBrew) {
+            showToast("🧊 عذراً! الكولد برو يستغرق وقتاً طويلاً بالتحضير، ومسموح لك بحبة واحدة فقط في الطلب!");
+            openCartDrawer();
+            return;
+        }
+    }
+
     if (existingItemIndex > -1) {
         cart[existingItemIndex].quantity += 1;
     } else {
@@ -396,7 +406,7 @@ function updateCartUI() {
         
         const priceDisplay = item.price === 0 ? 'مجاناً' : `${item.price * item.quantity} ر.س`;
 
-        const isQtyLocked = item.productId === 'cookie' || item.productId === 'tea' || (item.price === 0 && (item.productId === 'matcha' || item.productId === 'superpro')) || item.name.includes('كوكيز');
+        const isQtyLocked = item.productId === 'cookie' || item.productId === 'tea' || item.productId === 'cold_brew' || (item.price === 0 && (item.productId === 'matcha' || item.productId === 'superpro')) || item.name.includes('كوكيز') || item.name.includes('كولد برو');
         const plusButton = isQtyLocked 
             ? `<button class="qty-btn" style="opacity: 0.4; cursor: not-allowed;" onclick="showToast('🤫 متبقي حبة واحدة فقط!')">+</button>` 
             : `<button class="qty-btn" onclick="changeQuantity('${item.id}', 1)">+</button>`;
@@ -475,6 +485,10 @@ function changeQuantity(itemId, change) {
             }
             if (item.productId === 'cookie' || item.name.includes('كوكيز')) {
                 showToast("🤫 يمديك تطلب حبة كوكيز واحدة بس! متبقي حبة واحدة في المتجر.");
+                return;
+            }
+            if (item.productId === 'cold_brew' || item.name.includes('كولد برو')) {
+                showToast("🧊 عذراً! مسموح لك بحبة واحدة فقط من الكولد برو بالطلب لأنه يستغرق وقتاً طويلاً بالتحضير.");
                 return;
             }
             const currentTotalCount = cart.reduce((sum, item) => sum + item.quantity, 0);

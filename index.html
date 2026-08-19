@@ -406,7 +406,7 @@
                     <div class="product-info">
                         <h3>قهوجي ماهر برو</h3>
                         <p class="product-desc">قهوة مقطرة ويمديك تضيف لها ثلج إذا تبغى</p>
-                        <div class="product-price">3 ر.س <span class="price-suffix">/ كوب</span></div>
+                        <div class="product-price">5 ر.س <span class="price-suffix">/ كوب</span></div>
                         
                         <!-- Customization Section with Chips -->
                         <div class="customization-section">
@@ -445,7 +445,7 @@
                             </div>
                         </div>
 
-                        <button class="btn btn-add-cart" onclick="addToCart('pro', 'قهوجي ماهر برو', 3, 'pro_new.jpg')">
+                        <button class="btn btn-add-cart" onclick="addToCart('pro', 'قهوجي ماهر برو', 5, 'pro_new.jpg')">
                             <i class="fa-solid fa-cart-plus"></i> إضافة للسلة
                         </button>
                     </div>
@@ -559,36 +559,110 @@
                     </div>
                 </div>
 
-                <!-- Product 4b: Espresso Maher [Soon] -->
-                <div class="product-card premium coming-soon-card" data-id="espresso_soon" data-category="coffee" style="opacity: 0.85; filter: grayscale(20%); position: relative;">
-                    <div class="product-image-container" style="position: relative; overflow: hidden;">
+                <!-- Product 4b: Espresso Maher (5 SAR) -->
+                <div class="product-card premium" data-id="espresso" data-category="coffee">
+                    <div class="product-image-container">
                         <img src="espresso_maher.jpg" alt="سبرسو ماهر" class="product-image">
-                        <span class="product-tag tag-pro" style="background: linear-gradient(135deg, var(--gold), var(--accent)); color: #000; font-weight: bold; box-shadow: 0 0 10px rgba(255,170,0,0.4); z-index: 2;">قريباً ⏳</span>
+                        <span class="product-tag tag-pro" style="background: linear-gradient(135deg, var(--gold), var(--accent)); color: #000; font-weight: bold; box-shadow: 0 0 10px rgba(255,170,0,0.4);">ESPRESSO ☕</span>
                     </div>
                     <div class="product-info">
                         <h3>سبرسو ماهر ☕</h3>
-                        <p class="product-desc">نكهة إسبريسو غنية ومكثفة مع رغوة ذهبية من حبوب منتقاة بعناية فائقة. قريباً في المنيو!</p>
-                        <div class="product-price" style="color: var(--text-muted);">قريباً / Coming Soon</div>
+                        <p class="product-desc">نكهة إسبريسو غنية ومكثفة مع رغوة ذهبية من حبوب منتقاة بعناية فائقة.</p>
+                        <div class="product-price">5 ر.س <span class="price-suffix">/ كوب</span></div>
                         
-                        <button class="btn btn-add-cart" disabled style="background: rgba(255, 255, 255, 0.05); color: var(--text-muted); border: 1px dashed rgba(255, 255, 255, 0.15); cursor: not-allowed; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: none; width: 100%;">
-                            <i class="fa-solid fa-hourglass-start"></i> غير متوفر حالياً
+                        <!-- Customization Section with Chips -->
+                        <div class="customization-section">
+                            <h4 class="custom-title"><i class="fa-solid fa-sliders"></i> خصص كوبك:</h4>
+                            
+                            <div class="custom-options">
+                                <!-- Size -->
+                                <div class="option-group">
+                                    <label>الحجم:</label>
+                                    <div class="chips-container size-chips">
+                                        <input type="radio" id="size-espresso-normal" name="size-espresso" value="وسط" checked style="display:none;" onchange="scaleProductImage(this, 'espresso', 1.0)">
+                                        <label for="size-espresso-normal" class="chip-label">وسط</label>
+
+                                        <input type="radio" id="size-espresso-large" name="size-espresso" value="كبير" style="display:none;" onchange="scaleProductImage(this, 'espresso', 1.18)">
+                                        <label for="size-espresso-large" class="chip-label">كبير (+1 ر.س)</label>
+                                    </div>
+                                </div>
+
+                                <!-- Sugar -->
+                                <div class="option-group">
+                                    <label>السكر:</label>
+                                    <div class="chips-container sugar-chips">
+                                        <input type="radio" id="sugar-espresso-none" name="sugar-espresso" value="بدون سكر" checked style="display:none;">
+                                        <label for="sugar-espresso-none" class="chip-label">سادة</label>
+
+                                        <input type="radio" id="sugar-espresso-low" name="sugar-espresso" value="سكر خفيف" style="display:none;">
+                                        <label for="sugar-espresso-low" class="chip-label">خفيف</label>
+
+                                        <input type="radio" id="sugar-espresso-medium" name="sugar-espresso" value="سكر وسط" style="display:none;">
+                                        <label for="sugar-espresso-medium" class="chip-label">وسط</label>
+
+                                        <input type="radio" id="sugar-espresso-high" name="sugar-espresso" value="سكر زيادة" style="display:none;">
+                                        <label for="sugar-espresso-high" class="chip-label">زيادة</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-add-cart" onclick="addToCart('espresso', 'سبرسو ماهر ☕', 5, 'espresso_maher.jpg')">
+                            <i class="fa-solid fa-cart-plus"></i> إضافة للسلة
                         </button>
                     </div>
                 </div>
 
-                <!-- Product 4c: Cortado Maher [Soon] -->
-                <div class="product-card premium coming-soon-card" data-id="cortado_soon" data-category="coffee" style="opacity: 0.85; filter: grayscale(20%); position: relative;">
-                    <div class="product-image-container" style="position: relative; overflow: hidden;">
-                        <img src="cortado_maher.jpg" alt="كوارتادو ماهر" class="product-image">
-                        <span class="product-tag tag-pro" style="background: linear-gradient(135deg, var(--gold), var(--accent)); color: #000; font-weight: bold; box-shadow: 0 0 10px rgba(255,170,0,0.4); z-index: 2;">قريباً ⏳</span>
+                <!-- Product 4c: Cold Brew Maher (6 SAR) - Limited 1 Qty -->
+                <div class="product-card premium" data-id="cold_brew" data-category="coffee" style="border: 2px solid var(--gold); box-shadow: 0 0 15px rgba(255,170,0,0.3);">
+                    <div class="product-image-container">
+                        <img src="classic_new.jpg" alt="كولد برو ماهر" class="product-image">
+                        <span class="product-tag tag-pro" style="background: #2563eb; color: #fff; font-weight: bold; box-shadow: 0 0 10px rgba(37,99,235,0.5);">⏳ 1 حبة فقط / تتطلب وقتاً</span>
                     </div>
                     <div class="product-info">
-                        <h3>كوارتادو ماهر ☕</h3>
-                        <p class="product-desc">توازن مثالي بين الإسبريسو المركز وكمية متساوية من الحليب المبخر اللذيذ. ترقبوها!</p>
-                        <div class="product-price" style="color: var(--text-muted);">قريباً / Coming Soon</div>
+                        <h3>كولد برو ماهر 🧊☕</h3>
+                        <p class="product-desc">قهوة مستخلصة بالتنقيط البارد لمدة 12 ساعة لتوازن غني ونكهة ممتازة. (تستغرق وقتاً طويلاً بالتحضير - مسموح حبة واحدة فقط بالطلب!) ⏳❄️</p>
+                        <div class="product-price">6 ر.س <span class="price-suffix">/ كوب</span></div>
                         
-                        <button class="btn btn-add-cart" disabled style="background: rgba(255, 255, 255, 0.05); color: var(--text-muted); border: 1px dashed rgba(255, 255, 255, 0.15); cursor: not-allowed; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: none; width: 100%;">
-                            <i class="fa-solid fa-hourglass-start"></i> غير متوفر حالياً
+                        <!-- Customization Section with Chips -->
+                        <div class="customization-section">
+                            <h4 class="custom-title"><i class="fa-solid fa-sliders"></i> خصص كوبك:</h4>
+                            
+                            <div class="custom-options">
+                                <!-- Size -->
+                                <div class="option-group">
+                                    <label>الحجم:</label>
+                                    <div class="chips-container size-chips">
+                                        <input type="radio" id="size-coldbrew-normal" name="size-cold_brew" value="وسط" checked style="display:none;" onchange="scaleProductImage(this, 'cold_brew', 1.0)">
+                                        <label for="size-coldbrew-normal" class="chip-label">وسط</label>
+
+                                        <input type="radio" id="size-coldbrew-large" name="size-cold_brew" value="كبير" style="display:none;" onchange="scaleProductImage(this, 'cold_brew', 1.18)">
+                                        <label for="size-coldbrew-large" class="chip-label">كبير (+1 ر.س)</label>
+                                    </div>
+                                </div>
+
+                                <!-- Sugar -->
+                                <div class="option-group">
+                                    <label>السكر:</label>
+                                    <div class="chips-container sugar-chips">
+                                        <input type="radio" id="sugar-coldbrew-none" name="sugar-cold_brew" value="بدون سكر" checked style="display:none;">
+                                        <label for="sugar-coldbrew-none" class="chip-label">سادة</label>
+
+                                        <input type="radio" id="sugar-coldbrew-low" name="sugar-cold_brew" value="سكر خفيف" style="display:none;">
+                                        <label for="sugar-coldbrew-low" class="chip-label">خفيف</label>
+
+                                        <input type="radio" id="sugar-coldbrew-medium" name="sugar-cold_brew" value="سكر وسط" style="display:none;">
+                                        <label for="sugar-coldbrew-medium" class="chip-label">وسط</label>
+
+                                        <input type="radio" id="sugar-coldbrew-high" name="sugar-cold_brew" value="سكر زيادة" style="display:none;">
+                                        <label for="sugar-coldbrew-high" class="chip-label">زيادة</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-add-cart" onclick="addToCart('cold_brew', 'كولد برو ماهر 🧊☕', 6, 'classic_new.jpg')">
+                            <i class="fa-solid fa-cart-plus"></i> إضافة للسلة
                         </button>
                     </div>
                 </div>
@@ -701,21 +775,6 @@
                     </div>
                 </div>
 
-                <!-- Product 5b: Iced Tea Maher [Soon] -->
-                <div class="product-card premium coming-soon-card" data-id="icetea_soon" data-category="matcha" style="opacity: 0.85; filter: grayscale(20%); position: relative;">
-                    <div class="product-image-container" style="position: relative; overflow: hidden;">
-                        <img src="icetea_maher.jpg" alt="ايس تي ماهر" class="product-image">
-                        <span class="product-tag tag-pro" style="background: linear-gradient(135deg, var(--gold), var(--accent)); color: #000; font-weight: bold; box-shadow: 0 0 10px rgba(255,170,0,0.4); z-index: 2;">قريباً ⏳</span>
-                    </div>
-                    <div class="product-info">
-                        <h3>ايس تي ماهر 🍋</h3>
-                        <p class="product-desc">شاي مثلج منعش بنكهة الليمون والنعناع الباردة، الخيار الأمثل لأيام الصيف الحارة!</p>
-                        <div class="product-price" style="color: var(--text-muted);">قريباً / Coming Soon</div>
-                        
-                        <button class="btn btn-add-cart" disabled style="background: rgba(255, 255, 255, 0.05); color: var(--text-muted); border: 1px dashed rgba(255, 255, 255, 0.15); cursor: not-allowed; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: none; width: 100%;">
-                            <i class="fa-solid fa-hourglass-start"></i> غير متوفر حالياً
-                        </button>
-                    </div>
                 </div>
 
                 <!-- Product 6: Maher's Milkshake -->
@@ -1259,7 +1318,7 @@
 
 
     <!-- Script file -->
-    <script src="app.js?v=7.00"></script>
+    <script src="app.js?v=8.00"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
