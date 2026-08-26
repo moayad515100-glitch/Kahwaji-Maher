@@ -4603,6 +4603,7 @@ function applyMaherCoupon() {
 // 🎪 MAHER'S CIRCUS AMUSEMENT PARK & 3D WEBGL BOSS FIGHT SYSTEM
 // ==========================================================
 let circusBalance = 0;
+let pendingRechargeAmount = 0;
 let boss3DScene, boss3DCamera, boss3DRenderer, boss3DMeshGroup, bossParticleSystem, bossAnimId;
 
 function openCircusGate() {
@@ -4621,31 +4622,35 @@ function showCircusRechargeModal() {
 
     modal = document.createElement('div');
     modal.id = 'circus-gate-modal';
-    modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 100005; display: flex; align-items: center; justify-content: center; font-family: var(--font-arabic); direction: rtl;';
+    modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.88); z-index: 100005; display: flex; align-items: center; justify-content: center; font-family: var(--font-arabic); direction: rtl;';
     modal.innerHTML = `
-        <div class="win95-modal" style="width: 520px; max-width: 94%; background: #c0c0c0; border: 2px solid #fff; border-right-color: #808080; border-bottom-color: #808080; box-shadow: 0 0 30px rgba(255, 0, 85, 0.7); padding: 2px; color: #000;">
+        <div class="win95-modal" style="width: 540px; max-width: 94%; background: #c0c0c0; border: 2px solid #fff; border-right-color: #808080; border-bottom-color: #808080; box-shadow: 0 0 35px rgba(255, 0, 85, 0.7); padding: 2px; color: #000;">
             <div class="win95-title-bar" style="background: linear-gradient(90deg, #ff0055, #ffaa00); color: #fff; padding: 6px 10px; font-weight: bold; font-size: 1rem; display: flex; justify-content: space-between; align-items: center;">
                 <span>🎪 بوابة ملاهي وسيرك ماهر الأسطوري 🎠</span>
                 <button onclick="document.getElementById('circus-gate-modal')?.remove();" style="font-size: 0.8rem; font-weight: bold; background: #c0c0c0; border: 1px solid #fff; border-right-color: #808080; border-bottom-color: #808080; padding: 2px 8px; cursor: pointer; color: #000;">X</button>
             </div>
             <div class="win95-body" style="padding: 20px; text-align: center; background: url('circus_park_bg.jpg') center/cover no-repeat; position: relative;">
-                <div style="background: rgba(0,0,0,0.82); padding: 20px; border-radius: 8px; color: #fff; backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.2);">
+                <div style="background: rgba(0,0,0,0.85); padding: 20px; border-radius: 8px; color: #fff; backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.2);">
                     <div style="font-size: 3rem; margin-bottom: 8px; filter: drop-shadow(0 4px 10px rgba(255,0,85,0.8));">🎪🎠🎡</div>
                     <h3 style="color: #ffaa00; margin-bottom: 10px; font-size: 1.3rem;">أهلاً بك في ملاهي وسيرك ماهر!</h3>
-                    <p style="font-size: 0.95rem; line-height: 1.8; color: #ddd; margin-bottom: 20px;">
-                        قبل أن تبدأ باللعب واكتشاف ألعاب الملاهي الرائعة والغرفة الجانبية، يلزمك **شحن رصيد ألعاب الملاهي**:
+                    <p style="font-size: 0.95rem; line-height: 1.8; color: #ddd; margin-bottom: 18px;">
+                        قبل أن تبدأ باللعب واكتشاف الألعاب الـ 5 الرائعة، يلزمك **شحن رصيد ألعاب الملاهي**:
                     </p>
 
-                    <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-bottom: 15px;">
-                        <button onclick="rechargeCircusBalance(15)" style="padding: 12px 24px; font-size: 1.1rem; font-weight: bold; background: linear-gradient(135deg, #10b981, #059669); color: white; border: 2px solid #fff; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 15px rgba(16,185,129,0.5);">
-                            💳 شحن 15 ريال
+                    <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-bottom: 18px;">
+                        <button onclick="selectRechargePackage(15)" style="padding: 12px 22px; font-size: 1.05rem; font-weight: bold; background: linear-gradient(135deg, #10b981, #059669); color: white; border: 2px solid #fff; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 15px rgba(16,185,129,0.5);">
+                            💳 باقة 15 ريال
                         </button>
-                        <button onclick="rechargeCircusBalance(20)" style="padding: 12px 24px; font-size: 1.1rem; font-weight: bold; background: linear-gradient(135deg, #ff0055, #d97706); color: white; border: 2px solid #fff; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 15px rgba(255,0,85,0.5);">
-                            💳 شحن 20 ريال (موصى به ⭐)
+                        <button onclick="selectRechargePackage(20)" style="padding: 12px 22px; font-size: 1.05rem; font-weight: bold; background: linear-gradient(135deg, #ff0055, #d97706); color: white; border: 2px solid #fff; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 15px rgba(255,0,85,0.5);">
+                            💳 باقة 20 ريال (موصى به ⭐)
                         </button>
                     </div>
 
-                    <p style="font-size: 0.8rem; color: #aaa;">💡 الرصيد المشحون يُستخدم للعب كافة ألعاب السيرك والملاهي واقتناص التخفيضات!</p>
+                    <!-- Rules Notice -->
+                    <div style="background: rgba(220,38,38,0.2); border: 1px dashed #ef4444; border-radius: 6px; padding: 10px; font-size: 0.8rem; color: #fca5a5; text-align: right; line-height: 1.6;">
+                        📜 <strong>تنبيه هام وقوانين الملاهي:</strong><br>
+                        إذا قمت باللعب وإرسال الفاتورة بالرصيد دون إتمام الدفع الفعلي (كاش أو تحويل)، فمن حق الإدارة عدم قبول الفاتورة وإلغاء الطلب نهائياً.
+                    </div>
                 </div>
             </div>
         </div>
@@ -4653,13 +4658,50 @@ function showCircusRechargeModal() {
     document.body.appendChild(modal);
 }
 
-function rechargeCircusBalance(amount) {
-    circusBalance += amount;
-    if (typeof playSuccessSound === 'function') playSuccessSound();
-    showToast(`🎉 تم شحن رصيد الملاهي بـ ${amount} ريال بنجاح! رصيدك الحالي: ${circusBalance} ر.س`);
+function selectRechargePackage(amount) {
+    pendingRechargeAmount = amount;
     
-    const gateModal = document.getElementById('circus-gate-modal');
-    if (gateModal) gateModal.remove();
+    let modal = document.getElementById('circus-payment-modal');
+    if (modal) modal.remove();
+
+    modal = document.createElement('div');
+    modal.id = 'circus-payment-modal';
+    modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.88); z-index: 100008; display: flex; align-items: center; justify-content: center; font-family: var(--font-arabic); direction: rtl;';
+    modal.innerHTML = `
+        <div class="win95-modal" style="width: 480px; max-width: 92%; background: #c0c0c0; border: 2px solid #fff; border-right-color: #808080; border-bottom-color: #808080; box-shadow: 0 0 30px rgba(16,185,129,0.7); padding: 2px; color: #000;">
+            <div class="win95-title-bar" style="background: linear-gradient(90deg, #10b981, #059669); color: #fff; padding: 6px 10px; font-weight: bold; font-size: 1rem;">
+                💳 اختر طريقة الدفع لشحن ${amount} ريال
+            </div>
+            <div class="win95-body" style="padding: 20px; text-align: center;">
+                <h4 style="margin-bottom: 12px; color: #000080;">اختر طريقة دفع رصيد الملاهي:</h4>
+                <p style="font-size: 0.9rem; color: #333; margin-bottom: 18px;">المبلغ المطلوب للشحن: <strong>${amount} ر.س</strong></p>
+
+                <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 18px;">
+                    <button onclick="confirmCircusRecharge('تحويل بنكي / STC Pay')" style="padding: 12px; font-size: 1rem; font-weight: bold; background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; border: 2px solid #fff; border-radius: 6px; cursor: pointer; text-align: center;">
+                        💳 دفع عبر تحويل بنكي / STC Pay
+                    </button>
+                    <button onclick="confirmCircusRecharge('كاش عند الاستلام / بالمحل')" style="padding: 12px; font-size: 1rem; font-weight: bold; background: linear-gradient(135deg, #059669, #047857); color: white; border: 2px solid #fff; border-radius: 6px; cursor: pointer; text-align: center;">
+                        💵 دفع كاش عند الاستلام / بالمحل
+                    </button>
+                </div>
+
+                <div style="background: #fff; border: 1px inset #808080; padding: 8px; font-size: 0.78rem; color: #990000; font-weight: bold; border-radius: 4px;">
+                    ⚠️ تنبيه: يلزم الالتزام بالسداد الفعلي للطريقة المختارة لقبول طلب الفاتورة بالمحل.
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+function confirmCircusRecharge(method) {
+    circusBalance += pendingRechargeAmount;
+    if (typeof playSuccessSound === 'function') playSuccessSound();
+    
+    showToast(`🎉 تم شحن ${pendingRechargeAmount} ريال بنجاح بـ (${method})! رصيدك الحالي: ${circusBalance} ر.س`);
+    
+    document.getElementById('circus-payment-modal')?.remove();
+    document.getElementById('circus-gate-modal')?.remove();
 
     openCircusWorld();
 }
@@ -4670,15 +4712,15 @@ function openCircusWorld() {
 
     modal = document.createElement('div');
     modal.id = 'circus-world-modal';
-    modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 100005; display: flex; align-items: center; justify-content: center; font-family: var(--font-arabic); direction: rtl;';
+    modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); z-index: 100005; display: flex; align-items: center; justify-content: center; font-family: var(--font-arabic); direction: rtl;';
     modal.innerHTML = `
-        <div class="win95-modal" style="width: 720px; max-width: 95%; max-height: 92vh; overflow-y: auto; background: #c0c0c0; border: 2px solid #fff; border-right-color: #808080; border-bottom-color: #808080; box-shadow: 0 0 35px rgba(255, 0, 85, 0.8); padding: 2px; color: #000;">
+        <div class="win95-modal" style="width: 780px; max-width: 95%; max-height: 94vh; overflow-y: auto; background: #c0c0c0; border: 2px solid #fff; border-right-color: #808080; border-bottom-color: #808080; box-shadow: 0 0 35px rgba(255, 0, 85, 0.8); padding: 2px; color: #000;">
             <div class="win95-title-bar" style="background: linear-gradient(90deg, #ff0055, #ffaa00); color: #fff; padding: 6px 10px; font-weight: bold; font-size: 1.05rem; display: flex; justify-content: space-between; align-items: center;">
-                <span>🎪 ملاهي وسيرك ماهر - عالم الألعاب السحري 🎠</span>
+                <span>🎪 ملاهي وسيرك ماهر - عالم الألعاب الـ 5 السحري 🎠</span>
                 <button onclick="document.getElementById('circus-world-modal')?.remove();" style="font-size: 0.8rem; font-weight: bold; background: #c0c0c0; border: 1px solid #fff; border-right-color: #808080; border-bottom-color: #808080; padding: 2px 8px; cursor: pointer; color: #000;">X</button>
             </div>
             <div class="win95-body" style="padding: 20px; background: url('circus_park_bg.jpg') center/cover no-repeat; position: relative;">
-                <div style="background: rgba(0,0,0,0.85); padding: 18px; border-radius: 10px; color: #fff; backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.2);">
+                <div style="background: rgba(0,0,0,0.85); padding: 18px; border-radius: 10px; color: #fff; backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.2); position: relative;">
                     
                     <!-- Balance Display Bar -->
                     <div style="background: linear-gradient(90deg, #10b981, #059669); color: #fff; padding: 10px 18px; border-radius: 8px; font-weight: bold; font-size: 1.1rem; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(16,185,129,0.4);">
@@ -4686,47 +4728,61 @@ function openCircusWorld() {
                         <button onclick="showCircusRechargeModal()" style="padding: 4px 12px; font-size: 0.85rem; font-weight: bold; background: #fff; color: #059669; border: none; border-radius: 4px; cursor: pointer;">+ شحن إضافي</button>
                     </div>
 
-                    <h3 style="color: #ffaa00; margin-bottom: 15px; text-align: center; font-size: 1.3rem;">🎠 اختر لعبتك المفضلة واكسب الجوائز:</h3>
+                    <h3 style="color: #ffaa00; margin-bottom: 15px; text-align: center; font-size: 1.3rem;">🎠 اختر من الألعاب الـ 5 التفاعلية واكسب الجوائز:</h3>
 
-                    <!-- Games Grid -->
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px;">
+                    <!-- 5 Games Grid -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 20px;">
                         
                         <!-- Game 1 -->
-                        <div style="background: rgba(255,255,255,0.1); border: 2px solid #ffaa00; border-radius: 8px; padding: 15px; text-align: center;">
-                            <div style="font-size: 2.5rem; margin-bottom: 6px;">🎯</div>
-                            <h4 style="color: #ffaa00; margin-bottom: 6px;">نيشان السيرك</h4>
-                            <p style="font-size: 0.8rem; color: #ccc; margin-bottom: 10px;">اصب الأهداف السريعة واكسب كوبونات خصم!</p>
-                            <div style="font-size: 0.85rem; color: #10b981; font-weight: bold; margin-bottom: 10px;">التكلفة: 3 ر.س</div>
-                            <button onclick="playTargetShootingGame(3)" style="padding: 6px 14px; font-weight: bold; background: linear-gradient(135deg, #ff0055, #dc2626); color: white; border: none; border-radius: 4px; cursor: pointer; width: 100%;">🎯 العب الآن</button>
+                        <div style="background: rgba(255,255,255,0.1); border: 2px solid #ffaa00; border-radius: 8px; padding: 14px; text-align: center;">
+                            <div style="font-size: 2.2rem; margin-bottom: 4px;">🎯</div>
+                            <h4 style="color: #ffaa00; margin-bottom: 4px;">1. نيشان السيرك</h4>
+                            <p style="font-size: 0.78rem; color: #ccc; margin-bottom: 8px;">صوب واضرب الأهداف المتحركة بكليكك!</p>
+                            <div style="font-size: 0.82rem; color: #10b981; font-weight: bold; margin-bottom: 8px;">التكلفة: 3 ر.س</div>
+                            <button onclick="launchTargetShootingModal(3)" style="padding: 6px 12px; font-weight: bold; background: linear-gradient(135deg, #ff0055, #dc2626); color: white; border: none; border-radius: 4px; cursor: pointer; width: 100%;">🎯 العب التحدي</button>
                         </div>
 
                         <!-- Game 2 -->
-                        <div style="background: rgba(255,255,255,0.1); border: 2px solid #10b981; border-radius: 8px; padding: 15px; text-align: center;">
-                            <div style="font-size: 2.5rem; margin-bottom: 6px;">🎰</div>
-                            <h4 style="color: #10b981; margin-bottom: 6px;">عجلة الحظ الكبرى</h4>
-                            <p style="font-size: 0.8rem; color: #ccc; margin-bottom: 10px;">ادر العجلة واحصل على هدايا ومشروبات!</p>
-                            <div style="font-size: 0.85rem; color: #10b981; font-weight: bold; margin-bottom: 10px;">التكلفة: 4 ر.س</div>
-                            <button onclick="playFortuneWheelGame(4)" style="padding: 6px 14px; font-weight: bold; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; border-radius: 4px; cursor: pointer; width: 100%;">🎰 ادر العجلة</button>
+                        <div style="background: rgba(255,255,255,0.1); border: 2px solid #10b981; border-radius: 8px; padding: 14px; text-align: center;">
+                            <div style="font-size: 2.2rem; margin-bottom: 4px;">🎰</div>
+                            <h4 style="color: #10b981; margin-bottom: 4px;">2. عجلة الحظ الكبرى</h4>
+                            <p style="font-size: 0.78rem; color: #ccc; margin-bottom: 8px;">ادر العجلة التفاعلية واقتنص الخصومات!</p>
+                            <div style="font-size: 0.82rem; color: #10b981; font-weight: bold; margin-bottom: 8px;">التكلفة: 4 ر.س</div>
+                            <button onclick="launchFortuneWheelModal(4)" style="padding: 6px 12px; font-weight: bold; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; border-radius: 4px; cursor: pointer; width: 100%;">🎰 ادر العجلة</button>
                         </div>
 
                         <!-- Game 3 -->
-                        <div style="background: rgba(255,255,255,0.1); border: 2px solid #3b82f6; border-radius: 8px; padding: 15px; text-align: center;">
-                            <div style="font-size: 2.5rem; margin-bottom: 6px;">🎈</div>
-                            <h4 style="color: #60a5fa; margin-bottom: 6px;">فقص بالونات السيرك</h4>
-                            <p style="font-size: 0.8rem; color: #ccc; margin-bottom: 10px;">فقص بالونات السيرك واكشف المفاجآت!</p>
-                            <div style="font-size: 0.85rem; color: #10b981; font-weight: bold; margin-bottom: 10px;">التكلفة: 2 ر.س</div>
-                            <button onclick="playBalloonPopGame(2)" style="padding: 6px 14px; font-weight: bold; background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; border: none; border-radius: 4px; cursor: pointer; width: 100%;">🎈 فقص البالونات</button>
+                        <div style="background: rgba(255,255,255,0.1); border: 2px solid #3b82f6; border-radius: 8px; padding: 14px; text-align: center;">
+                            <div style="font-size: 2.2rem; margin-bottom: 4px;">🎈</div>
+                            <h4 style="color: #60a5fa; margin-bottom: 4px;">3. فقص البالونات</h4>
+                            <p style="font-size: 0.78rem; color: #ccc; margin-bottom: 8px;">فقص بالونات السيرك العائمة بيدك!</p>
+                            <div style="font-size: 0.82rem; color: #10b981; font-weight: bold; margin-bottom: 8px;">التكلفة: 2 ر.س</div>
+                            <button onclick="launchBalloonPopModal(2)" style="padding: 6px 12px; font-weight: bold; background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; border: none; border-radius: 4px; cursor: pointer; width: 100%;">🎈 فقص البالونات</button>
+                        </div>
+
+                        <!-- Game 4 (NEW) -->
+                        <div style="background: rgba(255,255,255,0.1); border: 2px solid #eab308; border-radius: 8px; padding: 14px; text-align: center;">
+                            <div style="font-size: 2.2rem; margin-bottom: 4px;">🏎️</div>
+                            <h4 style="color: #facc15; margin-bottom: 4px;">4. سباق السيارات</h4>
+                            <p style="font-size: 0.78rem; color: #ccc; margin-bottom: 8px;">قد سيارة الملاهي وتفادى الحواجز!</p>
+                            <div style="font-size: 0.82rem; color: #10b981; font-weight: bold; margin-bottom: 8px;">التكلفة: 3 ر.س</div>
+                            <button onclick="launchBumperCarsRaceModal(3)" style="padding: 6px 12px; font-weight: bold; background: linear-gradient(135deg, #eab308, #ca8a04); color: white; border: none; border-radius: 4px; cursor: pointer; width: 100%;">🏎️ ابدأ السباق</button>
+                        </div>
+
+                        <!-- Game 5 (NEW) -->
+                        <div style="background: rgba(255,255,255,0.1); border: 2px solid #a855f7; border-radius: 8px; padding: 14px; text-align: center;">
+                            <div style="font-size: 2.2rem; margin-bottom: 4px;">🔨</div>
+                            <h4 style="color: #c084fc; margin-bottom: 4px;">5. مطرقة القوة</h4>
+                            <p style="font-size: 0.78rem; color: #ccc; margin-bottom: 8px;">اضرب المطرقة في الوقت المناسب 100%!</p>
+                            <div style="font-size: 0.82rem; color: #10b981; font-weight: bold; margin-bottom: 8px;">التكلفة: 2 ر.س</div>
+                            <button onclick="launchHammerStrikeModal(2)" style="padding: 6px 12px; font-weight: bold; background: linear-gradient(135deg, #a855f7, #7e22ce); color: white; border: none; border-radius: 4px; cursor: pointer; width: 100%;">🔨 اضرب المطرقة</button>
                         </div>
 
                     </div>
 
-                    <!-- Secret Side Room Entrance Button -->
-                    <div style="background: linear-gradient(135deg, rgba(220,38,38,0.2), rgba(153,0,0,0.4)); border: 2px dashed #dc2626; border-radius: 8px; padding: 15px; text-align: center; box-shadow: 0 0 20px rgba(220,38,38,0.4);">
-                        <h4 style="color: #ef4444; margin-bottom: 6px; font-size: 1.1rem;">🚪 الغرفة الجانبية السريّة في الملاهي 🤫</h4>
-                        <p style="font-size: 0.85rem; color: #ddd; margin-bottom: 12px;">هناك غرفة جانبية غامضة بجانب ساحة الملاهي.. هل تجرؤ على استكشاف من يختبئ بالداخل؟</p>
-                        <button onclick="enterSecretSideRoom()" style="padding: 10px 24px; font-size: 1rem; font-weight: bold; background: linear-gradient(135deg, #dc2626, #990000); color: white; border: 2px solid #fff; border-radius: 6px; cursor: pointer; box-shadow: 0 4px 15px rgba(220,38,38,0.6);">
-                            🚪 دخول الغرفة الجانبية السريّة 🤫
-                        </button>
+                    <!-- Hidden Discreet Side Room Entrance (في الجنب) -->
+                    <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
+                        <span onclick="enterSecretSideRoom()" style="font-size: 0.75rem; color: rgba(255,255,255,0.4); cursor: pointer; text-decoration: underline;" title="الغرفة الجانبية">🔒 دخول الغرفة الجانبية...</span>
                     </div>
 
                 </div>
@@ -4736,52 +4792,280 @@ function openCircusWorld() {
     document.body.appendChild(modal);
 }
 
-function playTargetShootingGame(cost) {
+// ----------------------------------------------------
+// GAME 1: 🎯 TARGET SHOOTING INTERACTIVE MODAL
+// ----------------------------------------------------
+function launchTargetShootingModal(cost) {
     if (circusBalance < cost) {
-        showToast('⚠️ رصيدك غير كافٍ! اشحن رصيد ألعاب جديد لتستمر باللعب.');
+        showToast('⚠️ رصيدك غير كافٍ! اشحن رصيدك أولاً لتلعب.');
         showCircusRechargeModal();
         return;
     }
     circusBalance -= cost;
-    document.getElementById('circus-bal-val').textContent = `${circusBalance} ر.س`;
-    if (typeof playSuccessSound === 'function') playSuccessSound();
 
-    let winAmount = Math.random() > 0.4 ? 2 : 1;
-    activeDiscount += winAmount;
-    updateCartUI();
-    showToast(`🎯 فزت بنجاح في نيشان السيرك! تم إضافة خصم ${winAmount} ريال لسلتك! 🎉`);
+    let hits = 0;
+    let modal = document.createElement('div');
+    modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 100010; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: var(--font-arabic); direction: rtl;';
+    modal.innerHTML = `
+        <div style="text-align: center; color: #fff; margin-bottom: 15px;">
+            <h3 style="color: #ffaa00; font-size: 1.4rem;">🎯 لعبة نيشان السيرك (اضرب 5 أهداف!)</h3>
+            <p style="font-size: 0.9rem;">الأهداف المصابة: <strong id="shoot-hits-count" style="color: #10b981; font-size: 1.2rem;">0 / 5</strong></p>
+        </div>
+        <div id="shooting-arena-box" style="width: 500px; max-width: 90%; height: 320px; background: rgba(255,255,255,0.08); border: 2px solid #ffaa00; border-radius: 12px; position: relative; overflow: hidden; cursor: crosshair;">
+            <div id="target-target-item" onclick="hitTargetItem()" style="position: absolute; top: 100px; left: 200px; font-size: 3rem; cursor: pointer; transition: all 0.3s ease; user-select: none;">🎯</div>
+        </div>
+        <button onclick="this.parentElement.remove();" style="margin-top: 15px; padding: 6px 18px; background: #c0c0c0; color: #000; border: none; font-weight: bold; border-radius: 4px; cursor: pointer;">إغلاق ✖️</button>
+    `;
+    document.body.appendChild(modal);
+
+    let moveInterval = setInterval(() => {
+        let item = document.getElementById('target-target-item');
+        if (!item) { clearInterval(moveInterval); return; }
+        let top = Math.floor(Math.random() * 240) + 20;
+        let left = Math.floor(Math.random() * 400) + 20;
+        item.style.top = top + 'px';
+        item.style.left = left + 'px';
+    }, 700);
+
+    window.hitTargetItem = function() {
+        hits++;
+        if (typeof playSuccessSound === 'function') playSuccessSound();
+        let hitEl = document.getElementById('shoot-hits-count');
+        if (hitEl) hitEl.textContent = `${hits} / 5`;
+        if (hits >= 5) {
+            clearInterval(moveInterval);
+            modal.remove();
+            activeDiscount += 2;
+            updateCartUI();
+            showToast('🎉 كفو! أصبت كافة الأهداف وفزت بخصم 2 ريال بالسلة!');
+        }
+    };
 }
 
-function playFortuneWheelGame(cost) {
+// ----------------------------------------------------
+// GAME 2: 🎰 FORTUNE WHEEL INTERACTIVE CANVAS MODAL
+// ----------------------------------------------------
+function launchFortuneWheelModal(cost) {
     if (circusBalance < cost) {
-        showToast('⚠️ رصيدك غير كافٍ! اشحن رصيد ألعاب جديد لتستمر باللعب.');
+        showToast('⚠️ رصيدك غير كافٍ! اشحن رصيدك أولاً لتلعب.');
         showCircusRechargeModal();
         return;
     }
     circusBalance -= cost;
-    document.getElementById('circus-bal-val').textContent = `${circusBalance} ر.س`;
-    if (typeof playSuccessSound === 'function') playSuccessSound();
 
-    let prizes = [2, 3, 1, 4];
-    let prize = prizes[Math.floor(Math.random() * prizes.length)];
-    activeDiscount += prize;
-    updateCartUI();
-    showToast(`🎰 درت عجلة الحظ الكبرى وفزت بخصم ${prize} ريال بالسلة! 🏆`);
+    let modal = document.createElement('div');
+    modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 100010; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: var(--font-arabic); direction: rtl;';
+    modal.innerHTML = `
+        <div style="text-align: center; color: #fff; margin-bottom: 15px;">
+            <h3 style="color: #10b981; font-size: 1.4rem;">🎰 عجلة الحظ الكبرى</h3>
+            <p style="font-size: 0.9rem;">اضغط على الزر لإدارة العجلة واقتناص جائزتك!</p>
+        </div>
+        <div style="position: relative; width: 280px; height: 280px; margin-bottom: 20px;">
+            <div style="position: absolute; top: -12px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 14px solid transparent; border-right: 14px solid transparent; border-top: 24px solid #ff0055; z-index: 10;"></div>
+            <canvas id="wheel-canvas-el" width="280" height="280" style="border-radius: 50%; box-shadow: 0 0 25px rgba(16,185,129,0.7);"></canvas>
+        </div>
+        <button id="spin-wheel-btn" onclick="spinWheelAction()" style="padding: 12px 30px; font-size: 1.1rem; font-weight: bold; background: linear-gradient(135deg, #10b981, #059669); color: white; border: 2px solid #fff; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 15px rgba(16,185,129,0.5);">
+            🎰 ادر العجلة الآن!
+        </button>
+        <button onclick="this.parentElement.remove();" style="margin-top: 15px; padding: 6px 18px; background: #c0c0c0; color: #000; border: none; font-weight: bold; border-radius: 4px; cursor: pointer;">إغلاق ✖️</button>
+    `;
+    document.body.appendChild(modal);
+
+    const canvas = document.getElementById('wheel-canvas-el');
+    const ctx = canvas.getContext('2d');
+    const prizes = ['1 ريال 💵', '2 ريال 🎁', '3 ريال ⭐', '4 ريال 🏆', '1 ريال 💵', '2 ريال 🎁'];
+    const colors = ['#ff0055', '#10b981', '#3b82f6', '#eab308', '#a855f7', '#06b6d4'];
+
+    function drawWheel(angle = 0) {
+        ctx.clearRect(0,0,280,280);
+        const arc = (Math.PI * 2) / prizes.length;
+        for(let i=0; i<prizes.length; i++) {
+            ctx.beginPath();
+            ctx.fillStyle = colors[i];
+            ctx.moveTo(140, 140);
+            ctx.arc(140, 140, 135, angle + i * arc, angle + (i + 1) * arc);
+            ctx.fill();
+
+            ctx.save();
+            ctx.translate(140, 140);
+            ctx.rotate(angle + i * arc + arc/2);
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 14px Arial';
+            ctx.fillText(prizes[i], 50, 5);
+            ctx.restore();
+        }
+    }
+    drawWheel();
+
+    window.spinWheelAction = function() {
+        let btn = document.getElementById('spin-wheel-btn');
+        if (btn) btn.disabled = true;
+
+        let currentAngle = 0;
+        let speed = 0.4;
+        let timer = setInterval(() => {
+            currentAngle += speed;
+            speed *= 0.985;
+            drawWheel(currentAngle);
+
+            if (speed < 0.005) {
+                clearInterval(timer);
+                let winIdx = Math.floor(Math.random() * prizes.length);
+                let wonVal = [1, 2, 3, 4, 1, 2][winIdx];
+                activeDiscount += wonVal;
+                updateCartUI();
+                if (typeof playSuccessSound === 'function') playSuccessSound();
+                showToast(`🎰 درت العجلة وفزت بخصم ${wonVal} ريال بالسلة! 🎉`);
+                setTimeout(() => modal.remove(), 1200);
+            }
+        }, 20);
+    };
 }
 
-function playBalloonPopGame(cost) {
+// ----------------------------------------------------
+// GAME 3: 🎈 BALLOON POP INTERACTIVE MODAL
+// ----------------------------------------------------
+function launchBalloonPopModal(cost) {
     if (circusBalance < cost) {
-        showToast('⚠️ رصيدك غير كافٍ! اشحن رصيد ألعاب جديد لتستمر باللعب.');
+        showToast('⚠️ رصيدك غير كافٍ! اشحن رصيدك أولاً لتلعب.');
         showCircusRechargeModal();
         return;
     }
     circusBalance -= cost;
-    document.getElementById('circus-bal-val').textContent = `${circusBalance} ر.س`;
-    if (typeof playSuccessSound === 'function') playSuccessSound();
 
-    activeDiscount += 1;
-    updateCartUI();
-    showToast(`🎈 فقعت البالون السحري وفزت بريا الخصم 1 ريال للسلة! ✨`);
+    let popped = 0;
+    let modal = document.createElement('div');
+    modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 100010; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: var(--font-arabic); direction: rtl;';
+    modal.innerHTML = `
+        <div style="text-align: center; color: #fff; margin-bottom: 15px;">
+            <h3 style="color: #60a5fa; font-size: 1.4rem;">🎈 فقص بالونات السيرك (فقص 3 بالونات!)</h3>
+            <p style="font-size: 0.9rem;">البالونات المفقوعة: <strong id="pop-count-el" style="color: #10b981; font-size: 1.2rem;">0 / 3</strong></p>
+        </div>
+        <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; width: 400px; max-width: 90%;">
+            <div onclick="popSingleBalloon(this)" style="font-size: 4rem; cursor: pointer; user-select: none;">🎈</div>
+            <div onclick="popSingleBalloon(this)" style="font-size: 4rem; cursor: pointer; user-select: none;">🎈</div>
+            <div onclick="popSingleBalloon(this)" style="font-size: 4rem; cursor: pointer; user-select: none;">🎈</div>
+            <div onclick="popSingleBalloon(this)" style="font-size: 4rem; cursor: pointer; user-select: none;">🎈</div>
+        </div>
+        <button onclick="this.parentElement.remove();" style="margin-top: 25px; padding: 6px 18px; background: #c0c0c0; color: #000; border: none; font-weight: bold; border-radius: 4px; cursor: pointer;">إغلاق ✖️</button>
+    `;
+    document.body.appendChild(modal);
+
+    window.popSingleBalloon = function(el) {
+        if (el.textContent === '💥') return;
+        el.textContent = '💥';
+        popped++;
+        if (typeof playSuccessSound === 'function') playSuccessSound();
+        document.getElementById('pop-count-el').textContent = `${popped} / 3`;
+
+        if (popped >= 3) {
+            setTimeout(() => {
+                modal.remove();
+                activeDiscount += 1;
+                updateCartUI();
+                showToast('🎈 فقعت البالونات وفزت بخصم 1 ريال بالسلة! ✨');
+            }, 500);
+        }
+    };
+}
+
+// ----------------------------------------------------
+// GAME 4 (NEW): 🏎️ BUMPER CARS RACE INTERACTIVE MODAL
+// ----------------------------------------------------
+function launchBumperCarsRaceModal(cost) {
+    if (circusBalance < cost) {
+        showToast('⚠️ رصيدك غير كافٍ! اشحن رصيدك أولاً لتلعب.');
+        showCircusRechargeModal();
+        return;
+    }
+    circusBalance -= cost;
+
+    let score = 0;
+    let modal = document.createElement('div');
+    modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 100010; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: var(--font-arabic); direction: rtl;';
+    modal.innerHTML = `
+        <div style="text-align: center; color: #fff; margin-bottom: 15px;">
+            <h3 style="color: #facc15; font-size: 1.4rem;">🏎️ سباق سيارات الملاهي السريعة</h3>
+            <p style="font-size: 0.9rem;">اضغط زر البنزين 5 مرات سريعة للوصول لخط النهاية!</p>
+        </div>
+        <div style="width: 320px; max-width: 90%; background: rgba(255,255,255,0.1); border: 2px solid #facc15; border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 20px;">
+            <div id="race-car-icon" style="font-size: 3.5rem; transition: transform 0.2s ease;">🏎️ 💨</div>
+            <div style="width: 100%; height: 14px; background: #333; border-radius: 7px; margin-top: 15px; overflow: hidden;">
+                <div id="race-progress-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #eab308, #10b981); transition: width 0.2s ease;"></div>
+            </div>
+        </div>
+        <button onclick="pressGasPedal()" style="padding: 14px 32px; font-size: 1.1rem; font-weight: bold; background: linear-gradient(135deg, #eab308, #ca8a04); color: white; border: 2px solid #fff; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 15px rgba(234,179,8,0.5);">
+            🏎️ دوس بنزين! (اضغط هنا)
+        </button>
+        <button onclick="this.parentElement.remove();" style="margin-top: 15px; padding: 6px 18px; background: #c0c0c0; color: #000; border: none; font-weight: bold; border-radius: 4px; cursor: pointer;">إغلاق ✖️</button>
+    `;
+    document.body.appendChild(modal);
+
+    window.pressGasPedal = function() {
+        score++;
+        document.getElementById('race-progress-bar').style.width = (score * 20) + '%';
+        if (typeof playSuccessSound === 'function') playSuccessSound();
+
+        if (score >= 5) {
+            setTimeout(() => {
+                modal.remove();
+                activeDiscount += 2;
+                updateCartUI();
+                showToast('🏎️ وصلت لخط النهاية وفزت بخصم 2 ريال بالسلة! 🏆');
+            }, 300);
+        }
+    };
+}
+
+// ----------------------------------------------------
+// GAME 5 (NEW): 🔨 CIRCUS HIGH STRIKER HAMMER INTERACTIVE MODAL
+// ----------------------------------------------------
+function launchHammerStrikeModal(cost) {
+    if (circusBalance < cost) {
+        showToast('⚠️ رصيدك غير كافٍ! اشحن رصيدك أولاً لتلعب.');
+        showCircusRechargeModal();
+        return;
+    }
+    circusBalance -= cost;
+
+    let modal = document.createElement('div');
+    modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 100010; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: var(--font-arabic); direction: rtl;';
+    modal.innerHTML = `
+        <div style="text-align: center; color: #fff; margin-bottom: 15px;">
+            <h3 style="color: #c084fc; font-size: 1.4rem;">🔨 مطرقة القوة والسيرك</h3>
+            <p style="font-size: 0.9rem;">اضرب المطرقة عندما يصل مقياس القوة للقمة!</p>
+        </div>
+        <div style="width: 100px; height: 260px; background: rgba(255,255,255,0.1); border: 2px solid #a855f7; border-radius: 12px; position: relative; overflow: hidden; margin-bottom: 20px; display: flex; flex-direction: column-reverse;">
+            <div id="hammer-power-meter" style="width: 100%; height: 20%; background: linear-gradient(0deg, #a855f7, #ff0055); transition: height 0.1s linear;"></div>
+            <div style="position: absolute; top: 10px; width: 100%; text-align: center; font-size: 1.8rem;">🔔</div>
+        </div>
+        <button onclick="strikeHammerAction()" style="padding: 12px 30px; font-size: 1.1rem; font-weight: bold; background: linear-gradient(135deg, #a855f7, #7e22ce); color: white; border: 2px solid #fff; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 15px rgba(168,85,247,0.5);">
+            🔨 اضرب المطرقة الآن!
+        </button>
+        <button onclick="this.parentElement.remove();" style="margin-top: 15px; padding: 6px 18px; background: #c0c0c0; color: #000; border: none; font-weight: bold; border-radius: 4px; cursor: pointer;">إغلاق ✖️</button>
+    `;
+    document.body.appendChild(modal);
+
+    let power = 20;
+    let direction = 1;
+    let loop = setInterval(() => {
+        power += direction * 8;
+        if (power >= 100) { power = 100; direction = -1; }
+        if (power <= 10) { power = 10; direction = 1; }
+        let meter = document.getElementById('hammer-power-meter');
+        if (meter) meter.style.height = power + '%';
+    }, 60);
+
+    window.strikeHammerAction = function() {
+        clearInterval(loop);
+        if (typeof playSuccessSound === 'function') playSuccessSound();
+        
+        let reward = power > 70 ? 2 : 1;
+        activeDiscount += reward;
+        updateCartUI();
+        showToast(`🔨 ضربت المطرقة بقوة ${power}% وفزت بخصم ${reward} ريال بالسلة! 🔔`);
+        setTimeout(() => modal.remove(), 1200);
+    };
 }
 
 // ==========================================================
