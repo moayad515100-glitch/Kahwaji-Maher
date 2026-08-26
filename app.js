@@ -5071,6 +5071,11 @@ function launchHammerStrikeModal(cost) {
 // ==========================================================
 // 🚪 SECRET SIDE ROOM & 3-PHASE BOSS FIGHT SAGA
 // ==========================================================
+let currentBossPhase = 1;
+let phase1BossHp = 100;
+let phase1PlayerHp = 100;
+let hasRobotCompanion = false;
+
 function enterSecretSideRoom() {
     const worldModal = document.getElementById('circus-world-modal');
     if (worldModal) worldModal.remove();
@@ -5110,6 +5115,447 @@ function enterSecretSideRoom() {
         </div>
     `;
     document.body.appendChild(roomModal);
+}
+
+function triggerFuriousMaher3DBossFight() {
+    const roomModal = document.getElementById('secret-side-room-modal');
+    if (roomModal) roomModal.remove();
+
+    let furiousModal = document.getElementById('furious-maher-modal');
+    if (furiousModal) furiousModal.remove();
+
+    furiousModal = document.createElement('div');
+    furiousModal.id = 'furious-maher-modal';
+    furiousModal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 100015; display: flex; align-items: center; justify-content: center; font-family: var(--font-arabic); direction: rtl;';
+    furiousModal.innerHTML = `
+        <div class="win95-modal" style="width: 520px; max-width: 92%; background: #c0c0c0; border: 3px solid #ff0000; box-shadow: 0 0 50px rgba(255,0,0,0.9); padding: 2px; color: #000;">
+            <div class="win95-title-bar" style="background: #800000; color: #fff; padding: 6px 10px; font-weight: bold; font-size: 1.05rem;">
+                😡 غضب الباريستا ماهر (ملحمة الأطوار الـ 3)!
+            </div>
+            <div class="win95-body" style="padding: 22px; text-align: center;">
+                <div style="font-size: 4rem; margin-bottom: 10px; filter: drop-shadow(0 0 15px rgba(255,0,0,0.8));">😡🔥☕</div>
+                <div style="background: #fff; border: 2px inset #808080; padding: 16px; margin-bottom: 20px; text-align: right; font-size: 1.05rem; line-height: 1.8; color: #800000; border-radius: 4px; font-weight: bold;">
+                    "أنا قاعد أفلس وأنت حضرتك ما تبغى تروح تلعب وتشتري؟! 😡🔥<br>
+                    استعد لخوض الملحمة الأسطورية عبر 3 أطوار من المواجهة!"
+                </div>
+                <button onclick="startPhase1EasyBossFight()" style="padding: 12px 28px; font-size: 1.1rem; font-weight: bold; background: linear-gradient(135deg, #ff0000, #990000); color: white; border: 2px solid #fff; border-radius: 6px; cursor: pointer; box-shadow: 0 0 25px rgba(255,0,0,0.8);">
+                    ⚔️ بدء الطور الأول (مواجهة القطة السحرية 🐱)
+                </button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(furiousModal);
+}
+
+// ----------------------------------------------------------
+// PHASE 1: EASY INTRO + SECRET CAT COMPANION 🐱
+// ----------------------------------------------------------
+function startPhase1EasyBossFight() {
+    document.getElementById('furious-maher-modal')?.remove();
+
+    phase1BossHp = 100;
+    phase1PlayerHp = 100;
+
+    let modal = document.createElement('div');
+    modal.id = 'phase1-boss-modal';
+    modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); z-index: 100020; display: flex; flex-direction: column; align-items: center; justify-content: space-between; font-family: var(--font-arabic); direction: rtl; padding: 20px;';
+    modal.innerHTML = `
+        <div style="width: 100%; max-width: 600px; text-align: center; color: #fff;">
+            <h3 style="color: #ffaa00; font-size: 1.3rem;">⚡ الطور الأول: مواجهة البوس السهلة (مساعدة قطة الأسرار 🐱)</h3>
+            <p style="font-size: 0.85rem; color: #ccc;">قطة الأسرار تحميك بـ (درع قطة الأسرار) وتضرب البوس تلقائياً!</p>
+        </div>
+
+        <div style="width: 100%; max-width: 520px; background: rgba(255,255,255,0.08); border: 2px solid #ffaa00; border-radius: 12px; padding: 20px; text-align: center;">
+            <div style="display: flex; justify-content: space-around; align-items: center; margin-bottom: 20px;">
+                <div>
+                    <div style="font-size: 4rem; filter: drop-shadow(0 0 15px rgba(255,170,0,0.8));">☕👹</div>
+                    <div style="color: #ff0055; font-weight: bold;">البوس ماهر</div>
+                    <div style="width: 120px; height: 12px; background: #333; border-radius: 6px; overflow: hidden; margin-top: 4px;">
+                        <div id="p1-boss-hp-bar" style="width: 100%; height: 100%; background: #ff0055; transition: width 0.3s;"></div>
+                    </div>
+                </div>
+
+                <div style="font-size: 2.5rem; animation: circusPulse 1s infinite alternate;">⚡ VS ⚡</div>
+
+                <div>
+                    <div style="font-size: 4rem; filter: drop-shadow(0 0 15px rgba(16,185,129,0.8));">🐱🛡️</div>
+                    <div style="color: #10b981; font-weight: bold;">قطة الأسرار + أنت</div>
+                    <div style="width: 120px; height: 12px; background: #333; border-radius: 6px; overflow: hidden; margin-top: 4px;">
+                        <div id="p1-player-hp-bar" style="width: 100%; height: 100%; background: #10b981; transition: width 0.3s;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="background: rgba(0,0,0,0.6); padding: 10px; border-radius: 6px; font-size: 0.9rem; color: #10b981; margin-bottom: 20px;">
+                💬 <strong>قطة الأسرار 🐱:</strong> "أنا أحميك بـ (درع قطة الأسرار) وندمج البوس بسهولة!"
+            </div>
+
+            <button onclick="phase1AttackAction()" style="padding: 12px 30px; font-size: 1.1rem; font-weight: bold; background: linear-gradient(135deg, #10b981, #059669); color: white; border: 2px solid #fff; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 15px rgba(16,185,129,0.5);">
+                ⚔️ ضربة سريعة بالقطة السحرية 🐱
+            </button>
+        </div>
+
+        <button onclick="document.getElementById('phase1-boss-modal')?.remove();" style="padding: 6px 18px; background: #c0c0c0; color: #000; border: none; font-weight: bold; border-radius: 4px; cursor: pointer;">إغلاق ✖️</button>
+    `;
+    document.body.appendChild(modal);
+}
+
+function phase1AttackAction() {
+    phase1BossHp = Math.max(0, phase1BossHp - 35);
+    document.getElementById('p1-boss-hp-bar').style.width = phase1BossHp + '%';
+    if (typeof playSuccessSound === 'function') playSuccessSound();
+
+    showToast('🐱 ضربت قطة الأسرار البوس بـ 35 ضرر وحمتك بـ (درع القطة)!');
+
+    if (phase1BossHp <= 0) {
+        document.getElementById('phase1-boss-modal')?.remove();
+        showToast('🔥 هزمت الطور الأول بسهولة! استعد للطور الثاني 2D!');
+        setTimeout(startPhase22DEscapeRunner, 600);
+    }
+}
+
+// ----------------------------------------------------------
+// PHASE 2: 2D SIDE-SCROLLING ESCAPE RUNNER GAME 🏃‍♂️
+// Controls: WASD / Arrows (PC) & Touch D-Pad / Buttons (Mobile)
+// ----------------------------------------------------------
+function startPhase22DEscapeRunner() {
+    let modal = document.createElement('div');
+    modal.id = 'phase2-runner-modal';
+    modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #111; z-index: 100025; display: flex; flex-direction: column; align-items: center; justify-content: space-between; font-family: var(--font-arabic); direction: rtl; padding: 15px; overflow: hidden;';
+    modal.innerHTML = `
+        <div style="width: 100%; text-align: center; color: #fff; z-index: 10;">
+            <h3 style="color: #3b82f6; font-size: 1.3rem;">🏃‍♂️ الطور الثاني: لعبة الهروب 2D من البوس ماهر!</h3>
+            <p style="font-size: 0.85rem; color: #aaa;">استخدم (WASD أو الأسهم بالكمبيوتر) أو (الأسهم بالأونلاين للجوال) للقفز والهروب!</p>
+        </div>
+
+        <canvas id="runner-2d-canvas" width="640" height="280" style="background: linear-gradient(180deg, #1e1b4b, #311b92); border: 2px solid #3b82f6; border-radius: 8px; width: 95%; max-width: 640px; box-shadow: 0 0 25px rgba(59,130,246,0.5);"></canvas>
+
+        <!-- Mobile Touch D-Pad Controls (الأسهم للجوال) -->
+        <div style="display: flex; gap: 15px; justify-content: center; align-items: center; z-index: 10;">
+            <button onclick="movePlayerRunner('left')" style="padding: 12px 20px; font-size: 1.2rem; background: #333; color: #fff; border: 1px solid #666; border-radius: 8px; cursor: pointer;">⬅️ يسار</button>
+            <button onclick="jumpPlayerRunner()" style="padding: 14px 28px; font-size: 1.3rem; font-weight: bold; background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: #fff; border: 2px solid #fff; border-radius: 8px; cursor: pointer;">⬆️ قفز!</button>
+            <button onclick="movePlayerRunner('right')" style="padding: 12px 20px; font-size: 1.2rem; background: #333; color: #fff; border: 1px solid #666; border-radius: 8px; cursor: pointer;">➡️ يمين</button>
+        </div>
+    `;
+    document.body.appendChild(modal);
+
+    const canvas = document.getElementById('runner-2d-canvas');
+    const ctx = canvas.getContext('2d');
+
+    let playerX = 220;
+    let playerY = 200;
+    let playerVY = 0;
+    let isJumping = false;
+    let distance = 0;
+    let runnerAnimId;
+
+    let obstacles = [
+        { x: 640, y: 215, type: '☕' },
+        { x: 950, y: 215, type: '🔥' },
+        { x: 1250, y: 215, type: '☕' }
+    ];
+
+    function handlePCKey(e) {
+        if (e.key === 'w' || e.key === 'W' || e.key === 'ArrowUp' || e.key === ' ') {
+            jumpPlayerRunner();
+        } else if (e.key === 'a' || e.key === 'A' || e.key === 'ArrowLeft') {
+            movePlayerRunner('left');
+        } else if (e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') {
+            movePlayerRunner('right');
+        }
+    }
+    window.addEventListener('keydown', handlePCKey);
+
+    window.jumpPlayerRunner = function() {
+        if (!isJumping) {
+            playerVY = -13;
+            isJumping = true;
+            if (typeof playSuccessSound === 'function') playSuccessSound();
+        }
+    };
+
+    window.movePlayerRunner = function(dir) {
+        if (dir === 'left') playerX = Math.max(80, playerX - 25);
+        if (dir === 'right') playerX = Math.min(520, playerX + 25);
+    };
+
+    function gameLoop2D() {
+        ctx.clearRect(0,0,640,280);
+
+        ctx.fillStyle = '#4c1d95';
+        ctx.fillRect(0, 240, 640, 40);
+
+        ctx.font = '45px Arial';
+        ctx.fillText('☕👹', 30, 235);
+
+        playerY += playerVY;
+        playerVY += 0.8;
+        if (playerY >= 200) {
+            playerY = 200;
+            playerVY = 0;
+            isJumping = false;
+        }
+        ctx.fillText('🏃‍♂️', playerX, playerY + 35);
+
+        for (let obs of obstacles) {
+            obs.x -= 4.5;
+            if (obs.x < -40) obs.x = 640 + Math.random() * 200;
+            ctx.fillText(obs.type, obs.x, obs.y + 20);
+
+            if (Math.abs(obs.x - playerX) < 28 && Math.abs(obs.y - playerY) < 28) {
+                showToast('⚠️ صدمت بالحاجز! تراجع للخلف!');
+                playerX = Math.max(80, playerX - 30);
+            }
+        }
+
+        distance += 0.35;
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 14px Arial';
+        ctx.fillText(`المسافة: ${Math.floor(distance)}%`, 530, 30);
+
+        if (distance >= 100) {
+            cancelAnimationFrame(runnerAnimId);
+            window.removeEventListener('keydown', handlePCKey);
+            modal.remove();
+            showToast('🎉 كفو! هربت بنجاح من الطور الثاني 2D! استعد للطور الثالث المعركة 3D الصعبة!');
+            setTimeout(startPhase3Hard3DFreeMovementBoss, 600);
+            return;
+        }
+
+        runnerAnimId = requestAnimationFrame(gameLoop2D);
+    }
+    gameLoop2D();
+}
+
+// ----------------------------------------------------------
+// PHASE 3: HARD TRUE 3D FREE MOVEMENT BOSS ARENA (THREE.JS)
+// Controls: Full 3D Camera / WASD Free Movement
+// ----------------------------------------------------------
+let p3PlayerX = 0, p3PlayerZ = 0;
+let phase3BossHp = 150;
+let phase3PlayerHp = 100;
+
+function startPhase3Hard3DFreeMovementBoss() {
+    let bossModal = document.getElementById('boss-3d-arena-modal');
+    if (bossModal) bossModal.remove();
+
+    phase3BossHp = 150;
+    phase3PlayerHp = 100;
+    p3PlayerX = 0; p3PlayerZ = 0;
+
+    bossModal = document.createElement('div');
+    bossModal.id = 'boss-3d-arena-modal';
+    bossModal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 100030; display: flex; flex-direction: column; align-items: center; justify-content: space-between; font-family: var(--font-arabic); direction: rtl; overflow: hidden;';
+    bossModal.innerHTML = `
+        <div style="width: 100%; background: rgba(0,0,0,0.85); border-bottom: 2px solid #ff0055; padding: 12px 20px; z-index: 10; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <div style="flex: 1; min-width: 220px;">
+                <div style="display: flex; justify-content: space-between; font-weight: bold; color: #ff0055; margin-bottom: 4px; font-size: 0.95rem;">
+                    <span>🔥 الطور الثالث: البوس الأسطوري (صعوبة عالية ⭐⭐⭐)</span>
+                    <span id="p3-boss-hp-text">150 / 150</span>
+                </div>
+                <div style="width: 100%; height: 16px; background: #333; border-radius: 8px; overflow: hidden; border: 1px solid #ff0055;">
+                    <div id="p3-boss-hp-bar" style="width: 100%; height: 100%; background: linear-gradient(90deg, #ff0055, #ff4400); transition: width 0.3s ease;"></div>
+                </div>
+            </div>
+
+            <div style="flex: 1; min-width: 220px;">
+                <div style="display: flex; justify-content: space-between; font-weight: bold; color: #10b981; margin-bottom: 4px; font-size: 0.95rem;">
+                    <span>🛡️ صحتك:</span>
+                    <span id="p3-player-hp-text">100 / 100</span>
+                </div>
+                <div style="width: 100%; height: 16px; background: #333; border-radius: 8px; overflow: hidden; border: 1px solid #10b981;">
+                    <div id="p3-player-hp-bar" style="width: 100%; height: 100%; background: linear-gradient(90deg, #10b981, #059669); transition: width 0.3s ease;"></div>
+                </div>
+            </div>
+
+            <button onclick="close3DBossFightArena()" style="background: #c0c0c0; color: #000; border: 1px solid #fff; font-weight: bold; padding: 4px 12px; cursor: pointer; border-radius: 4px;">انسحاب 🚪</button>
+        </div>
+
+        <div id="three-boss-canvas-3" style="width: 100%; flex: 1; position: relative;"></div>
+
+        <div style="width: 100%; background: rgba(0,0,0,0.92); border-top: 2px solid #ff0055; padding: 12px; z-index: 10; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+            <div style="font-size: 0.8rem; color: #aaa; text-align: center;">🎮 تحرك بحرية في الفضاء 3D باستخدام (WASD) أو (الأسهم بالجوال):</div>
+            
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <div style="display: grid; grid-template-columns: repeat(3, 36px); gap: 4px;">
+                    <div></div>
+                    <button onclick="move3DPlayerFree('W')" style="padding: 6px; font-weight: bold; background: #333; color: #fff; border: 1px solid #666; border-radius: 4px;">⬆️</button>
+                    <div></div>
+                    <button onclick="move3DPlayerFree('A')" style="padding: 6px; font-weight: bold; background: #333; color: #fff; border: 1px solid #666; border-radius: 4px;">⬅️</button>
+                    <button onclick="move3DPlayerFree('S')" style="padding: 6px; font-weight: bold; background: #333; color: #fff; border: 1px solid #666; border-radius: 4px;">⬇️</button>
+                    <button onclick="move3DPlayerFree('D')" style="padding: 6px; font-weight: bold; background: #333; color: #fff; border: 1px solid #666; border-radius: 4px;">➡️</button>
+                </div>
+
+                <div style="display: flex; gap: 8px;">
+                    <button onclick="playerAttackPhase3(35, 'ضربة الإسبريسو الحارقة')" style="padding: 10px 18px; font-size: 1rem; font-weight: bold; background: linear-gradient(135deg, #dc2626, #990000); color: white; border: 2px solid #fff; border-radius: 6px; cursor: pointer; box-shadow: 0 4px 15px rgba(220,38,38,0.6);">
+                        ⚔️ ضربة الإسبريسو 3D
+                    </button>
+                    <button onclick="playerDefendPhase3()" style="padding: 10px 18px; font-size: 1rem; font-weight: bold; background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; border: 2px solid #fff; border-radius: 6px; cursor: pointer;">
+                        🛡️ درع القطة
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(bossModal);
+
+    setTimeout(initProcedural3DBossMeshPhase3, 100);
+}
+
+let player3DMesh;
+
+function initProcedural3DBossMeshPhase3() {
+    const container = document.getElementById('three-boss-canvas-3');
+    if (!container || typeof THREE === 'undefined') return;
+
+    const width = container.clientWidth || window.innerWidth;
+    const height = container.clientHeight || (window.innerHeight - 150);
+
+    boss3DScene = new THREE.Scene();
+    boss3DScene.fog = new THREE.FogExp2(0x110005, 0.05);
+
+    boss3DCamera = new THREE.PerspectiveCamera(60, width / height, 0.1, 1000);
+    boss3DCamera.position.set(0, 4, 8);
+    boss3DCamera.lookAt(0, 0, 0);
+
+    boss3DRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    boss3DRenderer.setSize(width, height);
+    boss3DRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(boss3DRenderer.domElement);
+
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+    boss3DScene.add(ambientLight);
+
+    const redLight = new THREE.PointLight(0xff0055, 4, 25);
+    redLight.position.set(2, 4, 4);
+    boss3DScene.add(redLight);
+
+    boss3DMeshGroup = new THREE.Group();
+    const cupGeom = new THREE.CylinderGeometry(2, 1.4, 3.6, 32);
+    const cupMat = new THREE.MeshStandardMaterial({ color: 0x111115, metalness: 0.9, roughness: 0.1, emissive: 0x440011 });
+    const cupMesh = new THREE.Mesh(cupGeom, cupMat);
+    boss3DMeshGroup.add(cupMesh);
+
+    const eyeGeom = new THREE.SphereGeometry(0.35, 16, 16);
+    const eyeMat = new THREE.MeshBasicMaterial({ color: 0xff0022 });
+    const leftEye = new THREE.Mesh(eyeGeom, eyeMat); leftEye.position.set(0.7, 0.8, 1.8);
+    const rightEye = new THREE.Mesh(eyeGeom, eyeMat); rightEye.position.set(-0.7, 0.8, 1.8);
+    boss3DMeshGroup.add(leftEye); boss3DMeshGroup.add(rightEye);
+
+    boss3DScene.add(boss3DMeshGroup);
+
+    const playerGeom = new THREE.SphereGeometry(0.5, 16, 16);
+    const playerMat = new THREE.MeshStandardMaterial({ color: 0x10b981, metalness: 0.5, emissive: 0x059669 });
+    player3DMesh = new THREE.Mesh(playerGeom, playerMat);
+    player3DMesh.position.set(0, 0.5, 3);
+    boss3DScene.add(player3DMesh);
+
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'w' || e.key === 'W' || e.key === 'ArrowUp') move3DPlayerFree('W');
+        if (e.key === 's' || e.key === 'S' || e.key === 'ArrowDown') move3DPlayerFree('S');
+        if (e.key === 'a' || e.key === 'A' || e.key === 'ArrowLeft') move3DPlayerFree('A');
+        if (e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') move3DPlayerFree('D');
+    });
+
+    window.move3DPlayerFree = function(dir) {
+        if (!player3DMesh) return;
+        if (dir === 'W') player3DMesh.position.z = Math.max(-2, player3DMesh.position.z - 0.4);
+        if (dir === 'S') player3DMesh.position.z = Math.min(5, player3DMesh.position.z + 0.4);
+        if (dir === 'A') player3DMesh.position.x = Math.max(-3.5, player3DMesh.position.x - 0.4);
+        if (dir === 'D') player3DMesh.position.x = Math.min(3.5, player3DMesh.position.x + 0.4);
+    };
+
+    let clock = new THREE.Clock();
+    function animate3DHardPhase() {
+        bossAnimId = requestAnimationFrame(animate3DHardPhase);
+        const elapsedTime = clock.getElapsedTime();
+
+        if (boss3DMeshGroup) {
+            boss3DMeshGroup.position.y = Math.sin(elapsedTime * 3) * 0.3;
+            boss3DMeshGroup.rotation.y = Math.sin(elapsedTime * 1.2) * 0.5;
+        }
+
+        boss3DRenderer.render(boss3DScene, boss3DCamera);
+    }
+    animate3DHardPhase();
+}
+
+function playerAttackPhase3(damage, attackName) {
+    if (phase3BossHp <= 0) return;
+
+    phase3BossHp = Math.max(0, phase3BossHp - damage);
+    document.getElementById('p3-boss-hp-bar').style.width = (phase3BossHp / 1.5) + '%';
+    document.getElementById('p3-boss-hp-text').textContent = `${phase3BossHp} / 150`;
+
+    if (boss3DMeshGroup) {
+        boss3DMeshGroup.position.z -= 0.6;
+        setTimeout(() => { if (boss3DMeshGroup) boss3DMeshGroup.position.z = 0; }, 200);
+    }
+
+    if (typeof playSuccessSound === 'function') playSuccessSound();
+    showToast(`💥 سددت ضربة 3D بـ ${attackName} وحققت ${damage} ضرر!`);
+
+    if (phase3BossHp <= 0) {
+        setTimeout(handlePhase3VictorySaga, 400);
+        return;
+    }
+
+    setTimeout(() => {
+        if (phase3BossHp > 0) {
+            let bossDmg = Math.floor(Math.random() * 20) + 15;
+            phase3PlayerHp = Math.max(0, phase3PlayerHp - bossDmg);
+            document.getElementById('p3-player-hp-bar').style.width = phase3PlayerHp + '%';
+            document.getElementById('p3-player-hp-text').textContent = `${phase3PlayerHp} / 100`;
+            showToast(`🔥 البوس هاجمك بشدة وسبب لك ${bossDmg} ضرر!`);
+        }
+    }, 600);
+}
+
+function playerDefendPhase3() {
+    phase3PlayerHp = Math.min(100, phase3PlayerHp + 20);
+    document.getElementById('p3-player-hp-bar').style.width = phase3PlayerHp + '%';
+    document.getElementById('p3-player-hp-text').textContent = `${phase3PlayerHp} / 100`;
+    showToast(`🛡️ فعّلت درع القطة واستعدت 20 نقطة صحة!`);
+}
+
+function handlePhase3VictorySaga() {
+    if (bossAnimId) cancelAnimationFrame(bossAnimId);
+
+    hasRobotCompanion = true;
+    activeDiscount += 5;
+    updateCartUI();
+    if (typeof playSuccessSound === 'function') playSuccessSound();
+
+    const cartHeader = document.querySelector('.cart-header');
+    if (cartHeader && !document.getElementById('cart-robot-companion')) {
+        let robotDiv = document.createElement('div');
+        robotDiv.id = 'cart-robot-companion';
+        robotDiv.style.cssText = 'background: linear-gradient(135deg, #10b981, #059669); color: #fff; padding: 8px; margin: 8px; border-radius: 6px; font-size: 0.85rem; font-weight: bold; text-align: center; border: 1px solid #fff; box-shadow: 0 0 12px rgba(16,185,129,0.6);';
+        robotDiv.innerHTML = `🤖 <strong>روبوت المتجر المساعد:</strong> "أنا معك بسلتك أمنحك درع وخصومات إضافية! ✨"`;
+        cartHeader.after(robotDiv);
+    }
+
+    let victoryModal = document.createElement('div');
+    victoryModal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.94); z-index: 100040; display: flex; align-items: center; justify-content: center; font-family: var(--font-arabic); direction: rtl;';
+    victoryModal.innerHTML = `
+        <div class="win95-modal" style="width: 540px; max-width: 94%; background: #c0c0c0; border: 3px solid #ffaa00; box-shadow: 0 0 50px rgba(255,170,0,0.9); padding: 2px; color: #000;">
+            <div class="win95-title-bar" style="background: linear-gradient(90deg, #ffaa00, #10b981); color: #fff; padding: 6px 10px; font-weight: bold; font-size: 1.05rem;">
+                🏆 انتصار ملحمي أسطوري على الأطوار الـ 3!
+            </div>
+            <div class="win95-body" style="padding: 24px; text-align: center;">
+                <div style="font-size: 4.5rem; margin-bottom: 12px; filter: drop-shadow(0 0 20px rgba(255,170,0,0.8));">🤖👑🏆</div>
+                <h2 style="color: #000080; margin-bottom: 10px;">أنت بطل المتجر الأسطوري!</h2>
+                <p style="font-size: 1.05rem; line-height: 1.8; color: #111; font-weight: bold; background: #fff; padding: 14px; border: 2px inset #808080; margin-bottom: 20px;">
+                    "أنت قوي جداً! خذ مكافأة البوس الأسطورية: **خصم 5 ريال بالسلة + انضمام روبوت المتجر 🤖 بسلتك لمساعدتك دائماً!**"
+                </p>
+
+                <button onclick="close3DBossFightArena(); openCartDrawer();" style="padding: 12px 28px; font-size: 1.05rem; font-weight: bold; background: linear-gradient(135deg, #10b981, #059669); color: white; border: 2px solid #fff; border-radius: 6px; cursor: pointer; box-shadow: 0 4px 15px rgba(16,185,129,0.5);">
+                    🎟️ رؤية روبوت المتجر والخصم بالسلة 🛒
+                </button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(victoryModal);
 }
 
 function close3DBossFightArena() {
