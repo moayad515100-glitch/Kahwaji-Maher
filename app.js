@@ -1008,6 +1008,7 @@ let fluctuatedPrices = {
     pro: 4,
     superpro: 5,
     juice: 4,
+    v60_360: 5,
     coffee_generic: 5
 };
 

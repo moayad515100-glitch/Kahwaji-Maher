@@ -668,6 +668,57 @@
                     </div>
                 </div>
 
+                <!-- Product 4d: 360 Maher V60 Iced (5 SAR) -->
+                <div class="product-card premium" data-id="v60_360" data-category="coffee" style="border: 2px solid var(--neon-matcha); box-shadow: 0 0 15px rgba(16,185,129,0.3);">
+                    <div class="product-image-container">
+                        <img src="v60_360_clear.jpg" alt="360 ماهر V60 باردة" class="product-image">
+                        <span class="product-tag tag-pro" style="background: linear-gradient(135deg, #10b981, #059669); color: #fff; font-weight: bold;">🧊 V60 باردة مروقة 360°</span>
+                    </div>
+                    <div class="product-info">
+                        <h3>360 🧊☕</h3>
+                        <p class="product-desc">قهوة V60 باردة ومقطرة بعناية فائقة وتوازن برودة 360 درجة لمذاق مروق ومنعش للغاية!</p>
+                        <div class="product-price">5 ر.س <span class="price-suffix">/ كوب</span></div>
+                        
+                        <!-- Customization Section with Chips -->
+                        <div class="customization-section">
+                            <h4 class="custom-title"><i class="fa-solid fa-sliders"></i> خصص كوبك:</h4>
+                            
+                            <div class="custom-options">
+                                <!-- Size -->
+                                <div class="option-group">
+                                    <label>الحجم:</label>
+                                    <div class="chips-container size-chips">
+                                        <input type="radio" id="size-v60_360-normal" name="size-v60_360" value="وسط" checked style="display:none;" onchange="scaleProductImage(this, 'v60_360', 1.0)">
+                                        <label for="size-v60_360-normal" class="chip-label">وسط</label>
+
+                                        <input type="radio" id="size-v60_360-large" name="size-v60_360" value="كبير" style="display:none;" onchange="scaleProductImage(this, 'v60_360', 1.18)">
+                                        <label for="size-v60_360-large" class="chip-label">كبير (+1 ر.س)</label>
+                                    </div>
+                                </div>
+
+                                <!-- Sugar -->
+                                <div class="option-group">
+                                    <label>السكر:</label>
+                                    <div class="chips-container sugar-chips">
+                                        <input type="radio" id="sugar-v60_360-none" name="sugar-v60_360" value="بدون سكر" checked style="display:none;">
+                                        <label for="sugar-v60_360-none" class="chip-label">سادة</label>
+
+                                        <input type="radio" id="sugar-v60_360-low" name="sugar-v60_360" value="سكر خفيف" style="display:none;">
+                                        <label for="sugar-v60_360-low" class="chip-label">خفيف</label>
+
+                                        <input type="radio" id="sugar-v60_360-medium" name="sugar-v60_360" value="سكر وسط" style="display:none;">
+                                        <label for="sugar-v60_360-medium" class="chip-label">وسط</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-add-cart" onclick="addToCart('v60_360', '360 🧊☕', 5, 'v60_360_clear.jpg')">
+                            <i class="fa-solid fa-cart-plus"></i> إضافة للسلة
+                        </button>
+                    </div>
+                </div>
+
                 <!-- Product 4: Juice of the Day (3 SAR) - Cold Clear Cup View -->
                 <div class="product-card premium" data-id="juice" data-category="juice">
                     <div class="product-image-container">
@@ -1308,7 +1359,7 @@
 
 
     <!-- Script file -->
-    <script src="app.js?v=19.00"></script>
+    <script src="app.js?v=20.00"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
