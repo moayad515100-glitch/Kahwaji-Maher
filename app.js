@@ -619,7 +619,13 @@ function submitOrder(event) {
         message += `🔮 *تم الطلب بخلطة ماهر السحرية المضيئة المروقة!* 🔮\n\n`;
     }
     
-    message += `⏱️ *الوقت المتوقع للتجهيز:* 4 دقائق ⏳\n`;
+    const hasSlowBrew = cart.some(item => item.productId === 'cold_brew' || item.name.includes('كولد برو'));
+    if (hasSlowBrew) {
+        message += `⏱️ *الوقت المتوقع للتجهيز:* تحضير بطيء مخصص (غير محدد بدقة - الكولد برو يستغرق وقتاً طويلاً) 🧊\n`;
+    } else {
+        message += `⏱️ *الوقت المتوقع للتجهيز:* 4 دقائق ⏳\n`;
+    }
+
     if (wantsDelivery) {
         message += `🛵 *ملاحظة التوصيل:* مدة التوصيل تعتمد على بعد موقعك داخل مكة المكرمة.\n`;
     } else {
@@ -639,15 +645,15 @@ function submitOrder(event) {
     // Open WhatsApp
     window.open(waLink, '_blank');
     
-    // Launch 4-Minute Order Preparation Live Timer Modal
-    launchOrderPreparationTimerModal(name, wantsDelivery);
+    // Launch Order Preparation Live Timer Modal
+    launchOrderPreparationTimerModal(name, wantsDelivery, hasSlowBrew);
 
     // Clear Cart and Close Modal
     cart = [];
     updateCartUI();
     closeCheckoutModal();
     checkoutForm.reset();
-    showToast('تم إرسال الطلب بنجاح! طلبك قيد التحضير (4 دقائق متوقعة).');
+    showToast(hasSlowBrew ? 'تم إرسال الطلب بنجاح! طلبك يحتوي على كولد برو (تحضير بطيء مخصص).' : 'تم إرسال الطلب بنجاح! طلبك قيد التحضير (4 دقائق متوقعة).');
 }
 
 // Play Custom Alarm Audio (Double Beep Siren via Web Audio API)
@@ -4749,9 +4755,14 @@ function parseAndImportSharedCart() {
 // ==========================================================
 // ⏱️ 4-MINUTE ORDER PREPARATION LIVE TIMER & DELIVERY NOTICE
 // ==========================================================
-function launchOrderPreparationTimerModal(customerName, isDelivery) {
+function launchOrderPreparationTimerModal(customerName, isDelivery, hasSlowBrew = false) {
     let modal = document.getElementById('order-prep-timer-modal');
     if (modal) modal.remove();
+
+    const timeTitle = hasSlowBrew ? "تحضير بطيء مخصص 🧊" : "04:00";
+    const subDesc = hasSlowBrew 
+        ? "طلبك يحتوي على (كولد برو) يـُحضر بالتنقيط البطيء والروقان الفائق، لذلك الوقت غير محدد بدقة ويستغرق وقتاً طويلاً:"
+        : "الباريستا ماهر يعّد مشروبك بطحن البن الفاخر والتقطير المثالي:";
 
     modal = document.createElement('div');
     modal.id = 'order-prep-timer-modal';
@@ -4763,23 +4774,23 @@ function launchOrderPreparationTimerModal(customerName, isDelivery) {
                 <button onclick="document.getElementById('order-prep-timer-modal')?.remove();" style="font-size: 0.8rem; font-weight: bold; background: #c0c0c0; border: 1px solid #fff; border-right-color: #808080; border-bottom-color: #808080; padding: 2px 8px; cursor: pointer; color: #000;">X</button>
             </div>
             <div class="win95-body" style="padding: 22px; text-align: center;">
-                <div style="font-size: 3.5rem; margin-bottom: 8px; filter: drop-shadow(0 0 10px rgba(255,170,0,0.8));">☕⏳💨</div>
+                <div style="font-size: 3.5rem; margin-bottom: 8px; filter: drop-shadow(0 0 10px rgba(255,170,0,0.8));">${hasSlowBrew ? '🧊⏳☕' : '☕⏳💨'}</div>
                 <h3 style="color: #000080; margin-bottom: 6px;">طلبك قيد التحضير يا ${customerName}!</h3>
-                <p style="font-size: 0.9rem; color: #333; margin-bottom: 16px;">الباريستا ماهر يعّد مشروبك بطحن البن الفاخر والتقطير المثالي:</p>
+                <p style="font-size: 0.9rem; color: #333; margin-bottom: 16px;">${subDesc}</p>
 
-                <!-- Big Countdown Display -->
+                <!-- Big Timer Display -->
                 <div style="background: #000; border: 2px inset #808080; padding: 14px; border-radius: 8px; margin-bottom: 16px;">
                     <div style="font-size: 0.82rem; color: #ffaa00; margin-bottom: 4px;">⏱️ الوقت المتوقع لتجهيز الطلب:</div>
-                    <div id="prep-timer-countdown-val" style="font-size: 2.8rem; font-family: monospace; font-weight: bold; color: #10b981; letter-spacing: 2px;">04:00</div>
+                    <div id="prep-timer-countdown-val" style="font-size: ${hasSlowBrew ? '1.6rem' : '2.8rem'}; font-family: monospace; font-weight: bold; color: #10b981; letter-spacing: 1px;">${timeTitle}</div>
                     <div style="width: 100%; height: 12px; background: #222; border-radius: 6px; margin-top: 10px; overflow: hidden;">
                         <div id="prep-timer-progress-bar" style="width: 100%; height: 100%; background: linear-gradient(90deg, #10b981, #ffaa00); transition: width 1s linear;"></div>
                     </div>
                 </div>
 
-                <!-- Delivery notice -->
+                <!-- Delivery & Slow Brew notice -->
                 <div style="background: #fff; border: 1.5px solid #ffaa00; border-radius: 6px; padding: 10px 14px; text-align: right; font-size: 0.85rem; line-height: 1.7; color: #111; margin-bottom: 18px;">
-                    🛵 <strong>تنبيه التوصيل:</strong><br>
-                    ${isDelivery ? 'مدة التوصيل تعتمد على بعد موقعك داخل مكة المكرمة.' : 'يمكنك المرور واستلام طلبك الساخن فور تجهيزه من المحل ☕.'}
+                    ${hasSlowBrew ? '🧊 <strong>تنبيه الكولد برو:</strong> الكولد برو يحتاج تخمير وتنقيع بطيء جداً للحصول على المذاق الفاخر.<br>' : ''}
+                    🛵 <strong>تنبيه التوصيل:</strong> ${isDelivery ? 'مدة التوصيل تعتمد على بعد موقعك داخل مكة المكرمة.' : 'يمكنك المرور واستلام طلبك فور تجهيزه من المحل ☕.'}
                 </div>
 
                 <div style="display: flex; gap: 10px; justify-content: center;">
@@ -4792,31 +4803,33 @@ function launchOrderPreparationTimerModal(customerName, isDelivery) {
     `;
     document.body.appendChild(modal);
 
-    let totalSeconds = 240; // 4 minutes
-    let remainingSeconds = totalSeconds;
+    if (!hasSlowBrew) {
+        let totalSeconds = 240; // 4 minutes
+        let remainingSeconds = totalSeconds;
 
-    let timerInterval = setInterval(() => {
-        remainingSeconds--;
-        if (remainingSeconds <= 0) {
-            clearInterval(timerInterval);
+        let timerInterval = setInterval(() => {
+            remainingSeconds--;
+            if (remainingSeconds <= 0) {
+                clearInterval(timerInterval);
+                const displayEl = document.getElementById('prep-timer-countdown-val');
+                if (displayEl) displayEl.textContent = "00:00 - طلبك جاهز! 🎉";
+                const barEl = document.getElementById('prep-timer-progress-bar');
+                if (barEl) barEl.style.width = "0%";
+                showToast("☕ طلبك جاهز الآن وصاحب المزاج يسعدك!");
+                return;
+            }
+
+            const mins = Math.floor(remainingSeconds / 60);
+            const secs = remainingSeconds % 60;
+            const formatted = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+            
             const displayEl = document.getElementById('prep-timer-countdown-val');
-            if (displayEl) displayEl.textContent = "00:00 - طلبك جاهز! 🎉";
+            if (displayEl) displayEl.textContent = formatted;
+
             const barEl = document.getElementById('prep-timer-progress-bar');
-            if (barEl) barEl.style.width = "0%";
-            showToast("☕ طلبك جاهز الآن وصاحب المزاج يسعدك!");
-            return;
-        }
-
-        const mins = Math.floor(remainingSeconds / 60);
-        const secs = remainingSeconds % 60;
-        const formatted = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-        
-        const displayEl = document.getElementById('prep-timer-countdown-val');
-        if (displayEl) displayEl.textContent = formatted;
-
-        const barEl = document.getElementById('prep-timer-progress-bar');
-        if (barEl) barEl.style.width = ((remainingSeconds / totalSeconds) * 100) + "%";
-    }, 1000);
+            if (barEl) barEl.style.width = ((remainingSeconds / totalSeconds) * 100) + "%";
+        }, 1000);
+    }
 }
 
 
