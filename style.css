@@ -721,6 +721,22 @@ input[type="radio"]:checked + .chip-label {
     gap: 10px;
 }
 
+.sar-symbol {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    color: var(--gold);
+    background: linear-gradient(135deg, rgba(255, 170, 0, 0.18), rgba(255, 170, 0, 0.05));
+    border: 1px solid rgba(255, 170, 0, 0.45);
+    padding: 1px 7px;
+    border-radius: 6px;
+    font-size: 0.85em;
+    margin-right: 3px;
+    vertical-align: middle;
+    box-shadow: 0 0 8px rgba(255, 170, 0, 0.25);
+}
+
 .old-price {
     font-size: 0.95rem;
     color: var(--text-muted);
