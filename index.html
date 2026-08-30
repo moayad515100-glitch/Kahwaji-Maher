@@ -1025,6 +1025,9 @@
                 <button onclick="showLocationModal()" style="background: none; border: none; color: var(--gold); cursor: pointer; text-decoration: underline; font-family: var(--font-arabic); font-size: 0.8rem; padding: 0; font-weight: bold;">تعديل</button>
             </div>
             <button class="btn btn-checkout btn-block" id="btn-checkout" disabled>إتمام الطلب</button>
+            <button class="btn btn-share-cart btn-block" id="btn-share-cart" onclick="shareCartLink()" style="margin-top: 8px; background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; border: none; font-weight: bold; border-radius: 12px; padding: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; width: 100%; box-shadow: 0 4px 15px rgba(37,99,235,0.3); font-family: var(--font-arabic); font-size: 0.9rem;">
+                <i class="fa-solid fa-share-nodes"></i> مشاركة سلتك مع صديق 🔗
+            </button>
             <div style="font-size: 0.75rem; color: var(--text-muted); text-align: center; margin-top: 10px;">
                 <i class="fa-solid fa-circle-info gold-text"></i> الحد الأقصى للطلب هو 5 أكواب فقط.
             </div>
@@ -1305,7 +1308,7 @@
 
 
     <!-- Script file -->
-    <script src="app.js?v=16.00"></script>
+    <script src="app.js?v=17.00"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {

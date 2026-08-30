@@ -619,7 +619,13 @@ function submitOrder(event) {
         message += `🔮 *تم الطلب بخلطة ماهر السحرية المضيئة المروقة!* 🔮\n\n`;
     }
     
-    message += `💬 شكرًا لاختيارك قهوجي ماهر! نتمنى لك وقتًا ممتعًا.`;
+    message += `⏱️ *الوقت المتوقع للتجهيز:* 4 دقائق ⏳\n`;
+    if (wantsDelivery) {
+        message += `🛵 *ملاحظة التوصيل:* مدة التوصيل تعتمد على بعد موقعك داخل مكة المكرمة.\n`;
+    } else {
+        message += `☕ *ملاحظة الاستلام:* استلام مباشر من المحل فور التجهيز.\n`;
+    }
+    message += `\n💬 شكرًا لاختيارك قهوجي ماهر! نتمنى لك وقتًا ممتعًا.`;
 
     // URL Encode Message
     const encodedMessage = encodeURIComponent(message);
@@ -633,12 +639,15 @@ function submitOrder(event) {
     // Open WhatsApp
     window.open(waLink, '_blank');
     
+    // Launch 4-Minute Order Preparation Live Timer Modal
+    launchOrderPreparationTimerModal(name, wantsDelivery);
+
     // Clear Cart and Close Modal
     cart = [];
     updateCartUI();
     closeCheckoutModal();
     checkoutForm.reset();
-    showToast('تم إرسال الطلب بنجاح! شكراً لك.');
+    showToast('تم إرسال الطلب بنجاح! طلبك قيد التحضير (4 دقائق متوقعة).');
 }
 
 // Play Custom Alarm Audio (Double Beep Siren via Web Audio API)
@@ -3894,8 +3903,9 @@ function confirmMapLocation() {
     }
 }
 
-// Initialize location status on DOMContentLoaded
+// Initialize location status and import shared cart on DOMContentLoaded
 document.addEventListener('DOMContentLoaded', () => {
+    parseAndImportSharedCart();
     const cached = localStorage.getItem('maher_in_mecca');
     if (cached !== null) {
         userInMecca = (cached === 'true');
@@ -4597,6 +4607,216 @@ function applyMaherCoupon() {
     if (navigator.vibrate) {
         navigator.vibrate([80, 40, 80]);
     }
+}
+
+// ==========================================================
+// 🔗 SHARE CART LINK FEATURE (مشاركة رابط السلة مع أصدقائك)
+// ==========================================================
+function shareCartLink() {
+    // Filter out free items (price === 0) as explicitly requested by user directive!
+    const paidItems = cart.filter(item => item.price > 0);
+
+    if (paidItems.length === 0) {
+        showToast('⚠️ سلتك فارغة أو تحتوي فقط على عناصر مجانية لا يمكن مشاركتها!');
+        return;
+    }
+
+    // Create compact payload
+    const payload = paidItems.map(item => ({
+        id: item.productId,
+        name: item.name,
+        price: item.price,
+        image: item.image,
+        options: item.options,
+        quantity: item.quantity
+    }));
+
+    try {
+        const jsonStr = JSON.stringify(payload);
+        const encoded = btoa(encodeURIComponent(jsonStr));
+        const shareUrl = `${window.location.origin}${window.location.pathname}?share_cart=${encoded}`;
+
+        if (navigator.share) {
+            navigator.share({
+                title: 'سلة طلبات قهوجي ماهر ☕',
+                text: 'اخترت لك هذه المشروبات الفاخرة من قهوجي ماهر! اضغط الرابط لإضافتها لسلتك فوراً ☕✨',
+                url: shareUrl
+            }).catch(() => {
+                copyShareUrlToClipboard(shareUrl);
+            });
+        } else {
+            copyShareUrlToClipboard(shareUrl);
+        }
+    } catch (err) {
+        console.error("Error sharing cart:", err);
+        showToast("عذراً، حدث خطأ أثناء إنشاء رابط المشاركة.");
+    }
+}
+
+function copyShareUrlToClipboard(url) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(() => {
+            showToast("🔗 تم نسخ رابط سلتك بنجاح! شاركه مع أصدقائك.");
+        }).catch(() => {
+            promptShareModal(url);
+        });
+    } else {
+        promptShareModal(url);
+    }
+}
+
+function promptShareModal(url) {
+    let modal = document.getElementById('share-cart-modal');
+    if (modal) modal.remove();
+
+    modal = document.createElement('div');
+    modal.id = 'share-cart-modal';
+    modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 100055; display: flex; align-items: center; justify-content: center; font-family: var(--font-arabic); direction: rtl;';
+    modal.innerHTML = `
+        <div class="win95-modal" style="width: 480px; max-width: 92%; background: #c0c0c0; border: 2px solid #fff; border-right-color: #808080; border-bottom-color: #808080; box-shadow: 0 0 30px rgba(37,99,235,0.7); padding: 2px; color: #000;">
+            <div class="win95-title-bar" style="background: linear-gradient(90deg, #2563eb, #1d4ed8); color: #fff; padding: 6px 10px; font-weight: bold; font-size: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                <span>🔗 مشاركة السلة مع أصدقائك</span>
+                <button onclick="document.getElementById('share-cart-modal')?.remove();" style="font-size: 0.8rem; font-weight: bold; background: #c0c0c0; border: 1px solid #fff; border-right-color: #808080; border-bottom-color: #808080; padding: 2px 8px; cursor: pointer; color: #000;">X</button>
+            </div>
+            <div class="win95-body" style="padding: 20px; text-align: center;">
+                <div style="font-size: 2.8rem; margin-bottom: 10px;">☕🔗</div>
+                <h4 style="color: #000080; margin-bottom: 8px;">نسخ رابط مشاركة السلة:</h4>
+                <p style="font-size: 0.85rem; color: #333; margin-bottom: 14px;">انسخ الرابط وشاركه مع صديقك ليحصل على نفس اختيارك فوراً:</p>
+                <input type="text" value="${url}" readonly style="width: 100%; padding: 8px; font-size: 0.82rem; border: 2px inset #808080; background: #fff; text-align: left; margin-bottom: 14px;">
+                <div style="display: flex; gap: 10px; justify-content: center;">
+                    <button onclick="navigator.clipboard.writeText('${url}'); showToast('تم النسخ للحافظة!');" style="padding: 8px 18px; font-weight: bold; background: #2563eb; color: #fff; border: 2px solid #fff; border-radius: 4px; cursor: pointer;">نسخ الرابط 📋</button>
+                    <button onclick="window.open('https://wa.me/?text=' + encodeURIComponent('اخترت لك هذه المشروبات الفاخرة من قهوجي ماهر! اضغط الرابط لإضافتها لسلتك فوراً ☕✨\\n' + '${url}'), '_blank');" style="padding: 8px 18px; font-weight: bold; background: #25d366; color: #fff; border: 2px solid #fff; border-radius: 4px; cursor: pointer;">مشاركة عبر واتساب 📲</button>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+function parseAndImportSharedCart() {
+    try {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (!urlParams.has('share_cart')) return;
+
+        const raw = urlParams.get('share_cart');
+        const jsonStr = decodeURIComponent(atob(raw));
+        const items = JSON.parse(jsonStr);
+
+        if (!Array.isArray(items) || items.length === 0) return;
+
+        let addedCount = 0;
+        items.forEach(item => {
+            // Strictly exclude any free items (price <= 0)
+            if (!item.price || item.price <= 0) return;
+
+            const existingTotalCount = cart.reduce((sum, i) => sum + i.quantity, 0);
+            if (existingTotalCount >= 5) return;
+
+            const cartItemId = `${item.id}-${item.options.size}-${item.options.sugar}${item.options.extra ? '-' + item.options.extra : ''}`;
+            const idx = cart.findIndex(i => i.id === cartItemId);
+            
+            if (idx > -1) {
+                cart[idx].quantity = Math.min(5, cart[idx].quantity + item.quantity);
+            } else {
+                cart.push({
+                    id: cartItemId,
+                    productId: item.id,
+                    name: item.name,
+                    price: item.price,
+                    image: item.image,
+                    options: item.options,
+                    quantity: Math.min(5, item.quantity)
+                });
+            }
+            addedCount++;
+        });
+
+        if (addedCount > 0) {
+            updateCartUI();
+            setTimeout(() => {
+                showToast(`🎉 تم استيراد سلة صديقك بنجاح (${addedCount} عناصر مدفوعة)!`);
+                openCartDrawer();
+            }, 600);
+        }
+
+        // Clean URL parameter
+        window.history.replaceState({}, document.title, window.location.pathname);
+    } catch (err) {
+        console.error("Failed to import shared cart:", err);
+    }
+}
+
+// ==========================================================
+// ⏱️ 4-MINUTE ORDER PREPARATION LIVE TIMER & DELIVERY NOTICE
+// ==========================================================
+function launchOrderPreparationTimerModal(customerName, isDelivery) {
+    let modal = document.getElementById('order-prep-timer-modal');
+    if (modal) modal.remove();
+
+    modal = document.createElement('div');
+    modal.id = 'order-prep-timer-modal';
+    modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); z-index: 100060; display: flex; align-items: center; justify-content: center; font-family: var(--font-arabic); direction: rtl;';
+    modal.innerHTML = `
+        <div class="win95-modal" style="width: 520px; max-width: 94%; background: #c0c0c0; border: 3px solid #ffaa00; box-shadow: 0 0 35px rgba(255,170,0,0.8); padding: 2px; color: #000;">
+            <div class="win95-title-bar" style="background: linear-gradient(90deg, #ffaa00, #10b981); color: #fff; padding: 6px 10px; font-weight: bold; font-size: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                <span>⏱️ الوقت المتوقع لتجهيز طلبك (قهوجي ماهر)</span>
+                <button onclick="document.getElementById('order-prep-timer-modal')?.remove();" style="font-size: 0.8rem; font-weight: bold; background: #c0c0c0; border: 1px solid #fff; border-right-color: #808080; border-bottom-color: #808080; padding: 2px 8px; cursor: pointer; color: #000;">X</button>
+            </div>
+            <div class="win95-body" style="padding: 22px; text-align: center;">
+                <div style="font-size: 3.5rem; margin-bottom: 8px; filter: drop-shadow(0 0 10px rgba(255,170,0,0.8));">☕⏳💨</div>
+                <h3 style="color: #000080; margin-bottom: 6px;">طلبك قيد التحضير يا ${customerName}!</h3>
+                <p style="font-size: 0.9rem; color: #333; margin-bottom: 16px;">الباريستا ماهر يعّد مشروبك بطحن البن الفاخر والتقطير المثالي:</p>
+
+                <!-- Big Countdown Display -->
+                <div style="background: #000; border: 2px inset #808080; padding: 14px; border-radius: 8px; margin-bottom: 16px;">
+                    <div style="font-size: 0.82rem; color: #ffaa00; margin-bottom: 4px;">⏱️ الوقت المتوقع لتجهيز الطلب:</div>
+                    <div id="prep-timer-countdown-val" style="font-size: 2.8rem; font-family: monospace; font-weight: bold; color: #10b981; letter-spacing: 2px;">04:00</div>
+                    <div style="width: 100%; height: 12px; background: #222; border-radius: 6px; margin-top: 10px; overflow: hidden;">
+                        <div id="prep-timer-progress-bar" style="width: 100%; height: 100%; background: linear-gradient(90deg, #10b981, #ffaa00); transition: width 1s linear;"></div>
+                    </div>
+                </div>
+
+                <!-- Delivery notice -->
+                <div style="background: #fff; border: 1.5px solid #ffaa00; border-radius: 6px; padding: 10px 14px; text-align: right; font-size: 0.85rem; line-height: 1.7; color: #111; margin-bottom: 18px;">
+                    🛵 <strong>تنبيه التوصيل:</strong><br>
+                    ${isDelivery ? 'مدة التوصيل تعتمد على بعد موقعك داخل مكة المكرمة.' : 'يمكنك المرور واستلام طلبك الساخن فور تجهيزه من المحل ☕.'}
+                </div>
+
+                <div style="display: flex; gap: 10px; justify-content: center;">
+                    <button onclick="document.getElementById('order-prep-timer-modal')?.remove();" style="padding: 10px 22px; font-weight: bold; background: linear-gradient(135deg, #10b981, #059669); color: white; border: 2px solid #fff; border-radius: 6px; cursor: pointer; box-shadow: 0 4px 12px rgba(16,185,129,0.4);">
+                        موافق ومتابعة الطلب 👍
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+
+    let totalSeconds = 240; // 4 minutes
+    let remainingSeconds = totalSeconds;
+
+    let timerInterval = setInterval(() => {
+        remainingSeconds--;
+        if (remainingSeconds <= 0) {
+            clearInterval(timerInterval);
+            const displayEl = document.getElementById('prep-timer-countdown-val');
+            if (displayEl) displayEl.textContent = "00:00 - طلبك جاهز! 🎉";
+            const barEl = document.getElementById('prep-timer-progress-bar');
+            if (barEl) barEl.style.width = "0%";
+            showToast("☕ طلبك جاهز الآن وصاحب المزاج يسعدك!");
+            return;
+        }
+
+        const mins = Math.floor(remainingSeconds / 60);
+        const secs = remainingSeconds % 60;
+        const formatted = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        
+        const displayEl = document.getElementById('prep-timer-countdown-val');
+        if (displayEl) displayEl.textContent = formatted;
+
+        const barEl = document.getElementById('prep-timer-progress-bar');
+        if (barEl) barEl.style.width = ((remainingSeconds / totalSeconds) * 100) + "%";
+    }, 1000);
 }
 
 
