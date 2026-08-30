@@ -631,18 +631,32 @@ input[type="radio"]:checked + .chip-label {
     width: 100%;
     height: 250px;
     overflow: hidden;
+    background: #000000;
+}
+
+.product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: var(--transition);
+}
+
+.product-card[data-id="matcha"] .product-image-container,
+.product-card[data-id="milkshake"] .product-image-container,
+.product-card[data-id="juice"] .product-image-container,
+.product-card[data-id="cold_brew"] .product-image-container {
     background: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.product-image {
-    width: 100%;
-    height: 100%;
+.product-card[data-id="matcha"] .product-image,
+.product-card[data-id="milkshake"] .product-image,
+.product-card[data-id="juice"] .product-image,
+.product-card[data-id="cold_brew"] .product-image {
     object-fit: contain;
     padding: 8px;
-    transition: var(--transition);
 }
 
 .product-card:hover .product-image {
