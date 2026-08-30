@@ -631,12 +631,17 @@ input[type="radio"]:checked + .chip-label {
     width: 100%;
     height: 250px;
     overflow: hidden;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .product-image {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
+    padding: 8px;
     transition: var(--transition);
 }
 
