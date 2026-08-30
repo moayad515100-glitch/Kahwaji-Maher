@@ -212,23 +212,35 @@ function addToCart(productId, name, price, image) {
     let size = 'وسط';
     let sugar = 'سكر وسط';
     let extra = '';
+    let flavor = '';
     
     const sizeInput = document.querySelector(`input[name="size-${productId}"]:checked`);
     const sugarInput = document.querySelector(`input[name="sugar-${productId}"]:checked`) || document.querySelector(`select[name="sugar-${productId}"]`);
     const extraInput = document.querySelector(`input[name="extra-${productId}"]:checked`);
+    const flavorInput = document.querySelector(`input[name="flavor-${productId}"]:checked`);
     
     if (sizeInput) size = sizeInput.value;
     if (sugarInput) sugar = sugarInput.value;
     if (extraInput) extra = extraInput.value;
+    if (flavorInput) flavor = flavorInput.value;
+
+    if (productId === 'milkshake') {
+        if (flavor === 'شوكولاتة') {
+            image = 'milkshake_chocolate_real.png';
+        } else {
+            image = 'milkshake_vanilla_real.png';
+        }
+    }
 
     const options = {
         size,
         sugar,
-        extra
+        extra,
+        flavor
     };
 
     // Create unique key for item + options combination
-    const cartItemId = `${productId}-${size}-${sugar}${extra ? '-' + extra : ''}`;
+    const cartItemId = `${productId}-${size}-${sugar}${flavor ? '-' + flavor : ''}${extra ? '-' + extra : ''}`;
 
     // Check total limit (max 5 cups)
     const currentTotalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -397,6 +409,9 @@ function updateCartUI() {
         
         // Construct readable options text
         let optionsText = `حجم ${item.options.size}`;
+        if (item.options.flavor) {
+            optionsText += ` • النكهة: ${item.options.flavor}`;
+        }
         if (item.options.sugar) {
             optionsText += ` • سكر: ${item.options.sugar}`;
         }
@@ -4832,6 +4847,18 @@ function launchOrderPreparationTimerModal(customerName, isDelivery, hasSlowBrew 
             const barEl = document.getElementById('prep-timer-progress-bar');
             if (barEl) barEl.style.width = ((remainingSeconds / totalSeconds) * 100) + "%";
         }, 1000);
+    }
+}
+
+// Dynamic Milkshake Image Switcher (Vanilla / Chocolate)
+function switchMilkshakeFlavor(flavor) {
+    const cardImg = document.getElementById('milkshake-card-img') || document.querySelector('.product-card[data-id="milkshake"] .product-image');
+    if (cardImg) {
+        if (flavor === 'chocolate') {
+            cardImg.src = 'milkshake_chocolate_real.png';
+        } else {
+            cardImg.src = 'milkshake_vanilla_real.png';
+        }
     }
 }
 
