@@ -258,8 +258,8 @@ function addToCart(productId, name, price, image) {
     if (size === 'كبير') {
         finalPrice += 1;
     }
-    // Add extra upcharge (+1 SAR for blueberry)
-    if (extra === 'مع توت أزرق') {
+    // Add extra upcharge (+1 SAR for blueberry or milk)
+    if (extra === 'مع توت أزرق' || extra === 'إضافة حليب') {
         finalPrice += 1;
     }
 

@@ -426,8 +426,20 @@
                                     </div>
                                 </div>
 
+                                <!-- Milk Option -->
+                                <div class="option-group" style="margin-top: 10px;">
+                                    <label>الحليب:</label>
+                                    <div class="chips-container milk-chips">
+                                        <input type="radio" id="extra-pro-nomilk" name="extra-pro" value="سادة" checked style="display:none;">
+                                        <label for="extra-pro-nomilk" class="chip-label">سادة (بدون حليب)</label>
+
+                                        <input type="radio" id="extra-pro-milk" name="extra-pro" value="إضافة حليب" style="display:none;">
+                                        <label for="extra-pro-milk" class="chip-label">🥛 إضافة حليب (+1 ر.س)</label>
+                                    </div>
+                                </div>
+
                                 <!-- Sugar -->
-                                <div class="option-group">
+                                <div class="option-group" style="margin-top: 10px;">
                                     <label>السكر:</label>
                                     <div class="chips-container sugar-chips">
                                         <input type="radio" id="sugar-pro-none" name="sugar-pro" value="بدون سكر" checked style="display:none;">
@@ -447,60 +459,6 @@
                         </div>
 
                         <button class="btn btn-add-cart" onclick="addToCart('pro', 'قهوجي ماهر برو', 5, 'hot_coffee_top.jpg')">
-                            <i class="fa-solid fa-cart-plus"></i> إضافة للسلة
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Product 3: Super Pro (5 SAR) - Hot Latte Top View -->
-                <div class="product-card luxury" data-id="superpro" data-category="coffee">
-                    <div class="product-image-container">
-                        <img src="hot_latte_top.jpg" alt="قهوجي ماهر سوبر برو" class="product-image">
-                        <span class="product-tag tag-super">SUPER PRO سوبر برو</span>
-                    </div>
-                    <div class="product-info">
-                        <h3>قهوجي ماهر سوبر برو</h3>
-                        <p class="product-desc">قهوة مقطرة مضاف عليها حليب وسكر</p>
-                        <div class="product-price">5 ر.س <span class="price-suffix">/ كوب</span></div>
-                        
-                        <!-- Customization Section with Chips -->
-                        <div class="customization-section">
-                            <h4 class="custom-title"><i class="fa-solid fa-sliders"></i> خصص كوبك:</h4>
-                            
-                            <div class="custom-options">
-                                <!-- Size -->
-                                <div class="option-group">
-                                    <label>الحجم:</label>
-                                    <div class="chips-container size-chips">
-                                        <input type="radio" id="size-superpro-normal" name="size-superpro" value="وسط" checked style="display:none;" onchange="scaleProductImage(this, 'superpro', 1.0)">
-                                        <label for="size-superpro-normal" class="chip-label">وسط</label>
-
-                                        <input type="radio" id="size-superpro-large" name="size-superpro" value="كبير" style="display:none;" onchange="scaleProductImage(this, 'superpro', 1.18)">
-                                        <label for="size-superpro-large" class="chip-label">كبير (+1 ر.س)</label>
-                                    </div>
-                                </div>
-
-                                <!-- Sugar -->
-                                <div class="option-group">
-                                    <label>السكر:</label>
-                                    <div class="chips-container sugar-chips">
-                                        <input type="radio" id="sugar-superpro-none" name="sugar-superpro" value="بدون سكر" checked style="display:none;">
-                                        <label for="sugar-superpro-none" class="chip-label">سادة</label>
-
-                                        <input type="radio" id="sugar-superpro-low" name="sugar-superpro" value="سكر خفيف" style="display:none;">
-                                        <label for="sugar-superpro-low" class="chip-label">خفيف</label>
-
-                                        <input type="radio" id="sugar-superpro-medium" name="sugar-superpro" value="سكر وسط" style="display:none;">
-                                        <label for="sugar-superpro-medium" class="chip-label">وسط</label>
-
-                                        <input type="radio" id="sugar-superpro-high" name="sugar-superpro" value="سكر زيادة" style="display:none;">
-                                        <label for="sugar-superpro-high" class="chip-label">زيادة</label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <button class="btn btn-add-cart" onclick="addToCart('superpro', 'قهوجي ماهر سوبر برو', 5, 'hot_latte_top.jpg')">
                             <i class="fa-solid fa-cart-plus"></i> إضافة للسلة
                         </button>
                     </div>
@@ -1373,7 +1331,7 @@
 
 
     <!-- Script file -->
-    <script src="app.js?v=25.00"></script>
+    <script src="app.js?v=26.00"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
