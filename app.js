@@ -295,11 +295,11 @@ function addToCart(productId, name, price, image) {
         }
     }
 
-    // Limit Cold Brew to 1 cup in the cart (pre-order reservation for tomorrow)
+    // Limit Cold Brew to 1 cup in the cart (pre-order reservation for 24 hours)
     if (productId === 'cold_brew' || name.includes('كولد برو')) {
         const hasColdBrew = cart.some(item => item.productId === 'cold_brew' || item.name.includes('كولد برو'));
         if (hasColdBrew) {
-            showToast("📅 عذراً! الكولد برو متاح للحجز المسبق ومسموح بحبة واحدة فقط بالطلب ليتم استلامها غداً!");
+            showToast("📅 عذراً! الكولد برو متاح للحجز المسبق ومسموح بحبة واحدة فقط بالطلب ليتم استلامها خلال 24 ساعة!");
             openCartDrawer();
             return;
         }
@@ -503,7 +503,7 @@ function changeQuantity(itemId, change) {
                 return;
             }
             if (item.productId === 'cold_brew' || item.name.includes('كولد برو')) {
-                showToast("📅 عذراً! الكولد برو متاح للحجز المسبق ومسموح بحبة واحدة فقط في الطلب ليتم استلامها غداً.");
+                showToast("📅 عذراً! الكولد برو متاح للحجز المسبق ومسموح بحبة واحدة فقط في الطلب ليتم استلامها خلال 24 ساعة.");
                 return;
             }
             const currentTotalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -636,8 +636,8 @@ function submitOrder(event) {
     
     const hasSlowBrew = cart.some(item => item.productId === 'cold_brew' || item.name.includes('كولد برو'));
     if (hasSlowBrew) {
-        message += `🗓️ *نوع الطلب:* حجز مسبق للكولد برو 🧊 (الاستلام والتجهيز للغد)\n`;
-        message += `⏱️ *موعد الجاهزية والاستلام:* غداً طازجاً ومروقاً 📅\n`;
+        message += `🗓️ *نوع الطلب:* حجز مسبق للكولد برو 🧊 (الاستلام والتجهيز خلال 24 ساعة)\n`;
+        message += `⏱️ *موعد الجاهزية والاستلام:* خلال 24 ساعة طازجاً ومروقاً 📅\n`;
     } else {
         message += `⏱️ *الوقت المتوقع للتجهيز:* 4 دقائق ⏳\n`;
     }
@@ -4776,10 +4776,10 @@ function launchOrderPreparationTimerModal(customerName, isDelivery, hasSlowBrew 
     let modal = document.getElementById('order-prep-timer-modal');
     if (modal) modal.remove();
 
-    const timeTitle = hasSlowBrew ? "📅 استلام غداً" : "04:00";
+    const timeTitle = hasSlowBrew ? "📅 خلال 24 ساعة" : "04:00";
     const subTitleText = hasSlowBrew ? `تم تسجيل حجز الكولد برو بنجاح يا ${customerName}! 📅` : `طلبك قيد التحضير يا ${customerName}!`;
     const subDesc = hasSlowBrew 
-        ? "طلبك يحتوي على (كولد برو) متاح للحجز المسبق والتخمير البطيء لمدة 12-24 ساعة، وسيكون جاهزاً للاستلام والتوصيل غداً!"
+        ? "طلبك يحتوي على (كولد برو) متاح للحجز المسبق والتخمير البطيء، وسيكون جاهزاً للاستلام والتوصيل خلال 24 ساعة!"
         : "الباريستا ماهر يعّد مشروبك بطحن البن الفاخر والتقطير المثالي:";
 
     modal = document.createElement('div');
@@ -4788,7 +4788,7 @@ function launchOrderPreparationTimerModal(customerName, isDelivery, hasSlowBrew 
     modal.innerHTML = `
         <div class="win95-modal" style="width: 520px; max-width: 94%; background: #c0c0c0; border: 3px solid #ffaa00; box-shadow: 0 0 35px rgba(255,170,0,0.8); padding: 2px; color: #000;">
             <div class="win95-title-bar" style="background: linear-gradient(90deg, #ffaa00, #10b981); color: #fff; padding: 6px 10px; font-weight: bold; font-size: 1rem; display: flex; justify-content: space-between; align-items: center;">
-                <span>${hasSlowBrew ? '📅 حجز مسبق للكولد برو (الاستلام غداً)' : '⏱️ الوقت المتوقع لتجهيز طلبك (قهوجي ماهر)'}</span>
+                <span>${hasSlowBrew ? '📅 حجز مسبق للكولد برو (الاستلام خلال 24 ساعة)' : '⏱️ الوقت المتوقع لتجهيز طلبك (قهوجي ماهر)'}</span>
                 <button onclick="document.getElementById('order-prep-timer-modal')?.remove();" style="font-size: 0.8rem; font-weight: bold; background: #c0c0c0; border: 1px solid #fff; border-right-color: #808080; border-bottom-color: #808080; padding: 2px 8px; cursor: pointer; color: #000;">X</button>
             </div>
             <div class="win95-body" style="padding: 22px; text-align: center;">
@@ -4807,8 +4807,8 @@ function launchOrderPreparationTimerModal(customerName, isDelivery, hasSlowBrew 
 
                 <!-- Delivery & Slow Brew notice -->
                 <div style="background: #fff; border: 1.5px solid #ffaa00; border-radius: 6px; padding: 10px 14px; text-align: right; font-size: 0.85rem; line-height: 1.7; color: #111; margin-bottom: 18px;">
-                    ${hasSlowBrew ? '🧊 <strong>حجز الكولد برو:</strong> يبدأ التنقيع والتقطير الفاخر فور استلام طلبك ليكون جاهزاً ومكتملاً غداً.<br>' : ''}
-                    🛵 <strong>تنبيه التوصيل:</strong> ${isDelivery ? 'مدة التوصيل تعتمد على بعد موقعك داخل مكة المكرمة.' : 'يمكنك المرور واستلام طلبك فور جاهزيته غداً من المحل ☕.'}
+                    ${hasSlowBrew ? '🧊 <strong>حجز الكولد برو:</strong> يبدأ التنقيع والتقطير الفاخر فور استلام طلبك ليكون جاهزاً ومكتملاً خلال 24 ساعة.<br>' : ''}
+                    🛵 <strong>تنبيه التوصيل:</strong> ${isDelivery ? 'مدة التوصيل تعتمد على بعد موقعك داخل مكة المكرمة.' : 'يمكنك المرور واستلام طلبك فور جاهزيته من المحل ☕.'}
                 </div>
 
                 <div style="display: flex; gap: 10px; justify-content: center;">
