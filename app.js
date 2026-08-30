@@ -395,7 +395,7 @@ function updateCartUI() {
                 <p>سلتك فارغة حالياً. أضف بعض القهوة لمزاجك!</p>
             </div>
         `;
-        cartTotal.innerHTML = '0 <span class="sar-symbol">﷼</span>';
+        cartTotal.textContent = '0 ر.س';
         btnCheckout.disabled = true;
         return;
     }
@@ -419,7 +419,7 @@ function updateCartUI() {
             optionsText += ` • إضافات: ${item.options.extra}`;
         }
         
-        const priceDisplay = item.price === 0 ? 'مجاناً' : `${item.price * item.quantity} <span class="sar-symbol">﷼</span>`;
+        const priceDisplay = item.price === 0 ? 'مجاناً' : `${item.price * item.quantity} ر.س`;
 
         const isQtyLocked = item.productId === 'cookie' || item.productId === 'tea' || item.productId === 'cold_brew' || (item.price === 0 && (item.productId === 'matcha' || item.productId === 'superpro')) || item.name.includes('كوكيز') || item.name.includes('كولد برو');
         const plusButton = isQtyLocked 
@@ -453,9 +453,9 @@ function updateCartUI() {
     const wantsDelivery = isDeliverySelected();
     if (wantsDelivery && cart.length > 0) {
         const finalTotal = total + DELIVERY_FEE;
-        cartTotal.innerHTML = `${total} <span class="sar-symbol">﷼</span> + ${DELIVERY_FEE} <span class="sar-symbol">﷼</span> (توصيل) = <span style="color: var(--neon-matcha);">${finalTotal} <span class="sar-symbol">﷼</span></span>`;
+        cartTotal.innerHTML = `${total} ر.س + ${DELIVERY_FEE} ر.س (توصيل) = <span style="color: var(--neon-matcha);">${finalTotal} ر.س</span>`;
     } else {
-        cartTotal.innerHTML = `${total} <span class="sar-symbol">﷼</span>`;
+        cartTotal.textContent = `${total} ر.س`;
     }
     
     // Checkout button is enabled for everyone, pickup option is allowed outside Mecca
@@ -534,7 +534,7 @@ function populateModalSummary() {
     cart.forEach(item => {
         const row = document.createElement('div');
         row.className = 'summary-item-row';
-        const itemPriceTotal = item.price === 0 ? 'مجاناً' : `${item.price * item.quantity} <span class="sar-symbol">﷼</span>`;
+        const itemPriceTotal = item.price === 0 ? 'مجاناً' : `${item.price * item.quantity} ر.س`;
         
         row.innerHTML = `
             <span>${item.name} (×${item.quantity})</span>
@@ -551,15 +551,15 @@ function populateModalSummary() {
         deliveryRow.style.fontWeight = 'bold';
         deliveryRow.innerHTML = `
             <span>🛵 رسوم التوصيل (مكة)</span>
-            <span>${DELIVERY_FEE} <span class="sar-symbol">﷼</span></span>
+            <span>${DELIVERY_FEE} ر.س</span>
         `;
         modalSummaryItems.appendChild(deliveryRow);
         
         const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0) + DELIVERY_FEE;
-        modalSummaryTotal.innerHTML = `${total} <span class="sar-symbol">﷼</span>`;
+        modalSummaryTotal.textContent = `${total} ر.س`;
     } else {
         const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        modalSummaryTotal.innerHTML = `${total} <span class="sar-symbol">﷼</span>`;
+        modalSummaryTotal.textContent = `${total} ر.س`;
     }
 }
 

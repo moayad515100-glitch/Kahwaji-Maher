@@ -722,24 +722,9 @@ input[type="radio"]:checked + .chip-label {
 }
 
 .sar-symbol {
-    display: inline-block;
-    width: 1.15em;
-    height: 1.15em;
-    vertical-align: -0.15em;
-    background-color: currentColor;
-    -webkit-mask: url('saudi_riyal_symbol_gold.png') no-repeat center / contain;
-    mask: url('saudi_riyal_symbol_gold.png') no-repeat center / contain;
-    margin-right: 4px;
-    margin-left: 2px;
-}
-
-.sar-symbol-img {
-    height: 1.15em;
-    width: auto;
-    vertical-align: -0.15em;
-    margin-right: 4px;
-    margin-left: 2px;
-    display: inline-block;
+    font-weight: bold;
+    font-size: 0.9em;
+    margin-right: 3px;
 }
 
 .old-price {
