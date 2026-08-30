@@ -592,11 +592,8 @@
                                 <div class="option-group">
                                     <label>الحجم:</label>
                                     <div class="chips-container size-chips">
-                                        <input type="radio" id="size-coldbrew-normal" name="size-cold_brew" value="وسط" checked style="display:none;" onchange="scaleProductImage(this, 'cold_brew', 1.0)">
-                                        <label for="size-coldbrew-normal" class="chip-label">وسط</label>
-
-                                        <input type="radio" id="size-coldbrew-large" name="size-cold_brew" value="كبير" style="display:none;" onchange="scaleProductImage(this, 'cold_brew', 1.18)">
-                                        <label for="size-coldbrew-large" class="chip-label">كبير (+1 ر.س)</label>
+                                        <input type="radio" id="size-coldbrew-small" name="size-cold_brew" value="صغير" checked style="display:none;" onchange="scaleProductImage(this, 'cold_brew', 1.0)">
+                                        <label for="size-coldbrew-small" class="chip-label">صغير (الحجم المتاح فقط)</label>
                                     </div>
                                 </div>
 
@@ -1331,7 +1328,7 @@
 
 
     <!-- Script file -->
-    <script src="app.js?v=29.00"></script>
+    <script src="app.js?v=30.00"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
