@@ -16,8 +16,8 @@
 //   'grind_challenge': "Coffee Grind Speed" clicker game (click fast to win)
 //   'neon_magic'     : "Magic Glowing Coffee" neon theme (glow, mouse trails)
 // ==========================================================
-let ACTIVE_EVENT = 'none'; 
-let ACTIVE_EVENT_TIMESTAMP = 1784974029429; 
+let ACTIVE_EVENT = 'where_is_maher'; 
+let ACTIVE_EVENT_TIMESTAMP = 1788261899000; 
 
 // تحميل الفعالية النشطة من الذاكرة المحلية إذا كانت أحدث لتجاوز الكاش والتأخر للمطور
 try {
@@ -1335,6 +1335,22 @@ function renderActiveEventTemplate() {
             </div>
         `;
         document.getElementById('btn-start-chase').addEventListener('click', startCarChaseGame);
+    } else if (ACTIVE_EVENT === 'where_is_maher') {
+        retroEventDynamicBody.innerHTML = `
+            <div class="win95-body" style="padding: 20px; text-align: center; font-family: var(--font-arabic); background: #1c1512; color: #fff;">
+                <div style="font-size: 3rem; margin-bottom: 10px;">🔍 🚪 📚</div>
+                <h3 style="margin-bottom: 10px; color: #ffaa00;">حدث أين ماهر؟ - قهوجي ماهر يذاكر للثانوية!</h3>
+                <p style="font-size: 0.9rem; color: #ddd; line-height: 1.6; margin-bottom: 15px;">
+                    قهوجي ماهر اختفى عن البار مؤقتاً! اكتشفنا أنه قاعد يذاكر لدروس الثانوية العامة والقدرات والتحصيلي خلف <strong>باب سرّي صغير جداً 🚪</strong> متخفي في صفحات الموقع!<br>
+                    ابحث عن الباب الصغير أو افتحه مباشرة من هنا!
+                </p>
+                <div style="display: flex; gap: 8px; flex-direction: column;">
+                    <button class="win95-btn" onclick="openSecretDoorModal(); closeRetroModalFn();" style="padding: 10px; font-weight: bold; background: #008080; color: #fff; border: 2px outset #00ffff; cursor: pointer;">فتح الغرفة السرية لماهر 🚪✨</button>
+                    <button class="win95-btn" id="retro-modal-ok" style="padding: 8px; cursor: pointer;">إغلاق والبحث في الموقع 🔍</button>
+                </div>
+            </div>
+        `;
+        document.getElementById('retro-modal-ok').addEventListener('click', closeRetroModalFn);
     } else if (ACTIVE_EVENT === 'matcha') {
         if (typeof IS_EVENT_POSTPONED !== 'undefined' && IS_EVENT_POSTPONED) {
             retroEventDynamicBody.innerHTML = `
@@ -3064,6 +3080,9 @@ function initActiveEventHooks() {
         } else if (currentEvent === 'thief') {
             moodHeaderBanner.className = 'mood-header-banner danger-mood';
             moodHeaderBanner.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> الحدث النشط: سارق القهوة يتجول في المتجر! إذا سرق سلتك, اقبض عليه بالكمبيوتر القديم! 🚓🥷';
+        } else if (currentEvent === 'where_is_maher') {
+            moodHeaderBanner.className = 'mood-header-banner warning-mood';
+            moodHeaderBanner.innerHTML = '<i class="fa-solid fa-user-ninja"></i> 🔍 حدث خاص: أين ماهر؟ (قهوجي ماهر اختفى عن البار فجأة! 😱 ابحث عن الباب السرّي الصغير جداً 🚪 في الموقع لاكتشاف سره ومكانه!)';
         } else if (currentEvent === 'matcha') {
             moodHeaderBanner.className = 'mood-header-banner success-mood';
             moodHeaderBanner.innerHTML = '<i class="fa-solid fa-leaf"></i> الحدث النشط: بدء أكبر حدث قهوجي ماهر 95! 🍵 الماتشا وسوبر برو مجاناً بالكامل! اطلب كوبك الآن! 💚';
@@ -4861,6 +4880,116 @@ function switchMilkshakeFlavor(flavor) {
         }
     }
 }
+
+// ==========================================================
+// 🔍 EVENT: "WHERE IS MAHER?" (أين ماهر؟ - الباب السرّي والمذاكرة)
+// ==========================================================
+
+function openSecretDoorModal() {
+    const modal = document.getElementById('maher-studying-modal');
+    const overlay = document.getElementById('maher-studying-overlay');
+    if (modal && overlay) {
+        const savedPrayers = localStorage.getItem('maher_prayers_count') || '1482';
+        const prayerCountEl = document.getElementById('maher-prayer-count');
+        if (prayerCountEl) prayerCountEl.textContent = Number(savedPrayers).toLocaleString('ar-SA');
+
+        overlay.style.display = 'block';
+        modal.style.display = 'block';
+        setTimeout(() => {
+            overlay.classList.add('active');
+            modal.classList.add('active');
+        }, 10);
+
+        try {
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            if (AudioCtx) {
+                const ctx = new AudioCtx();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(440, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.3);
+                gain.gain.setValueAtTime(0.2, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.3);
+            }
+        } catch(e) {}
+    }
+}
+
+function closeSecretDoorModal() {
+    const modal = document.getElementById('maher-studying-modal');
+    const overlay = document.getElementById('maher-studying-overlay');
+    if (modal && overlay) {
+        modal.classList.remove('active');
+        overlay.classList.remove('active');
+        setTimeout(() => {
+            modal.style.display = 'none';
+            overlay.style.display = 'none';
+        }, 300);
+    }
+}
+
+function prayForMaher() {
+    let count = parseInt(localStorage.getItem('maher_prayers_count') || '1482', 10);
+    count += 1;
+    localStorage.setItem('maher_prayers_count', count.toString());
+
+    const prayerCountEl = document.getElementById('maher-prayer-count');
+    if (prayerCountEl) {
+        prayerCountEl.textContent = count.toLocaleString('ar-SA');
+        prayerCountEl.style.transform = 'scale(1.3)';
+        prayerCountEl.style.color = '#39ff14';
+        setTimeout(() => {
+            prayerCountEl.style.transform = 'scale(1)';
+            prayerCountEl.style.color = 'var(--gold)';
+        }, 400);
+    }
+
+    if (typeof triggerConfetti === 'function') triggerConfetti();
+    triggerStudyParticles();
+
+    if (typeof showToast === 'function') {
+        showToast('🤲 جزاك الله خيراً! وصلتك دعواتك لماهر وزادت طاقة المذاكرة والتركيز لديه 1000%! 📚⚡☕');
+    }
+
+    try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtx) {
+            const ctx = new AudioCtx();
+            const notes = [523.25, 659.25, 783.99, 1046.50];
+            notes.forEach((freq, idx) => {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.08);
+                gain.gain.setValueAtTime(0.15, ctx.currentTime + idx * 0.08);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.08 + 0.3);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(ctx.currentTime + idx * 0.08);
+                osc.stop(ctx.currentTime + idx * 0.08 + 0.3);
+            });
+        }
+    } catch(e) {}
+}
+
+function triggerStudyParticles() {
+    const emojis = ['📚', '🎓', '✏️', '☕', '🤲', '⚡', '🧪', '📐', '🌟', '💯'];
+    for (let i = 0; i < 20; i++) {
+        const p = document.createElement('div');
+        p.className = 'study-particle';
+        p.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        p.style.left = `${Math.random() * 80 + 10}vw`;
+        p.style.bottom = '10px';
+        p.style.animationDuration = `${Math.random() * 1.5 + 2}s`;
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), 3500);
+    }
+}
+
 
 
 

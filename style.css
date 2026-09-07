@@ -4796,3 +4796,425 @@ body.is-installed-app {
     }
 }
 
+/* ==========================================================
+   🔍 EVENT: "WHERE IS MAHER?" (أين ماهر؟ - الباب السرّي الصغير والمذاكرة)
+   ========================================================== */
+
+/* Secret Tiny Door (Hidden in Header Logo Area) */
+.secret-tiny-door {
+    display: inline-flex;
+    align-items: flex-end;
+    justify-content: center;
+    width: 16px;
+    height: 26px;
+    margin-right: 8px;
+    cursor: pointer;
+    position: relative;
+    vertical-align: middle;
+    transition: transform 0.3s ease, filter 0.3s ease;
+    filter: drop-shadow(0 0 6px rgba(255, 170, 0, 0.6));
+    animation: tinyDoorPulse 2.5s infinite ease-in-out;
+}
+
+.secret-tiny-door:hover {
+    transform: scale(1.4) rotate(-5deg);
+    filter: drop-shadow(0 0 12px rgba(255, 215, 0, 0.95));
+}
+
+.tiny-door-panel {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, #5c3a21 0%, #362010 100%);
+    border: 1.5px solid #d4af37;
+    border-radius: 8px 8px 0 0;
+    position: relative;
+    box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.8);
+}
+
+.tiny-door-knob {
+    width: 3.5px;
+    height: 3.5px;
+    background: #ffe066;
+    border-radius: 50%;
+    position: absolute;
+    top: 55%;
+    left: 2.5px;
+    box-shadow: 0 0 4px #ffaa00;
+}
+
+@keyframes tinyDoorPulse {
+    0%, 100% {
+        box-shadow: 0 0 4px rgba(255, 170, 0, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 14px rgba(255, 215, 0, 0.95), 0 0 20px rgba(255, 170, 0, 0.6);
+    }
+}
+
+/* Floating Tiny Door Widget (Bottom Left/Right Corner) */
+.floating-tiny-door-widget {
+    position: fixed;
+    bottom: 75px;
+    left: 15px;
+    z-index: 9990;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px 5px 6px;
+    background: rgba(22, 17, 14, 0.88);
+    border: 1.5px solid var(--gold);
+    border-radius: 20px;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6), 0 0 15px rgba(255, 170, 0, 0.3);
+    transition: transform 0.3s ease, background 0.3s ease;
+    animation: floatDoorBadge 3s infinite ease-in-out;
+}
+
+.floating-tiny-door-widget:hover {
+    transform: scale(1.1) translateY(-3px);
+    background: rgba(36, 26, 20, 0.95);
+    border-color: #ffe066;
+}
+
+.floating-tiny-door-widget .tiny-door-panel {
+    width: 14px;
+    height: 22px;
+}
+
+.tiny-door-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--gold);
+    font-family: var(--font-arabic);
+}
+
+@keyframes floatDoorBadge {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+}
+
+/* Where is Maher? Studying Modal Card & Overlay */
+.studying-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.88);
+    backdrop-filter: blur(10px);
+    z-index: 10008;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+}
+
+.studying-modal-overlay.active {
+    opacity: 1;
+}
+
+.studying-modal-card {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -45%) scale(0.92);
+    width: 92%;
+    max-width: 540px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background: linear-gradient(145deg, rgba(28, 21, 18, 0.98) 0%, rgba(18, 14, 11, 0.99) 100%);
+    border: 2px solid var(--gold);
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 35px rgba(255, 170, 0, 0.3);
+    z-index: 10009;
+    display: none;
+    opacity: 0;
+    transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.35s ease;
+    direction: rtl;
+    padding: 24px;
+    color: var(--text-main);
+    font-family: var(--font-arabic);
+}
+
+.studying-modal-card.active {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.studying-close-btn {
+    position: absolute;
+    top: 15px;
+    left: 18px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    font-size: 1.5rem;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+}
+
+.studying-close-btn:hover {
+    background: var(--danger);
+    border-color: var(--danger);
+    transform: rotate(90deg);
+}
+
+.studying-card-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.studying-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 14px;
+    background: rgba(255, 170, 0, 0.12);
+    border: 1px solid var(--gold);
+    border-radius: 20px;
+    color: var(--gold);
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.studying-title {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: #ffffff;
+    line-height: 1.4;
+}
+
+/* Desk Scene Graphic */
+.maher-desk-scene {
+    position: relative;
+    background: radial-gradient(circle at 50% 30%, #3a281c 0%, #17110d 100%);
+    border: 1px solid rgba(255, 170, 0, 0.2);
+    border-radius: 18px;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 20px;
+    overflow: hidden;
+    box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.8);
+}
+
+.desk-lamp-glow {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 140px;
+    height: 140px;
+    background: radial-gradient(circle, rgba(255, 220, 100, 0.35) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.maher-character {
+    position: relative;
+    margin-bottom: 15px;
+}
+
+.char-emoji {
+    font-size: 4.2rem;
+    display: inline-block;
+    animation: maherNod 3s infinite ease-in-out;
+}
+
+@keyframes maherNod {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-4px) rotate(2deg); }
+}
+
+.studying-bubbles {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+}
+
+.bubble-item {
+    font-size: 0.72rem;
+    padding: 3px 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    color: #ffe0b2;
+    font-weight: 600;
+}
+
+.desk-surface {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    border-top: 2px dashed rgba(255, 170, 0, 0.3);
+    padding-top: 12px;
+    margin-top: 8px;
+}
+
+.desk-book {
+    font-size: 0.75rem;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-weight: 700;
+    color: #fff;
+}
+
+.book-math { background: #b71c1c; }
+.book-chem { background: #1b5e20; }
+.book-phys { background: #0d47a1; }
+.desk-coffee { background: #e65100; font-size: 0.75rem; padding: 4px 8px; border-radius: 6px; font-weight: 700; color: #fff; }
+
+/* Speech Bubble */
+.maher-speech-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 170, 0, 0.25);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 18px;
+    position: relative;
+}
+
+.speech-author {
+    font-weight: 800;
+    color: var(--gold);
+    font-size: 0.95rem;
+    margin-bottom: 6px;
+}
+
+.speech-text {
+    font-size: 0.92rem;
+    line-height: 1.65;
+    color: #eee;
+}
+
+/* Stats Bar */
+.studying-stats-bar {
+    display: flex;
+    justify-content: space-around;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 14px;
+    padding: 10px 14px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.stat-val {
+    transition: transform 0.3s ease, color 0.3s ease;
+    display: inline-block;
+}
+
+/* Actions */
+.studying-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.btn-pray-maher {
+    width: 100%;
+    padding: 13px;
+    background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+    color: #ffffff;
+    border: 1.5px solid #4caf50;
+    border-radius: 14px;
+    font-size: 1rem;
+    font-weight: 800;
+    font-family: var(--font-arabic);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 15px rgba(46, 125, 50, 0.4);
+    transition: var(--transition);
+}
+
+.btn-pray-maher:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
+    box-shadow: 0 6px 20px rgba(46, 125, 50, 0.6);
+}
+
+.btn-order-coffee {
+    width: 100%;
+    padding: 11px;
+    background: linear-gradient(135deg, var(--gold) 0%, #d48800 100%);
+    color: #1a0f00;
+    border: none;
+    border-radius: 14px;
+    font-size: 0.92rem;
+    font-weight: 700;
+    font-family: var(--font-arabic);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: var(--transition);
+}
+
+.btn-order-coffee:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+}
+
+.btn-close-secret {
+    width: 100%;
+    padding: 10px;
+    background: transparent;
+    color: #aaa;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 14px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    font-family: var(--font-arabic);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: var(--transition);
+}
+
+.btn-close-secret:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+}
+
+/* Floating Study Particle */
+.study-particle {
+    position: fixed;
+    z-index: 10015;
+    pointer-events: none;
+    font-size: 1.8rem;
+    animation: floatStudyParticle 2.5s forwards cubic-bezier(0.1, 0.8, 0.3, 1);
+}
+
+@keyframes floatStudyParticle {
+    0% {
+        transform: translateY(0) scale(0.4) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-80vh) scale(1.4) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+
