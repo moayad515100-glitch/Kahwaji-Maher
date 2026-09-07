@@ -182,12 +182,8 @@
             <div class="logo-area">
                 <img src="5960730354593238429.jpg" alt="شعار قهوجي ماهر" class="header-logo">
                 <span class="brand-name">قهوجي <span class="gold-text">ماهر</span></span>
-                <!-- Secret Tiny Door Hidden in Header Logo Area -->
-                <div class="secret-tiny-door" onclick="openSecretDoorModal()" title="🚪 باب سرّي صغير جداً... (أين ماهر؟ اضغط هنا!)">
-                    <div class="tiny-door-panel">
-                        <div class="tiny-door-knob"></div>
-                    </div>
-                </div>
+                <!-- Secret Creepy Tiny Dot in Logo Area -->
+                <span class="secret-creepy-dot" onclick="openCreepyEyesRoom()" title="👁️ . (نقطة سرية غريبة...)"></span>
             </div>
             
             <nav class="main-nav">
@@ -1281,7 +1277,7 @@
                     <legend style="font-weight: bold; background: #c0c0c0; padding: 0 5px; font-size: 0.9rem;">🔥 إدارة الفعاليات النشطة</legend>
                     <label style="display: block; margin-bottom: 8px; font-size: 0.85rem; font-weight: bold;">اختر الفعالية لتنشيطها:</label>
                     <select id="dev-event-select" style="width: 100%; padding: 6px; background: #fff; color: #000; border: 2px inset #fff; font-family: monospace; font-size: 0.85rem; outline: none; margin-bottom: 12px;">
-                        <option value="where_is_maher">أين ماهر؟ (مذاكرة الثانوية والباب السرّي)</option>
+                        <option value="where_is_maher">أين ماهر؟ (غرفة العيون المرعبة والنقطة السرية)</option>
                         <option value="none">بدون فعالية (عادي)</option>
                         <option value="neon_magic">القهوة المضيئة (neon_magic)</option>
                         <option value="anger">غضب ماهر (anger)</option>
@@ -1334,93 +1330,61 @@
 
 
 
-    <!-- Where is Maher? Floating Tiny Door Widget -->
-    <div class="floating-tiny-door-widget" onclick="openSecretDoorModal()" title="🚪 باب سرّي صغير جداً... (أين ماهر؟ اضغط هنا!)">
-        <div class="tiny-door-panel">
-            <div class="tiny-door-knob"></div>
-        </div>
-        <span class="tiny-door-label">أين ماهر؟ 🚪</span>
+    <!-- Where is Maher? Secret Creepy Tiny Dot Floating Widget -->
+    <div class="creepy-floating-dot" onclick="openCreepyEyesRoom()" title="👁️ . (نقطة حمراء غريبة... أين ماهر؟)">
+        <span class="dot-core"></span>
     </div>
 
-    <!-- Where is Maher? Secret Studying Modal -->
-    <div class="studying-modal-overlay" id="maher-studying-overlay" onclick="closeSecretDoorModal()"></div>
-    <div class="studying-modal-card" id="maher-studying-modal">
-        <button class="studying-close-btn" onclick="closeSecretDoorModal()">&times;</button>
-        
-        <div class="studying-card-header">
-            <div class="studying-badge">
-                <span class="badge-icon">🔍</span>
-                <span>حدث أين ماهر؟ | غرفته السرية 🚪✨</span>
-            </div>
-            <h2 class="studying-title">قهوجي ماهر قاعد يذاكر عشانه ثانوي! 📚☕</h2>
+    <!-- Where is Maher? Creepy Horror Eyes Room Modal -->
+    <div class="creepy-room-overlay" id="creepy-eyes-overlay" onclick="tryInteractCreepyRoom(event)"></div>
+    <div class="creepy-room-modal" id="creepy-eyes-modal">
+        <!-- Floating Animated Creepy Eyes Background Layer -->
+        <div class="creepy-eyes-grid" id="creepy-eyes-container">
+            <!-- Dynamically populated or styled SVG eyes -->
         </div>
 
-        <div class="studying-body">
-            <!-- Cozy Maher Desk Illustration Scene -->
-            <div class="maher-desk-scene">
-                <div class="desk-lamp-glow"></div>
-                <div class="maher-avatar-container">
-                    <div class="maher-character">
-                        <span class="char-emoji">👨‍🎓</span>
-                        <div class="studying-bubbles">
-                            <span class="bubble-item">📐 رياضيات</span>
-                            <span class="bubble-item">🧪 كيمياء</span>
-                            <span class="bubble-item">⚡ قدرات</span>
-                            <span class="bubble-item">🎓 تحصيلي</span>
-                        </div>
-                    </div>
+        <div class="creepy-spotlight"></div>
+
+        <div class="creepy-room-content">
+            <button class="creepy-escape-btn" onclick="closeCreepyEyesRoom()">🚪 الهروب من الغرفة المظلمة</button>
+
+            <!-- Maher Terrified Silhouette / Character -->
+            <div class="terrified-maher-container" onclick="trySaveMaher()">
+                <div class="maher-horror-avatar">
+                    <span class="scared-emoji">😱</span>
+                    <div class="sweat-drops">💦 💦</div>
                 </div>
-                <div class="desk-surface">
-                    <div class="desk-book book-math">📐 كتاب التجميعات</div>
-                    <div class="desk-book book-chem">🧪 أسئلة القدرات</div>
-                    <div class="desk-book book-phys">⚡ كتب الثانوية</div>
-                    <div class="desk-coffee">☕ فنجان التركيز</div>
-                </div>
+                <div class="spilled-coffee">☕💥</div>
+                <div class="horror-status-badge">👁️ ماهر محتجز ومحاط بالعيون!</div>
             </div>
 
-            <!-- Speech Bubble Message -->
-            <div class="maher-speech-card">
-                <div class="speech-author">
-                    <span class="author-name">قهوجي ماهر ☕:</span>
-                </div>
-                <p class="speech-text">
-                    "أهلاً بك يا بطل! 🤫 كشفت الباب السرّي الصغير جداً! 🚪✨<br>
-                    أنا اعتذرت عن البار مؤقتاً لأني قاعد أذاكر لدروس <strong>الثانوية العامة</strong> واختبارات <strong>القدرات والتحصيلي</strong>! 📚✏️<br>
-                    القهوة بالمتجر متوفرة بأيدي أمينة والشباب قايمين بالواجب.. دعواتكم لي بالتوفيق والنسبة العالية 99%+! 🎓🔥"
+            <!-- Horror Narrative -->
+            <div class="creepy-speech-card">
+                <div class="creepy-title">👁️ هم يراقبونه في كل مكان...</div>
+                <p class="creepy-text">
+                    قهوجي ماهر محتجز داخل الغرفة المظلمة! عيون حاقدة ولا ترمش تلاحقه في كل زاوية برعب شديد.. <br>
+                    <strong style="color: #ff3333; display: block; margin-top: 8px;">❌ وأنت عاجز تماماً ولا تستطيع فعل أي شيء لإنقاذه!</strong>
                 </p>
             </div>
 
-            <!-- Stats & Prayer Tracker -->
-            <div class="studying-stats-bar">
-                <div class="stat-item">
-                    <span class="stat-icon">⚡</span>
-                    <span class="stat-label">مستوى التركيز:</span>
-                    <span class="stat-val gold-text">100% 🚀</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-icon">🤲</span>
-                    <span class="stat-label">دعوات الزوار:</span>
-                    <span class="stat-val" id="maher-prayer-count">1,482</span>
-                </div>
+            <!-- Hopeless Action Buttons -->
+            <div class="creepy-hopeless-actions">
+                <button class="btn-hopeless-save" onclick="trySaveMaher()">
+                    <i class="fa-solid fa-hand-holding-heart"></i> محاولة إنقاذ ماهر (معطلة ❌)
+                </button>
+                <button class="btn-hopeless-speak" onclick="trySaveMaher()">
+                    <i class="fa-solid fa-comment-slash"></i> التحدث معه (العيون تمنعك 👁️)
+                </button>
             </div>
 
-            <!-- Interactive Actions -->
-            <div class="studying-actions">
-                <button class="btn-pray-maher" onclick="prayForMaher()">
-                    <i class="fa-solid fa-hands-praying"></i> ادعُ لماهر بالتوفيق والنجاح 🤲
-                </button>
-                <button class="btn-order-coffee" onclick="closeSecretDoorModal(); location.href='#menu';">
-                    <i class="fa-solid fa-mug-hot"></i> اطلب قهوتك واتركه يذاكر ☕
-                </button>
-                <button class="btn-close-secret" onclick="closeSecretDoorModal()">
-                    <i class="fa-solid fa-door-closed"></i> إغلاق الباب 🚪
-                </button>
+            <div class="creepy-footer-msg" id="creepy-warning-msg">
+                اضغط على أي شيء للمحاولة.. ولكن بلا جدوى 👁️
             </div>
         </div>
     </div>
 
     <!-- Script file -->
-    <script src="app.js?v=44.00"></script>
+    <script src="app.js?v=45.00"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
