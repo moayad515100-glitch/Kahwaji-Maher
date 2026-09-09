@@ -1,10 +1,11 @@
-const CACHE_NAME = 'maher-coffee-v450';
+const CACHE_NAME = 'maher-coffee-v460';
 const ASSETS = [
   './',
   './index.html',
   './app.js',
   './style.css',
   './manifest.json',
+  './qahwaji-logo.glb',
   './icon-192.png',
   './icon-512.png',
   './milkshake.png',

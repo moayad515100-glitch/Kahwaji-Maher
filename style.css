@@ -310,39 +310,93 @@ a {
     transition: var(--transition);
 }
 
-.cyber-cup-container:hover {
-    transform: scale(1.06);
+/* 3D Floating Logo Container */
+.cyber-3d-logo-container {
+    position: relative;
+    width: 320px;
+    height: 340px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    animation: float3DLogo 4s infinite ease-in-out;
 }
 
-.cyber-cup-img {
-    width: 220px;
-    height: 220px;
-    object-fit: cover;
+@keyframes float3DLogo {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-14px);
+    }
+}
+
+.glowing-aura-3d {
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 260px;
+    height: 260px;
+    background: radial-gradient(circle, rgba(255, 170, 0, 0.35) 0%, rgba(255, 106, 0, 0.15) 50%, transparent 70%);
     border-radius: 50%;
-    border: 3.5px solid var(--gold);
-    box-shadow: 0 0 35px rgba(255, 170, 0, 0.45);
-    animation: rotate-cup 25s linear infinite;
+    filter: blur(20px);
+    pointer-events: none;
+    z-index: 1;
 }
 
 .glowing-ring {
     position: absolute;
-    width: 255px;
-    height: 255px;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 290px;
+    height: 290px;
     border-radius: 50%;
     border: 2px dashed var(--gold);
-    opacity: 0.45;
-    animation: spin-ring 18s linear infinite;
+    opacity: 0.55;
+    animation: spin-ring 22s linear infinite;
+    pointer-events: none;
+    z-index: 1;
 }
 
-@keyframes rotate-cup {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+.cyber-3d-model-viewer {
+    width: 300px;
+    height: 300px;
+    background: transparent;
+    position: relative;
+    z-index: 2;
+    filter: drop-shadow(0 15px 30px rgba(255, 170, 0, 0.45));
+    --poster-color: transparent;
+}
+
+.model-3d-hint {
+    margin-top: 12px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--gold);
+    background: rgba(22, 17, 14, 0.88);
+    border: 1px solid var(--gold);
+    padding: 5px 16px;
+    border-radius: 20px;
+    box-shadow: 0 0 15px rgba(255, 170, 0, 0.3);
+    backdrop-filter: blur(6px);
+    z-index: 3;
+    letter-spacing: 0.5px;
+    animation: pulseHint 2s infinite ease-in-out;
+}
+
+@keyframes pulseHint {
+    0%, 100% { opacity: 0.85; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.04); }
 }
 
 @keyframes spin-ring {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(-360deg); }
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to { transform: translate(-50%, -50%) rotate(-360deg); }
 }
+
 
 .hero-badge {
     display: inline-block;

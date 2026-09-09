@@ -4999,6 +4999,68 @@ function tryInteractCreepyRoom(e) {
     }
 }
 
+// ==========================================================
+// 🧊 3D FLOATING LOGO LOADER (qahwaji-logo.glb)
+// ==========================================================
+function init3DLogoFallback() {
+    const container = document.querySelector('.cyber-3d-logo-container');
+    if (!container) return;
+
+    const modelViewer = container.querySelector('model-viewer');
+    if (modelViewer) {
+        modelViewer.addEventListener('error', (evt) => {
+            console.warn('Model Viewer error, trying Three.js GLTFLoader fallback:', evt);
+            loadThreeJS3DLogo(container, modelViewer);
+        });
+    }
+}
+
+function loadThreeJS3DLogo(container, oldElement) {
+    if (typeof THREE === 'undefined' || typeof THREE.GLTFLoader === 'undefined') return;
+    if (oldElement) oldElement.style.display = 'none';
+
+    const canvas = document.createElement('canvas');
+    canvas.style.cssText = 'width: 280px; height: 280px; position: relative; z-index: 2;';
+    container.insertBefore(canvas, container.querySelector('.model-3d-hint'));
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
+    camera.position.set(0, 0, 5);
+
+    const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+    renderer.setSize(280, 280);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
+    scene.add(ambientLight);
+
+    const dirLight = new THREE.DirectionalLight(0xffaa00, 2);
+    dirLight.position.set(5, 5, 5);
+    scene.add(dirLight);
+
+    const loader = new THREE.GLTFLoader();
+    loader.load('qahwaji-logo.glb', (gltf) => {
+        const model = gltf.scene;
+        scene.add(model);
+
+        const box = new THREE.Box3().setFromObject(model);
+        const center = box.getCenter(new THREE.Vector3());
+        model.position.sub(center);
+
+        function animate() {
+            requestAnimationFrame(animate);
+            model.rotation.y += 0.015;
+            renderer.render(scene, camera);
+        }
+        animate();
+    }, undefined, (err) => {
+        console.error('Three.js GLTF loading error:', err);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', init3DLogoFallback);
+
+
 
 
 
