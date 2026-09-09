@@ -347,18 +347,7 @@ a {
 }
 
 .glowing-ring {
-    position: absolute;
-    top: 45%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 290px;
-    height: 290px;
-    border-radius: 50%;
-    border: 2px dashed var(--gold);
-    opacity: 0.55;
-    animation: spin-ring 22s linear infinite;
-    pointer-events: none;
-    z-index: 1;
+    display: none !important;
 }
 
 .cyber-3d-model-viewer {
