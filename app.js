@@ -5021,7 +5021,7 @@ function loadThreeJS3DLogo(container, oldElement) {
 
     const canvas = document.createElement('canvas');
     canvas.style.cssText = 'width: 280px; height: 280px; position: relative; z-index: 2;';
-    container.insertBefore(canvas, container.querySelector('.model-3d-hint'));
+    container.appendChild(canvas);
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
