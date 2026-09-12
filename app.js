@@ -728,23 +728,212 @@ function triggerAlarm(message) {
     }, 2500); // alarm goes away after 2.5 seconds
 }
 
-// Submit Suggestion (Send to WhatsApp)
-function submitSuggestion(event) {
-    event.preventDefault();
-    const suggestionText = document.getElementById('suggestion-text').value.trim();
-    if (!suggestionText) return;
-    
-    let message = `💡 *اقتراح جديد من عميل قهوجي ماهر* 💡\n\n`;
-    message += `${suggestionText}\n\n`;
-    message += `-----------------------------------`;
-    
-    const encodedMessage = encodeURIComponent(message);
-    const waLink = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
-    
-    window.open(waLink, '_blank');
-    document.getElementById('suggestion-form').reset();
-    showToast('تم إرسال اقتراحك بنجاح! شكراً لك.');
+// ==========================================================
+// 💬 REAL-TIME PUBLIC COMMENTS & SUGGESTIONS ENGINE (NO SERVER)
+// ==========================================================
+
+let publicCommentsList = [];
+const COMMENTS_API_ENDPOINT = '/api/comments';
+const DIRECT_BIN_ENDPOINT = 'https://extendsclass.com/api/json-storage/bin/dfbfbef';
+
+async function loadPublicComments() {
+    const feedContainer = document.getElementById('public-comments-feed');
+    const badgeEl = document.getElementById('comments-count-badge');
+    const loaderEl = document.getElementById('comments-loader');
+    if (!feedContainer) return;
+
+    if (loaderEl) loaderEl.style.display = 'block';
+
+    try {
+        let response = await fetch(COMMENTS_API_ENDPOINT);
+        if (!response.ok) {
+            response = await fetch(DIRECT_BIN_ENDPOINT);
+        }
+        const data = await response.json();
+        if (data && Array.isArray(data.comments)) {
+            publicCommentsList = data.comments;
+            try {
+                localStorage.setItem('maher_cached_comments', JSON.stringify(publicCommentsList));
+            } catch(e) {}
+        }
+    } catch(e) {
+        console.warn('Comments API fetch error, using local cache fallback:', e);
+        try {
+            const cached = localStorage.getItem('maher_cached_comments');
+            if (cached) publicCommentsList = JSON.parse(cached);
+        } catch(err) {}
+    } finally {
+        if (loaderEl) loaderEl.style.display = 'none';
+    }
+
+    renderPublicCommentsFeed();
 }
+
+function renderPublicCommentsFeed() {
+    const feedContainer = document.getElementById('public-comments-feed');
+    const badgeEl = document.getElementById('comments-count-badge');
+    if (!feedContainer) return;
+
+    if (badgeEl) {
+        badgeEl.textContent = `${publicCommentsList.length} تعليقات منشورة`;
+    }
+
+    if (publicCommentsList.length === 0) {
+        feedContainer.innerHTML = `
+            <div class="empty-comments-state">
+                <i class="fa-solid fa-comments"></i>
+                <p>لا توجد تعليقات منشورة بعد.. كن أول من يترك تعليقه ليراه الجميع! 🚀</p>
+            </div>
+        `;
+        return;
+    }
+
+    const badgeMap = {
+        coffee: { label: '☕ رأي بالقهوة', class: 'badge-coffee' },
+        matcha: { label: '🍵 رأي بالماتشا', class: 'badge-matcha' },
+        suggestion: { label: '💡 اقتراح للمتجر', class: 'badge-suggestion' },
+        general: { label: '💬 كلمة محبة', class: 'badge-general' }
+    };
+
+    feedContainer.innerHTML = publicCommentsList.map(c => {
+        const catInfo = badgeMap[c.category] || badgeMap.general;
+        const initial = (c.name || 'ع').charAt(0).toUpperCase();
+        const formattedDate = formatCommentDate(c.date);
+        const likes = c.likes || 0;
+
+        return `
+            <div class="comment-card" id="comment-card-${c.id}">
+                <div class="comment-header">
+                    <div class="author-avatar">${initial}</div>
+                    <div class="author-info">
+                        <div class="author-name-row">
+                            <span class="author-name">${escapeHTML(c.name || 'زائر')}</span>
+                            <span class="comment-category-tag ${catInfo.class}">${catInfo.label}</span>
+                        </div>
+                        <span class="comment-date"><i class="fa-regular fa-clock"></i> ${formattedDate}</span>
+                    </div>
+                </div>
+                <div class="comment-body-text">
+                    ${escapeHTML(c.text)}
+                </div>
+                <div class="comment-footer">
+                    <button type="button" class="btn-like-comment" onclick="likePublicComment('${c.id}')">
+                        <i class="fa-solid fa-thumbs-up"></i> إعجاب <span class="like-count" id="like-count-${c.id}">${likes}</span>
+                    </button>
+                    <span class="public-badge-verified">✓ تعليق منشور عام</span>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+async function submitPublicComment(event) {
+    event.preventDefault();
+    const nameInput = document.getElementById('comment-author-name');
+    const typeSelect = document.getElementById('comment-type-select');
+    const textInput = document.getElementById('suggestion-text');
+    const submitBtn = document.getElementById('btn-submit-comment-el');
+
+    const name = nameInput ? nameInput.value.trim() : 'زائر';
+    const category = typeSelect ? typeSelect.value : 'coffee';
+    const text = textInput ? textInput.value.trim() : '';
+
+    if (!text) return;
+
+    const newComment = {
+        id: 'c_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
+        name: name || 'زائر',
+        text: text,
+        category: category,
+        date: new Date().toISOString(),
+        likes: 0
+    };
+
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري النشر العام...';
+    }
+
+    publicCommentsList.unshift(newComment);
+    renderPublicCommentsFeed();
+
+    try {
+        let response = await fetch(COMMENTS_API_ENDPOINT, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ newComment })
+        });
+
+        if (!response.ok) {
+            await fetch(DIRECT_BIN_ENDPOINT, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ comments: publicCommentsList })
+            });
+        }
+    } catch(e) {
+        console.warn('API update warning, saved locally:', e);
+    } finally {
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> نشر التعليق علناً للجميع 🚀';
+        }
+    }
+
+    if (textInput) textInput.value = '';
+    showToast('🎉 تم نشر تعليقك علناً في الموقع ليراها جميع الزوار!');
+    if (typeof playSuccessSound === 'function') playSuccessSound();
+}
+
+async function likePublicComment(commentId) {
+    const comment = publicCommentsList.find(c => c.id === commentId);
+    if (!comment) return;
+
+    comment.likes = (comment.likes || 0) + 1;
+    const countEl = document.getElementById(`like-count-${commentId}`);
+    if (countEl) {
+        countEl.textContent = comment.likes;
+        countEl.parentElement.classList.add('liked-pulse');
+        setTimeout(() => countEl.parentElement.classList.remove('liked-pulse'), 400);
+    }
+
+    try {
+        fetch(COMMENTS_API_ENDPOINT, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'like', commentId })
+        });
+    } catch(e) {}
+}
+
+function formatCommentDate(dateStr) {
+    if (!dateStr) return 'قبل قليل';
+    try {
+        const d = new Date(dateStr);
+        const diffSecs = Math.floor((Date.now() - d.getTime()) / 1000);
+        if (diffSecs < 60) return 'الآن';
+        if (diffSecs < 3600) return `قبل ${Math.floor(diffSecs / 60)} دقيقة`;
+        if (diffSecs < 86400) return `قبل ${Math.floor(diffSecs / 3600)} ساعة`;
+        return d.toLocaleDateString('ar-SA', { day: 'numeric', month: 'short' });
+    } catch(e) {
+        return 'مؤخراً';
+    }
+}
+
+function escapeHTML(str) {
+    if (!str) return '';
+    return str.replace(/[&<>"']/g, function(m) {
+        return {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        }[m];
+    });
+}
+
+document.addEventListener('DOMContentLoaded', loadPublicComments);
 
 // Play Success Chime Audio (Ascending Sweet Arpeggio via Web Audio API)
 function playSuccessSound() {

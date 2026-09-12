@@ -5121,4 +5121,272 @@ body.is-installed-app {
     transition: transform 0.2s ease;
 }
 
+/* ==========================================================
+   💬 PUBLIC COMMENTS & SUGGESTIONS SECTION (LIVE FEED)
+   ========================================================== */
+
+.suggestions-layout-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.25fr;
+    gap: 30px;
+    align-items: start;
+    margin-top: 30px;
+}
+
+@media (max-width: 900px) {
+    .suggestions-layout-grid {
+        grid-template-columns: 1fr;
+        gap: 25px;
+    }
+}
+
+/* Form Card */
+.suggestion-form-card {
+    background: linear-gradient(145deg, rgba(22, 17, 14, 0.9) 0%, rgba(12, 9, 7, 0.95) 100%);
+    border: 1.5px solid rgba(255, 170, 0, 0.25);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(255, 170, 0, 0.05);
+    direction: rtl;
+}
+
+.form-card-title {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px dashed rgba(255, 170, 0, 0.2);
+    padding-bottom: 12px;
+}
+
+.custom-select-box {
+    width: 100%;
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 170, 0, 0.25);
+    border-radius: 12px;
+    color: var(--text-main);
+    font-family: var(--font-arabic);
+    font-size: 0.92rem;
+    outline: none;
+    transition: var(--transition);
+}
+
+.custom-select-box:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 12px rgba(255, 170, 0, 0.3);
+}
+
+.btn-submit-comment {
+    width: 100%;
+    padding: 14px;
+    font-size: 1rem;
+    font-weight: 800;
+    margin-top: 10px;
+}
+
+/* Comments Feed Wrapper */
+.public-comments-feed-wrapper {
+    background: linear-gradient(145deg, rgba(18, 14, 11, 0.95) 0%, rgba(10, 7, 5, 0.98) 100%);
+    border: 1.5px solid rgba(255, 170, 0, 0.2);
+    border-radius: 20px;
+    padding: 22px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    direction: rtl;
+}
+
+.feed-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 12px;
+}
+
+.feed-header h3 {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.live-count-badge {
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 4px 12px;
+    background: rgba(255, 170, 0, 0.12);
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    border-radius: 20px;
+}
+
+.comments-loading-spinner {
+    text-align: center;
+    padding: 20px;
+    color: var(--gold);
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+.comments-feed-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-height: 520px;
+    overflow-y: auto;
+    padding-left: 5px;
+}
+
+.empty-comments-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #888;
+}
+
+.empty-comments-state i {
+    font-size: 3rem;
+    color: var(--gold);
+    opacity: 0.5;
+    margin-bottom: 12px;
+}
+
+/* Comment Card */
+.comment-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 170, 0, 0.18);
+    border-radius: 16px;
+    padding: 16px;
+    transition: var(--transition);
+    animation: commentPopIn 0.4s ease;
+}
+
+@keyframes commentPopIn {
+    0% { opacity: 0; transform: translateY(-12px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+.comment-card:hover {
+    border-color: rgba(255, 170, 0, 0.4);
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateY(-2px);
+}
+
+.comment-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.author-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold) 0%, #d48800 100%);
+    color: #000;
+    font-weight: 800;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 10px rgba(255, 170, 0, 0.3);
+    flex-shrink: 0;
+}
+
+.author-info {
+    flex-grow: 1;
+}
+
+.author-name-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.author-name {
+    font-weight: 800;
+    font-size: 0.98rem;
+    color: #ffffff;
+}
+
+.comment-category-tag {
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+}
+
+.badge-coffee { background: rgba(255, 170, 0, 0.15); color: var(--gold); border: 1px solid var(--gold); }
+.badge-matcha { background: rgba(57, 255, 20, 0.15); color: #39ff14; border: 1px solid #39ff14; }
+.badge-suggestion { background: rgba(0, 240, 255, 0.15); color: #00f0ff; border: 1px solid #00f0ff; }
+.badge-general { background: rgba(255, 105, 180, 0.15); color: #ff69b4; border: 1px solid #ff69b4; }
+
+.comment-date {
+    font-size: 0.78rem;
+    color: #aaa;
+    display: block;
+    margin-top: 2px;
+}
+
+.comment-body-text {
+    font-size: 0.92rem;
+    line-height: 1.65;
+    color: #eee;
+    margin-bottom: 12px;
+    white-space: pre-line;
+}
+
+.comment-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px dashed rgba(255, 255, 255, 0.08);
+    padding-top: 8px;
+    font-size: 0.8rem;
+}
+
+.btn-like-comment {
+    background: rgba(255, 170, 0, 0.1);
+    border: 1px solid rgba(255, 170, 0, 0.3);
+    color: var(--gold);
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    font-family: var(--font-arabic);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: var(--transition);
+}
+
+.btn-like-comment:hover {
+    background: var(--gold);
+    color: #000;
+}
+
+.btn-like-comment.liked-pulse {
+    animation: likePulse 0.35s ease;
+}
+
+@keyframes likePulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.25); }
+    100% { transform: scale(1); }
+}
+
+.public-badge-verified {
+    color: #888;
+    font-size: 0.75rem;
+}
+
+
 

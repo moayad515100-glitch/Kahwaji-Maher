@@ -1187,25 +1187,66 @@
         <span id="toast-message">تمت إضافة القهوة للسلة بنجاح!</span>
     </div>
 
-    <!-- Suggestions Section -->
+    <!-- Public Comments & Suggestions Section -->
     <section id="suggestions" class="suggestions-section">
         <div class="container">
             <div class="section-header">
-                <h2>يسعدنا سماع اقتراحاتكم</h2>
+                <h2>آراء واقتراحات العملاء والزوار 💬✨</h2>
                 <div class="header-line"></div>
-                <p>شاركونا أفكاركم وملاحظاتكم لتطوير خدماتنا، وسنقوم باستلامها مباشرة عبر الواتساب</p>
+                <p>جميع التعليقات واقتراحاتكم تُنشر فورياً وعلناً ليراها جميع زوار الموقع مباشرة بدون سيرفر!</p>
             </div>
             
-            <div class="suggestion-form-container">
-                <form id="suggestion-form" onsubmit="submitSuggestion(event)">
-                    <div class="form-group">
-                        <label for="suggestion-text">اقتراحك أو ملاحظتك:</label>
-                        <textarea id="suggestion-text" rows="4" placeholder="اكتب اقتراحك هنا بكل حب وأريحية..." required></textarea>
+            <div class="suggestions-layout-grid">
+                <!-- Submit Form Card -->
+                <div class="suggestion-form-card">
+                    <h3 class="form-card-title"><i class="fa-solid fa-pen-to-square gold-text"></i> أضف تعليقك / اقتراحك العام</h3>
+                    <form id="suggestion-form" onsubmit="submitPublicComment(event)">
+                        <div class="form-group">
+                            <label for="comment-author-name">اسمك الكريم (أو اسم مستعار):</label>
+                            <div class="input-wrapper">
+                                <i class="fa-solid fa-user"></i>
+                                <input type="text" id="comment-author-name" placeholder="مثال: أحمد العتيبي، أو محب القهوة" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="comment-type-select">تصنيف التعليق:</label>
+                            <select id="comment-type-select" class="custom-select-box">
+                                <option value="coffee">☕ رأي وانطباع عن القهوة</option>
+                                <option value="suggestion">💡 اقتراح وتطوير للمتجر</option>
+                                <option value="matcha">🍵 رأي بالماتشا والمشروبات</option>
+                                <option value="general">💬 كلمة ومحبة لقهوجي ماهر</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="suggestion-text">نص التعليق أو الاقتراح العام:</label>
+                            <textarea id="suggestion-text" rows="4" placeholder="اكتب تعليقك أو اقتراحك هنا ليظهر لجميع زوار الموقع فوراً..." required></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-submit-comment" id="btn-submit-comment-el">
+                            <i class="fa-solid fa-paper-plane"></i> نشر التعليق علناً للجميع 🚀
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Live Public Comments Feed -->
+                <div class="public-comments-feed-wrapper">
+                    <div class="feed-header">
+                        <h3><i class="fa-solid fa-comments gold-text"></i> التعليقات المنشورة المباشرة</h3>
+                        <span class="live-count-badge" id="comments-count-badge">0 تعليق</span>
                     </div>
-                    <button type="submit" class="btn btn-primary btn-submit-suggestion">
-                        <i class="fa-brands fa-whatsapp"></i> إرسال الاقتراح عبر الواتساب
-                    </button>
-                </form>
+
+                    <!-- Loader Spinner -->
+                    <div id="comments-loader" class="comments-loading-spinner" style="display: none;">
+                        <i class="fa-solid fa-spinner fa-spin"></i> جاري تحميل التعليقات المباشرة...
+                    </div>
+
+                    <!-- Comments List Container -->
+                    <div id="public-comments-feed" class="comments-feed-list">
+                        <!-- Loaded dynamically via JS -->
+                    </div>
+                </div>
             </div>
         </div>
     </section>
