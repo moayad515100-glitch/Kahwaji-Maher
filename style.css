@@ -5479,6 +5479,31 @@ body.is-installed-app {
     box-shadow: 0 0 10px rgba(255, 215, 0, 0.35);
 }
 
+/* Delete Comment Button */
+.btn-delete-comment {
+    background: rgba(255, 68, 68, 0.12);
+    border: 1px solid rgba(255, 68, 68, 0.35);
+    color: #ff5555;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    font-family: var(--font-arabic);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: var(--transition);
+}
+
+.btn-delete-comment:hover {
+    background: #ff4444;
+    color: #ffffff;
+    box-shadow: 0 0 10px rgba(255, 68, 68, 0.5);
+    transform: scale(1.03);
+}
+
+
 
 
 

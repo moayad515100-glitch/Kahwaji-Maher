@@ -51,7 +51,9 @@ export async function onRequest(context) {
                 if (!Array.isArray(currentData.comments)) currentData.comments = [];
             } catch(e) {}
 
-            if (payload.action === 'like' && payload.commentId) {
+            if (payload.action === 'delete' && payload.commentId) {
+                currentData.comments = currentData.comments.filter(c => c.id !== payload.commentId);
+            } else if (payload.action === 'like' && payload.commentId) {
                 // Handle Like increment
                 const targetComment = currentData.comments.find(c => c.id === payload.commentId);
                 if (targetComment) {

@@ -769,6 +769,36 @@ async function loadPublicComments() {
     renderPublicCommentsFeed();
 }
 
+function getMyCommentIds() {
+    try {
+        const stored = localStorage.getItem('maher_my_comment_ids');
+        return stored ? JSON.parse(stored) : [];
+    } catch(e) {
+        return [];
+    }
+}
+
+function saveMyCommentId(id) {
+    try {
+        const ids = getMyCommentIds();
+        if (!ids.includes(id)) {
+            ids.push(id);
+            localStorage.setItem('maher_my_comment_ids', JSON.stringify(ids));
+        }
+    } catch(e) {}
+}
+
+function removeMyCommentId(id) {
+    try {
+        const ids = getMyCommentIds().filter(i => i !== id);
+        localStorage.setItem('maher_my_comment_ids', JSON.stringify(ids));
+    } catch(e) {}
+}
+
+function isMyComment(id) {
+    return getMyCommentIds().includes(id);
+}
+
 function isMeyadName(name) {
     if (!name) return false;
     const cleanName = String(name).trim().toLowerCase();
@@ -807,6 +837,7 @@ function renderPublicCommentsFeed() {
         const formattedDate = formatCommentDate(c.date);
         const likes = c.likes || 0;
         const isMeyadVIP = isMeyadName(c.name);
+        const canDelete = isMyComment(c.id);
 
         if (isMeyadVIP) {
             return `
@@ -831,9 +862,16 @@ function renderPublicCommentsFeed() {
                         ${escapeHTML(c.text)}
                     </div>
                     <div class="comment-footer">
-                        <button type="button" class="btn-like-comment" onclick="likePublicComment('${c.id}')" style="border-color: #ffd700; color: #ffd700; background: rgba(255, 215, 0, 0.15);">
-                            <i class="fa-solid fa-thumbs-up"></i> إعجاب <span class="like-count" id="like-count-${c.id}">${likes}</span>
-                        </button>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <button type="button" class="btn-like-comment" onclick="likePublicComment('${c.id}')" style="border-color: #ffd700; color: #ffd700; background: rgba(255, 215, 0, 0.15);">
+                                <i class="fa-solid fa-thumbs-up"></i> إعجاب <span class="like-count" id="like-count-${c.id}">${likes}</span>
+                            </button>
+                            ${canDelete ? `
+                                <button type="button" class="btn-delete-comment" onclick="deletePublicComment('${c.id}')" title="حذف التعليق الخاص بك">
+                                    <i class="fa-solid fa-trash-can"></i> حذف
+                                </button>
+                            ` : ''}
+                        </div>
                         <span class="public-badge-verified meyad-verified">👑 زبون ماسي موثق - الأكثر طلباً 💎</span>
                     </div>
                 </div>
@@ -856,9 +894,16 @@ function renderPublicCommentsFeed() {
                     ${escapeHTML(c.text)}
                 </div>
                 <div class="comment-footer">
-                    <button type="button" class="btn-like-comment" onclick="likePublicComment('${c.id}')">
-                        <i class="fa-solid fa-thumbs-up"></i> إعجاب <span class="like-count" id="like-count-${c.id}">${likes}</span>
-                    </button>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <button type="button" class="btn-like-comment" onclick="likePublicComment('${c.id}')">
+                            <i class="fa-solid fa-thumbs-up"></i> إعجاب <span class="like-count" id="like-count-${c.id}">${likes}</span>
+                        </button>
+                        ${canDelete ? `
+                            <button type="button" class="btn-delete-comment" onclick="deletePublicComment('${c.id}')" title="حذف التعليق الخاص بك">
+                                <i class="fa-solid fa-trash-can"></i> حذف
+                            </button>
+                        ` : ''}
+                    </div>
                     <span class="public-badge-verified">✓ تعليق منشور عام</span>
                 </div>
             </div>
@@ -887,6 +932,8 @@ async function submitPublicComment(event) {
         date: new Date().toISOString(),
         likes: 0
     };
+
+    saveMyCommentId(newComment.id);
 
     if (submitBtn) {
         submitBtn.disabled = true;
@@ -926,6 +973,39 @@ async function submitPublicComment(event) {
         showToast('🎉 تم نشر تعليقك علناً في الموقع ليراها جميع الزوار!');
     }
     if (typeof playSuccessSound === 'function') playSuccessSound();
+}
+
+async function deletePublicComment(commentId) {
+    if (!confirm('هل أنت تأكد من رغبتك في حذف هذا التعليق؟')) return;
+
+    // Remove locally
+    publicCommentsList = publicCommentsList.filter(c => c.id !== commentId);
+    removeMyCommentId(commentId);
+    try {
+        localStorage.setItem('maher_cached_comments', JSON.stringify(publicCommentsList));
+    } catch(e) {}
+
+    renderPublicCommentsFeed();
+    showToast('🗑️ تم حذف التعليق بنجاح!');
+
+    // Sync deletion
+    try {
+        let response = await fetch(COMMENTS_API_ENDPOINT, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'delete', commentId: commentId })
+        });
+
+        if (!response.ok) {
+            await fetch(DIRECT_BIN_ENDPOINT, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ comments: publicCommentsList })
+            });
+        }
+    } catch(e) {
+        console.warn('Delete sync error:', e);
+    }
 }
 
 async function likePublicComment(commentId) {
