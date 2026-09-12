@@ -736,13 +736,47 @@ let publicCommentsList = [];
 const COMMENTS_API_ENDPOINT = '/api/comments';
 const DIRECT_BIN_ENDPOINT = 'https://extendsclass.com/api/json-storage/bin/dfbfbef';
 
-async function loadPublicComments() {
+function sanitizeComments(list) {
+    if (!Array.isArray(list)) return [];
+    return list.filter(c => {
+        if (!c || typeof c !== 'object') return false;
+        if (!c.name || !c.text) return false;
+        const nameStr = String(c.name).trim();
+        const textStr = String(c.text).trim();
+        
+        // Remove mock comments
+        if (c.id === 'c1' || c.id === 'c2' || c.id === 'c3') return false;
+        if (nameStr.includes('أحمد العتيبي') || nameStr.includes('سارة الشمري') || nameStr.includes('فيصل مكة')) return false;
+        if (textStr.includes('طعمها خرافي') || textStr.includes('الماتشا الباردة بطلة') || textStr.includes('أفضل قهوة في مكة')) return false;
+        
+        return true;
+    });
+}
+
+async function loadPublicComments(isSilent = false) {
     const feedContainer = document.getElementById('public-comments-feed');
     const badgeEl = document.getElementById('comments-count-badge');
     const loaderEl = document.getElementById('comments-loader');
     if (!feedContainer) return;
 
-    if (loaderEl) loaderEl.style.display = 'block';
+    if (loaderEl && !isSilent && publicCommentsList.length === 0) {
+        loaderEl.style.display = 'block';
+    }
+
+    // Always clean local storage cache from mock comments first
+    try {
+        const cached = localStorage.getItem('maher_cached_comments');
+        if (cached) {
+            const parsed = JSON.parse(cached);
+            const cleaned = sanitizeComments(parsed);
+            if (cleaned.length !== parsed.length) {
+                localStorage.setItem('maher_cached_comments', JSON.stringify(cleaned));
+            }
+            if (publicCommentsList.length === 0) {
+                publicCommentsList = cleaned;
+            }
+        }
+    } catch(err) {}
 
     try {
         let response = await fetch(COMMENTS_API_ENDPOINT);
@@ -751,17 +785,23 @@ async function loadPublicComments() {
         }
         const data = await response.json();
         if (data && Array.isArray(data.comments)) {
-            publicCommentsList = data.comments;
+            const remoteComments = sanitizeComments(data.comments);
+            
+            // Merge with local list using Map to prevent dropping any unsynced local comments
+            const map = new Map();
+            remoteComments.forEach(c => { if(c && c.id) map.set(c.id, c); });
+            publicCommentsList.forEach(c => { if(c && c.id) map.set(c.id, c); });
+            
+            let merged = Array.from(map.values());
+            merged.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+            publicCommentsList = sanitizeComments(merged);
+
             try {
                 localStorage.setItem('maher_cached_comments', JSON.stringify(publicCommentsList));
             } catch(e) {}
         }
     } catch(e) {
         console.warn('Comments API fetch error, using local cache fallback:', e);
-        try {
-            const cached = localStorage.getItem('maher_cached_comments');
-            if (cached) publicCommentsList = JSON.parse(cached);
-        } catch(err) {}
     } finally {
         if (loaderEl) loaderEl.style.display = 'none';
     }
@@ -801,14 +841,29 @@ function isMyComment(id) {
 
 function isMeyadName(name) {
     if (!name) return false;
-    const cleanName = String(name).trim().toLowerCase();
-    return cleanName.includes('ميعاد') || cleanName.includes('meyad') || cleanName.includes('meead');
+    const str = String(name)
+        .trim()
+        .toLowerCase()
+        .replace(/[\u064B-\u0652]/g, '')
+        .replace(/[أإآا]/g, 'ا')
+        .replace(/ى/g, 'ي')
+        .replace(/\s+/g, '');
+
+    return str.includes('ميعاد') || 
+           str.includes('مياد') || 
+           str.includes('معاد') || 
+           str.includes('ميعااد') || 
+           str.includes('meyad') || 
+           str.includes('meead') || 
+           str.includes('miad');
 }
 
 function renderPublicCommentsFeed() {
     const feedContainer = document.getElementById('public-comments-feed');
     const badgeEl = document.getElementById('comments-count-badge');
     if (!feedContainer) return;
+
+    publicCommentsList = sanitizeComments(publicCommentsList);
 
     if (badgeEl) {
         badgeEl.textContent = `${publicCommentsList.length} تعليقات منشورة`;
@@ -851,19 +906,19 @@ function renderPublicCommentsFeed() {
                         <div class="author-avatar meyad-avatar" title="VIP - الأكثر طلباً">👑</div>
                         <div class="author-info">
                             <div class="author-name-row">
-                                <span class="author-name">${escapeHTML(c.name || 'ميعاد')}</span>
+                                <span class="author-name meyad-name-title">${escapeHTML(c.name || 'ميعاد')}</span>
                                 <span class="comment-category-tag badge-meyad-vip">👑 الأكثر طلباً (VIP)</span>
                                 <span class="comment-category-tag ${catInfo.class}">${catInfo.label}</span>
                             </div>
                             <span class="comment-date"><i class="fa-regular fa-clock"></i> ${formattedDate}</span>
                         </div>
                     </div>
-                    <div class="comment-body-text" style="font-size: 1.02rem; font-weight: 700; color: #ffffff; text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);">
+                    <div class="comment-body-text meyad-text-glow">
                         ${escapeHTML(c.text)}
                     </div>
                     <div class="comment-footer">
                         <div style="display: flex; align-items: center; gap: 8px;">
-                            <button type="button" class="btn-like-comment" onclick="likePublicComment('${c.id}')" style="border-color: #ffd700; color: #ffd700; background: rgba(255, 215, 0, 0.15);">
+                            <button type="button" class="btn-like-comment meyad-like-btn" onclick="likePublicComment('${c.id}')">
                                 <i class="fa-solid fa-thumbs-up"></i> إعجاب <span class="like-count" id="like-count-${c.id}">${likes}</span>
                             </button>
                             ${canDelete ? `
@@ -872,7 +927,7 @@ function renderPublicCommentsFeed() {
                                 </button>
                             ` : ''}
                         </div>
-                        <span class="public-badge-verified meyad-verified">👑 زبون ماسي موثق - الأكثر طلباً 💎</span>
+                        <span class="public-badge-verified meyad-verified">👑 زبون ماسي موثق (أكثر من 100 طلب) 💎</span>
                     </div>
                 </div>
             `;
@@ -925,7 +980,7 @@ async function submitPublicComment(event) {
     if (!text) return;
 
     const newComment = {
-        id: 'c_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
+        id: 'c_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7),
         name: name || 'زائر',
         text: text,
         category: category,
@@ -941,6 +996,11 @@ async function submitPublicComment(event) {
     }
 
     publicCommentsList.unshift(newComment);
+    publicCommentsList = sanitizeComments(publicCommentsList);
+    try {
+        localStorage.setItem('maher_cached_comments', JSON.stringify(publicCommentsList));
+    } catch(e) {}
+
     renderPublicCommentsFeed();
 
     try {
@@ -950,7 +1010,16 @@ async function submitPublicComment(event) {
             body: JSON.stringify({ newComment })
         });
 
-        if (!response.ok) {
+        if (response.ok) {
+            const data = await response.json();
+            if (data && Array.isArray(data.comments)) {
+                publicCommentsList = sanitizeComments(data.comments);
+                try {
+                    localStorage.setItem('maher_cached_comments', JSON.stringify(publicCommentsList));
+                } catch(e) {}
+                renderPublicCommentsFeed();
+            }
+        } else {
             await fetch(DIRECT_BIN_ENDPOINT, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
@@ -967,8 +1036,9 @@ async function submitPublicComment(event) {
     }
 
     if (textInput) textInput.value = '';
+
     if (isMeyadName(name)) {
-        showToast('👑 أهلاً بكِ يا ميعاد! تم نشر تعليقك بصفتك الزبونة الأكثر طلباً في متجر ماهر 🏆✨');
+        showToast('👑 أهلاً بكِ يا ميعاد! تم نشر تعليقك بصفتك الزبونة رقم #1 والأكثر طلباً في متجر ماهر 🏆✨');
     } else {
         showToast('🎉 تم نشر تعليقك علناً في الموقع ليراها جميع الزوار!');
     }
@@ -1007,6 +1077,11 @@ async function deletePublicComment(commentId) {
         console.warn('Delete sync error:', e);
     }
 }
+
+// Auto refresh public comments every 12 seconds
+setInterval(() => {
+    loadPublicComments(true);
+}, 12000);
 
 async function likePublicComment(commentId) {
     const comment = publicCommentsList.find(c => c.id === commentId);

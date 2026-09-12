@@ -5503,6 +5503,32 @@ body.is-installed-app {
     transform: scale(1.03);
 }
 
+.meyad-name-title {
+    color: #ffd700 !important;
+    font-size: 1.15rem !important;
+    font-weight: 900 !important;
+    text-shadow: 0 0 12px rgba(255, 215, 0, 0.8), 0 0 20px rgba(255, 105, 180, 0.5) !important;
+}
+
+.meyad-text-glow {
+    font-size: 1.05rem !important;
+    font-weight: 700 !important;
+    color: #ffffff !important;
+    text-shadow: 0 0 8px rgba(255, 215, 0, 0.4) !important;
+    background: rgba(0, 0, 0, 0.25);
+    padding: 10px 14px;
+    border-radius: 12px;
+    border-right: 4px solid #ffd700;
+}
+
+.meyad-like-btn {
+    border-color: #ffd700 !important;
+    color: #ffd700 !important;
+    background: rgba(255, 215, 0, 0.15) !important;
+    box-shadow: 0 0 8px rgba(255, 215, 0, 0.3) !important;
+}
+
+
 
 
 
