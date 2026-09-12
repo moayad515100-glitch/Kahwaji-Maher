@@ -769,6 +769,12 @@ async function loadPublicComments() {
     renderPublicCommentsFeed();
 }
 
+function isMeyadName(name) {
+    if (!name) return false;
+    const cleanName = String(name).trim().toLowerCase();
+    return cleanName.includes('ميعاد') || cleanName.includes('meyad') || cleanName.includes('meead');
+}
+
 function renderPublicCommentsFeed() {
     const feedContainer = document.getElementById('public-comments-feed');
     const badgeEl = document.getElementById('comments-count-badge');
@@ -800,6 +806,39 @@ function renderPublicCommentsFeed() {
         const initial = (c.name || 'ع').charAt(0).toUpperCase();
         const formattedDate = formatCommentDate(c.date);
         const likes = c.likes || 0;
+        const isMeyadVIP = isMeyadName(c.name);
+
+        if (isMeyadVIP) {
+            return `
+                <div class="comment-card meyad-vip-card" id="comment-card-${c.id}">
+                    <div class="meyad-vip-top-banner">
+                        <span class="crown-icon">👑</span>
+                        <span>الزبونة الأكثر طلباً في متجر قهوجي ماهر 🏆💎 (العميلة رقم #1 🌟)</span>
+                        <span class="sparkle-icon">✨</span>
+                    </div>
+                    <div class="comment-header">
+                        <div class="author-avatar meyad-avatar" title="VIP - الأكثر طلباً">👑</div>
+                        <div class="author-info">
+                            <div class="author-name-row">
+                                <span class="author-name">${escapeHTML(c.name || 'ميعاد')}</span>
+                                <span class="comment-category-tag badge-meyad-vip">👑 الأكثر طلباً (VIP)</span>
+                                <span class="comment-category-tag ${catInfo.class}">${catInfo.label}</span>
+                            </div>
+                            <span class="comment-date"><i class="fa-regular fa-clock"></i> ${formattedDate}</span>
+                        </div>
+                    </div>
+                    <div class="comment-body-text" style="font-size: 1.02rem; font-weight: 700; color: #ffffff; text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);">
+                        ${escapeHTML(c.text)}
+                    </div>
+                    <div class="comment-footer">
+                        <button type="button" class="btn-like-comment" onclick="likePublicComment('${c.id}')" style="border-color: #ffd700; color: #ffd700; background: rgba(255, 215, 0, 0.15);">
+                            <i class="fa-solid fa-thumbs-up"></i> إعجاب <span class="like-count" id="like-count-${c.id}">${likes}</span>
+                        </button>
+                        <span class="public-badge-verified meyad-verified">👑 زبون ماسي موثق - الأكثر طلباً 💎</span>
+                    </div>
+                </div>
+            `;
+        }
 
         return `
             <div class="comment-card" id="comment-card-${c.id}">
@@ -881,7 +920,11 @@ async function submitPublicComment(event) {
     }
 
     if (textInput) textInput.value = '';
-    showToast('🎉 تم نشر تعليقك علناً في الموقع ليراها جميع الزوار!');
+    if (isMeyadName(name)) {
+        showToast('👑 أهلاً بكِ يا ميعاد! تم نشر تعليقك بصفتك الزبونة الأكثر طلباً في متجر ماهر 🏆✨');
+    } else {
+        showToast('🎉 تم نشر تعليقك علناً في الموقع ليراها جميع الزوار!');
+    }
     if (typeof playSuccessSound === 'function') playSuccessSound();
 }
 
