@@ -779,9 +779,9 @@ async function loadPublicComments(isSilent = false) {
     } catch(err) {}
 
     try {
-        let response = await fetch(COMMENTS_API_ENDPOINT);
+        let response = await fetch(COMMENTS_API_ENDPOINT + '?_t=' + Date.now(), { cache: 'no-store' });
         if (!response.ok) {
-            response = await fetch(DIRECT_BIN_ENDPOINT);
+            response = await fetch(DIRECT_BIN_ENDPOINT + '?_t=' + Date.now(), { cache: 'no-store' });
         }
         const data = await response.json();
         if (data && Array.isArray(data.comments)) {

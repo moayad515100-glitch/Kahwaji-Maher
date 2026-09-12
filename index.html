@@ -1442,7 +1442,15 @@
     </div>
 
     <!-- Script file -->
-    <script src="app.js?v=46.20"></script>
+    <script>
+        try {
+            const cached = localStorage.getItem('maher_cached_comments');
+            if (cached && (cached.includes('أحمد العتيبي') || cached.includes('سارة الشمري') || cached.includes('c1'))) {
+                localStorage.removeItem('maher_cached_comments');
+            }
+        } catch(e) {}
+    </script>
+    <script src="app.js?v=50.00"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {

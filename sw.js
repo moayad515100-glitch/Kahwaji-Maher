@@ -1,4 +1,4 @@
-const CACHE_NAME = 'maher-coffee-v494';
+const CACHE_NAME = 'maher-coffee-v500-final';
 const ASSETS = [
   './',
   './index.html',
@@ -19,11 +19,7 @@ const ASSETS = [
 
 // Install Event
 self.addEventListener('install', (e) => {
-  e.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS);
-    }).then(() => self.skipWaiting())
-  );
+  self.skipWaiting();
 });
 
 // Activate Event
@@ -43,25 +39,30 @@ self.addEventListener('activate', (e) => {
 
 // Fetch Event
 self.addEventListener('fetch', (e) => {
-  // Only cache GET requests and from same origin to prevent caching GitHub API or external scripts dynamically
-  if (e.request.method !== 'GET' || !e.request.url.startsWith(self.location.origin)) {
+  const url = e.request.url;
+  
+  // NEVER cache API requests, non-GET, or cross-origin requests
+  if (e.request.method !== 'GET' || !url.startsWith(self.location.origin) || url.includes('/api/')) {
+    return;
+  }
+  
+  // Network first for app.js and style.css and index.html to ensure live updates reach users instantly
+  if (url.includes('app.js') || url.includes('style.css') || url.includes('index.html')) {
+    e.respondWith(
+      fetch(e.request).then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200) {
+          const resClone = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(e.request, resClone));
+        }
+        return networkResponse;
+      }).catch(() => caches.match(e.request))
+    );
     return;
   }
   
   e.respondWith(
     caches.match(e.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        // Fetch in background to update cache (stale-while-revalidate strategy)
-        fetch(e.request).then((networkResponse) => {
-          if (networkResponse.status === 200) {
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(e.request, networkResponse);
-            });
-          }
-        }).catch(() => {});
-        return cachedResponse;
-      }
-      return fetch(e.request);
+      return cachedResponse || fetch(e.request);
     })
   );
 });
