@@ -259,7 +259,7 @@ a {
     display: flex;
     align-items: center;
     padding-top: 85px;
-    background-image: url('5960730354593238429.jpg');
+    background-image: url('saudi96-logo.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -5527,6 +5527,35 @@ body.is-installed-app {
     background: rgba(255, 215, 0, 0.15) !important;
     box-shadow: 0 0 8px rgba(255, 215, 0, 0.3) !important;
 }
+
+/* 🇸🇦 SAUDI NATIONAL DAY 96 STYLES */
+@keyframes pulse96 {
+    0% { transform: scale(1); box-shadow: 0 0 10px rgba(16, 185, 129, 0.4); }
+    50% { transform: scale(1.05); box-shadow: 0 0 22px rgba(16, 185, 129, 0.85); }
+    100% { transform: scale(1); box-shadow: 0 0 10px rgba(16, 185, 129, 0.4); }
+}
+
+.saudi96-badge-active {
+    background: linear-gradient(135deg, #005c2b 0%, #10b981 100%) !important;
+    color: #ffffff !important;
+    border: 1px solid #ffd700 !important;
+    animation: pulse96 2s infinite !important;
+}
+
+.saudi96-discount-banner {
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px dashed #10b981;
+    color: #10b981;
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin-top: 10px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 
 
 
