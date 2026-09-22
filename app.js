@@ -26,16 +26,15 @@ const SAUDI_96_LAUNCH_TIME = new Date('2026-09-21T15:00:00+03:00').getTime();
 const SAUDI_96_END_TIME = SAUDI_96_LAUNCH_TIME + (24 * 60 * 60 * 1000); 
 
 function isSaudi96Prelaunch() {
-    return Date.now() < SAUDI_96_LAUNCH_TIME;
+    return false; // Event is active immediately without timer
 }
 
 function isSaudi96Active() {
-    const now = Date.now();
-    return now >= SAUDI_96_LAUNCH_TIME && now < SAUDI_96_END_TIME;
+    return true; // Event & 96 Halalah prices active immediately!
 }
 
 function isSaudi96Finished() {
-    return Date.now() >= SAUDI_96_END_TIME;
+    return false;
 }
 
 // تحميل الفعالية النشطة من الذاكرة المحلية إذا كانت أحدث لتجاوز الكاش والتأخر للمطور
@@ -3321,8 +3320,8 @@ function updateStockGridHTML() {
 // Main Initialization Hook for the active event
 // ----------------------------------------------------------
 function updateSaudi96ProductsUI() {
-    const isPrelaunch = isSaudi96Prelaunch();
-    const isActive = isSaudi96Active();
+    const isPrelaunch = false;
+    const isActive = true;
 
     document.querySelectorAll('.product-card').forEach(card => {
         const id = card.getAttribute('data-id');
