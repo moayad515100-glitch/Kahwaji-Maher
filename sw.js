@@ -1,4 +1,4 @@
-const CACHE_NAME = 'maher-coffee-v6100-macos-desktop';
+const CACHE_NAME = 'maher-coffee-v6200-revert-original';
 const ASSETS = [
   './',
   './index.html',
