@@ -16,35 +16,14 @@
 //   'grind_challenge': "Coffee Grind Speed" clicker game (click fast to win)
 //   'neon_magic'     : "Magic Glowing Coffee" neon theme (glow, mouse trails)
 // ==========================================================
-let ACTIVE_EVENT = 'saudi_96'; 
-let ACTIVE_EVENT_TIMESTAMP = 1789919163535; 
-
-// 🇸🇦 SAUDI NATIONAL DAY 96 TIMESTAMPS
-// Launch Time: Tomorrow 3:00 PM Saudi Time (2026-09-21 15:00:00 GMT+3)
-const SAUDI_96_LAUNCH_TIME = new Date('2026-09-21T15:00:00+03:00').getTime(); 
-// Event End Time: 24 Hours later (2026-09-22 15:00:00 GMT+3)
-const SAUDI_96_END_TIME = SAUDI_96_LAUNCH_TIME + (24 * 60 * 60 * 1000); 
-
-function isSaudi96Prelaunch() {
-    return false; // Event is active immediately without timer
-}
-
-function isSaudi96Active() {
-    return true; // Event & 96 Halalah prices active immediately!
-}
-
-function isSaudi96Finished() {
-    return false;
-}
+let ACTIVE_EVENT = 'where_is_maher'; 
+let ACTIVE_EVENT_TIMESTAMP = 1788261899000; 
 
 // تحميل الفعالية النشطة من الذاكرة المحلية إذا كانت أحدث لتجاوز الكاش والتأخر للمطور
 try {
     const savedEvent = localStorage.getItem('maher_active_event');
     const savedTime = parseInt(localStorage.getItem('maher_active_event_time') || '0', 10);
-    if (savedEvent && savedEvent !== 'saudi_96' && savedTime < 1790000000000) {
-        localStorage.removeItem('maher_active_event');
-        localStorage.removeItem('maher_active_event_time');
-    } else if (savedEvent && savedTime > ACTIVE_EVENT_TIMESTAMP) {
+    if (savedEvent && savedTime > ACTIVE_EVENT_TIMESTAMP) {
         ACTIVE_EVENT = savedEvent;
     }
 } catch(e) {}
@@ -285,18 +264,7 @@ function addToCart(productId, name, price, image) {
     }
 
     let finalName = name;
-    if (ACTIVE_EVENT === 'saudi_96' && isSaudi96Active()) {
-        if (productId === 'cold_brew') {
-            finalPrice = 6;
-            finalName = `${name} (سعر عادي)`;
-        } else if (productId === 'milkshake') {
-            finalPrice = 7;
-            finalName = `${name} (عرض 2 + 1 مجاناً)`;
-        } else {
-            finalPrice = 0.96; // 96 Halalah!
-            finalName = `${name} (عرض 96 هللة 🇸🇦)`;
-        }
-    } else if (currentEvent === 'maher_vacation') {
+    if (currentEvent === 'maher_vacation') {
         finalPrice = fluctuatedPrices[productId] !== undefined ? fluctuatedPrices[productId] : finalPrice;
         finalName = `${name} (سعر البورصة)`;
     } else if (currentEvent === 'matcha') {
@@ -480,40 +448,14 @@ function updateCartUI() {
         cartItemsContainer.appendChild(itemElement);
     });
 
-    // Calculate Subtotal
-    let rawSubtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    let milkshakeDiscount = 0;
-
-    // Check Milkshake Buy 2 Get 1 Free deal (Applicable in Saudi 96 Event & general deal)
-    const milkshakeCount = cart
-        .filter(item => item.productId === 'milkshake')
-        .reduce((sum, item) => sum + item.quantity, 0);
-
-    if (milkshakeCount >= 3) {
-        const freeCount = Math.floor(milkshakeCount / 3);
-        milkshakeDiscount = freeCount * 7.00; // Free Milkshake price!
-    }
-
-    const total = Math.max(0, rawSubtotal - milkshakeDiscount);
-
-    // If milkshake discount is active, append discount row to cart drawer
-    if (milkshakeDiscount > 0) {
-        const discountRow = document.createElement('div');
-        discountRow.className = 'saudi96-discount-banner';
-        discountRow.style.cssText = 'background: rgba(16, 185, 129, 0.15); border: 1px dashed #10b981; color: #10b981; padding: 8px 12px; border-radius: 8px; margin-bottom: 12px; font-size: 0.85rem; font-weight: bold; display: flex; justify-content: space-between; align-items: center; direction: rtl;';
-        discountRow.innerHTML = `
-            <span>🎁 خصم اليوم الوطني 96 (ميلك شيك مجاني 2+1):</span>
-            <span>-${milkshakeDiscount.toFixed(2)} <span class="sar-symbol" title="ريال سعودي"></span></span>
-        `;
-        cartItemsContainer.insertBefore(discountRow, cartItemsContainer.firstChild);
-    }
-
+    // Calculate & Display Total
+    const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     const wantsDelivery = isDeliverySelected();
     if (wantsDelivery && cart.length > 0) {
-        const finalTotal = (total + DELIVERY_FEE).toFixed(2);
-        cartTotal.innerHTML = `${total.toFixed(2)} <span class="sar-symbol" title="ريال سعودي"></span> + ${DELIVERY_FEE} <span class="sar-symbol" title="ريال سعودي"></span> (توصيل) = <span style="color: var(--neon-matcha);">${finalTotal} <span class="sar-symbol" title="ريال سعودي"></span></span>`;
+        const finalTotal = total + DELIVERY_FEE;
+        cartTotal.innerHTML = `${total} <span class="sar-symbol" title="ريال سعودي"></span> + ${DELIVERY_FEE} <span class="sar-symbol" title="ريال سعودي"></span> (توصيل) = <span style="color: var(--neon-matcha);">${finalTotal} <span class="sar-symbol" title="ريال سعودي"></span></span>`;
     } else {
-        cartTotal.innerHTML = `${total.toFixed(2)} <span class="sar-symbol" title="ريال سعودي"></span>`;
+        cartTotal.innerHTML = `${total} <span class="sar-symbol" title="ريال سعودي"></span>`;
     }
     
     // Checkout button is enabled for everyone, pickup option is allowed outside Mecca
@@ -3322,69 +3264,6 @@ function updateStockGridHTML() {
 // ----------------------------------------------------------
 // Main Initialization Hook for the active event
 // ----------------------------------------------------------
-function updateSaudi96ProductsUI() {
-    const isPrelaunch = false;
-    const isActive = true;
-
-    document.querySelectorAll('.product-card').forEach(card => {
-        const id = card.getAttribute('data-id');
-        const priceEl = card.querySelector('.product-price');
-        const tagContainer = card.querySelector('.product-image-container');
-
-        // Clean up previous saudi96 tags
-        card.querySelectorAll('.tag-saudi96').forEach(t => t.remove());
-
-        if (id === 'cold_brew') {
-            if (tagContainer && !card.querySelector('.tag-coldbrew-excluded')) {
-                const badge = document.createElement('span');
-                badge.className = 'product-tag tag-saudi96 tag-coldbrew-excluded';
-                badge.style.cssText = 'background: #e11d48; color: #fff; font-weight: bold; border-radius: 8px; font-size: 0.75rem; box-shadow: 0 0 10px rgba(225, 29, 72, 0.4);';
-                badge.innerHTML = '⛔ مستثنى من عرض 96 هللة (6 ريال)';
-                tagContainer.appendChild(badge);
-            }
-        } else if (id === 'milkshake') {
-            if (tagContainer && !card.querySelector('.tag-milkshake-deal')) {
-                const badge = document.createElement('span');
-                badge.className = 'product-tag tag-saudi96 tag-milkshake-deal';
-                badge.style.cssText = 'background: linear-gradient(135deg, #059669, #10b981); color: #fff; font-weight: bold; border-radius: 8px; font-size: 0.75rem; box-shadow: 0 0 12px rgba(16, 185, 129, 0.5);';
-                badge.innerHTML = '🎁 عرض خاص: اشترِ 2 واكسب الثالث مجاناً! (عرض 2 + 1) 🥤';
-                tagContainer.appendChild(badge);
-            }
-        } else {
-            if (isActive) {
-                if (priceEl && !priceEl.querySelector('.saudi96-price-tag')) {
-                    let defaultPrice = 5;
-                    if (id === 'pro' || id === 'coffee_generic' || id === 'espresso' || id === 'v60_360') defaultPrice = 5;
-                    else if (id === 'icetea' || id === 'juice') defaultPrice = 3;
-                    else if (id === 'matcha') defaultPrice = 6;
-                    else if (id === 'cookie') defaultPrice = 4;
-
-                    priceEl.innerHTML = `
-                        <span style="text-decoration: line-through; opacity: 0.5; margin-left: 6px; font-size: 0.85rem;">${defaultPrice} ريال</span>
-                        <span class="saudi96-price-tag" style="color: #10b981; font-weight: 900; font-size: 1.3rem; text-shadow: 0 0 10px rgba(16,185,129,0.4);">0.96</span>
-                        <span class="sar-symbol" title="ريال سعودي"></span>
-                        <span class="price-suffix" style="color: #ffd700; font-weight: bold; font-size: 0.8rem;">(96 هللة! 🇸🇦)</span>
-                    `;
-                }
-                if (tagContainer && !card.querySelector('.tag-active-96')) {
-                    const badge = document.createElement('span');
-                    badge.className = 'product-tag tag-saudi96 tag-active-96 saudi96-badge-active';
-                    badge.innerHTML = '🇸🇦 عرض اليوم الوطني: 96 هللة!';
-                    tagContainer.appendChild(badge);
-                }
-            } else if (isPrelaunch) {
-                if (tagContainer && !card.querySelector('.tag-prelaunch-96')) {
-                    const badge = document.createElement('span');
-                    badge.className = 'product-tag tag-saudi96 tag-prelaunch-96';
-                    badge.style.cssText = 'background: linear-gradient(135deg, #004d25, #059669); color: #ffd700; font-weight: bold; border-radius: 8px; font-size: 0.75rem;';
-                    badge.innerHTML = '⚡ ينخفض إلى 96 هللة غداً الساعة 3 م!';
-                    tagContainer.appendChild(badge);
-                }
-            }
-        }
-    });
-}
-
 function checkGlobalCountdown() {
     const bannerEl = document.getElementById('prelaunch-timer-banner');
     const heroCdContainer = document.getElementById('hero-countdown-container');
@@ -3396,127 +3275,6 @@ function checkGlobalCountdown() {
         if (heroCdContainer) heroCdContainer.style.display = 'none';
         if (retroCompBtn) retroCompBtn.style.display = 'block';
         return;
-    }
-
-    if (ACTIVE_EVENT === 'saudi_96') {
-        updateSaudi96ProductsUI();
-
-        if (isSaudi96Prelaunch()) {
-            // PRE-LAUNCH COUNTDOWN PHASE
-            bannerEl.style.display = 'block';
-            bannerEl.style.background = 'linear-gradient(135deg, #004d25, #007a3d)';
-            bannerEl.style.color = '#ffffff';
-            bannerEl.style.textAlign = 'center';
-            bannerEl.style.padding = '12px 15px';
-            bannerEl.style.fontWeight = 'bold';
-            bannerEl.style.boxShadow = '0 4px 15px rgba(0, 108, 53, 0.4)';
-            
-            if (moodHeaderBanner) moodHeaderBanner.style.display = 'none';
-            if (heroCdContainer) {
-                heroCdContainer.style.display = 'flex';
-                const titleEl = heroCdContainer.querySelector('.countdown-title');
-                if (titleEl) {
-                    titleEl.innerHTML = `🇸🇦 <strong>العد التنازلي لانطلاق عروض اليوم الوطني 96 (كل المنيو بـ 0.96 ريال!):</strong>`;
-                }
-            }
-            
-            const updatePrelaunchTimer = () => {
-                const diff = SAUDI_96_LAUNCH_TIME - Date.now();
-                if (diff <= 0) {
-                    if (globalCountdownInterval) {
-                        clearInterval(globalCountdownInterval);
-                        globalCountdownInterval = null;
-                    }
-                    checkGlobalCountdown();
-                    return;
-                }
-                
-                const hrs = Math.floor(diff / (1000 * 60 * 60));
-                const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                const secs = Math.floor((diff % (1000 * 60)) / 1000);
-                
-                const fHrs = String(hrs).padStart(2, '0');
-                const fMins = String(mins).padStart(2, '0');
-                const fSecs = String(secs).padStart(2, '0');
-                
-                bannerEl.innerHTML = `🇸🇦 <strong>ترقبوا انطلاق عروض اليوم الوطني 96 لدى قهوجي ماهر! 💚</strong> المنيو بـ 96 هللة ينطلق غداً الساعة 3:00 م ويستمر 24 ساعة فقط! ⏳ المتبقي: <span style="color: #ffd700; font-family: monospace; font-size: 1.15rem; background: rgba(0,0,0,0.3); padding: 2px 8px; border-radius: 4px;">${fHrs}:${fMins}:${fSecs}</span>`;
-                
-                const hoursEl = document.getElementById('cd-hours');
-                const minutesEl = document.getElementById('cd-minutes');
-                const secondsEl = document.getElementById('cd-seconds');
-                if (hoursEl) hoursEl.textContent = fHrs;
-                if (minutesEl) minutesEl.textContent = fMins;
-                if (secondsEl) secondsEl.textContent = fSecs;
-            };
-            
-            if (!globalCountdownInterval) {
-                updatePrelaunchTimer();
-                globalCountdownInterval = setInterval(updatePrelaunchTimer, 1000);
-            }
-            return;
-        } else if (isSaudi96Active()) {
-            // ACTIVE SAUDI 96 EVENT PHASE (24 HOURS)
-            bannerEl.style.display = 'block';
-            bannerEl.style.background = 'linear-gradient(90deg, #005c2b 0%, #00a84e 50%, #005c2b 100%)';
-            bannerEl.style.color = '#ffffff';
-            bannerEl.style.textAlign = 'center';
-            bannerEl.style.padding = '12px 15px';
-            bannerEl.style.fontWeight = 'bold';
-            bannerEl.style.boxShadow = '0 4px 20px rgba(0, 200, 80, 0.5)';
-            
-            if (moodHeaderBanner) moodHeaderBanner.style.display = 'none';
-            if (heroCdContainer) {
-                heroCdContainer.style.display = 'flex';
-                const titleEl = heroCdContainer.querySelector('.countdown-title');
-                if (titleEl) {
-                    titleEl.innerHTML = `🇸🇦✨ <strong>عروض اليوم الوطني 96 انطلقت الآن! متبقي على نهاية العرض:</strong>`;
-                }
-            }
-            
-            const updateActiveTimer = () => {
-                const diff = SAUDI_96_END_TIME - Date.now();
-                if (diff <= 0) {
-                    if (globalCountdownInterval) {
-                        clearInterval(globalCountdownInterval);
-                        globalCountdownInterval = null;
-                    }
-                    checkGlobalCountdown();
-                    return;
-                }
-                
-                const hrs = Math.floor(diff / (1000 * 60 * 60));
-                const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                const secs = Math.floor((diff % (1000 * 60)) / 1000);
-                
-                const fHrs = String(hrs).padStart(2, '0');
-                const fMins = String(mins).padStart(2, '0');
-                const fSecs = String(secs).padStart(2, '0');
-                
-                bannerEl.innerHTML = `🎉 <strong>عروض اليوم الوطني 96 انطلقت الآن! المنيو بـ 0.96 ريال (96 هللة) 🇸🇦✨</strong> | متبقي على النهاية: <span style="color: #ffd700; font-family: monospace; font-size: 1.15rem; background: rgba(0,0,0,0.3); padding: 2px 8px; border-radius: 4px;">${fHrs}:${fMins}:${fSecs}</span> ⏳`;
-                
-                const hoursEl = document.getElementById('cd-hours');
-                const minutesEl = document.getElementById('cd-minutes');
-                const secondsEl = document.getElementById('cd-seconds');
-                if (hoursEl) hoursEl.textContent = fHrs;
-                if (minutesEl) minutesEl.textContent = fMins;
-                if (secondsEl) secondsEl.textContent = fSecs;
-            };
-            
-            if (!globalCountdownInterval) {
-                updateActiveTimer();
-                globalCountdownInterval = setInterval(updateActiveTimer, 1000);
-            }
-            return;
-        } else {
-            // EVENT FINISHED
-            bannerEl.style.display = 'block';
-            bannerEl.style.background = '#1e293b';
-            bannerEl.style.color = '#ffd700';
-            bannerEl.style.padding = '10px';
-            bannerEl.innerHTML = `🇸🇦 <strong>انتهت عروض اليوم الوطني 96! شكراً لجميع من شارك معنا 💚✨</strong>`;
-            if (heroCdContainer) heroCdContainer.style.display = 'none';
-            return;
-        }
     }
     
     if (retroCompBtn) retroCompBtn.style.display = 'block';
