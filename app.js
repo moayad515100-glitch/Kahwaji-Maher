@@ -1851,211 +1851,10 @@ function renderActiveEventTemplate() {
                 }
             }, 1000);
         } else {
-            // Post-launch: render full Win95 Desktop environment!
-            const redeemed = localStorage.getItem('maher_matcha_redeemed') === 'true';
-            retroEventDynamicBody.innerHTML = `
-                <div class="maher-os-desktop" id="maher-desktop">
-                    <!-- Icons Grid -->
-                    <div class="desktop-icons">
-                        <div class="desktop-icon" onclick="openOSWindow('win-event')">
-                            <span class="desktop-icon-img">📁</span>
-                            <span class="desktop-icon-text">لوحة الفعاليات</span>
-                        </div>
-                        <div class="desktop-icon" onclick="openOSWindow('win-cmd')">
-                            <span class="desktop-icon-img">🖥️</span>
-                            <span class="desktop-icon-text">Terminal CMD</span>
-                        </div>
-                        <div class="desktop-icon" onclick="openOSWindow('win-barista')">
-                            <span class="desktop-icon-img">🎮</span>
-                            <span class="desktop-icon-text">بارستا ماهر</span>
-                        </div>
-                        <div class="desktop-icon" onclick="openOSWindow('win-paint')">
-                            <span class="desktop-icon-img">🎨</span>
-                            <span class="desktop-icon-text">لاتيه آرت</span>
-                        </div>
-                        <div class="desktop-icon" onclick="openOSWindow('win-radio')">
-                            <span class="desktop-icon-img">📻</span>
-                            <span class="desktop-icon-text">راديو لوفي</span>
-                        </div>
-                        <div class="desktop-icon" onclick="openOSWindow('win-notepad')">
-                            <span class="desktop-icon-img">📝</span>
-                            <span class="desktop-icon-text">المفكرة</span>
-                        </div>
-                    </div>
-
-                    <!-- Windows -->
-                    <!-- Window 1: Event Console -->
-                    <div class="os-window" id="win-event" style="display: none;">
-                        <div class="window-titlebar" onmousedown="dragOSWindow(event, 'win-event')">
-                            <span class="window-title">📁 لوحة الفعاليات</span>
-                            <div class="window-controls">
-                                <button class="win-btn" onclick="closeOSWindow('win-event')">X</button>
-                            </div>
-                        </div>
-                        <div class="window-body">
-                            <div style="text-align: center; background: #e8f5e9; padding: 8px; border: 1px solid #81c784; border-radius: 4px; direction: rtl; font-family: var(--font-arabic);">
-                                <h4 style="color:#2e7d32;">🍵 أسبوع الماتشا الماهرة نشط!</h4>
-                                <p style="font-size:0.75rem; margin-top:5px; color:#333;">لقد قمنا بتوفير الماتشا وسوبر برو مجاناً بالكامل للجميع! يمكنك طلب الأكواب الآن من المتجر.</p>
-                                <hr style="margin: 8px 0; border: none; border-top: 1px dotted #ccc;">
-                                <div style="font-size: 0.8rem; font-weight: bold; color: #2e7d32; margin-bottom: 6px;">🎁 هدية أسبوع الماتشا الخاصة بك:</div>
-                                <button class="win95-btn" id="btn-claim-free-matcha" style="width: 100%; font-weight: bold; background: #2e7d32; color: #fff; border-color: #2e7d32; cursor: pointer; padding: 6px 12px; user-select:none;" ${redeemed ? 'disabled' : ''}>
-                                    ${redeemed ? 'تم استلام الكوب المجاني بنجاح! ✔️' : 'ماتشا ماهرة مجاناً (كوب واحد فقط!) 🍵'}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Window: CMD Terminal -->
-                    <div class="os-window" id="win-cmd" style="display: none; min-width: 320px;">
-                        <div class="window-titlebar" onmousedown="dragOSWindow(event, 'win-cmd')">
-                            <span class="window-title">🖥️ Command Prompt (cmd.exe)</span>
-                            <div class="window-controls">
-                                <button class="win-btn" onclick="closeOSWindow('win-cmd')">X</button>
-                            </div>
-                        </div>
-                        <div class="window-body" style="background: #000; color: #00ff00; font-family: 'Courier New', Courier, monospace; font-size: 0.75rem; padding: 10px; height: 230px; display: flex; flex-direction: column; direction: ltr; text-align: left;">
-                            <div id="cmd-output" style="flex: 1; overflow-y: auto; margin-bottom: 6px; line-height: 1.4; word-break: break-all;">
-                                <div>Microsoft(R) Windows 95 [Version 4.00.950]</div>
-                                <div>(C)Copyright Kahwaji Maher Corp 1981-1995.</div>
-                                <br>
-                                <div>Type <span style="color:#ffff00;">'help'</span> to view commands list.</div>
-                                <div>Try typing <span style="color:#ffff00;">'buy classic'</span> or secret command <span style="color:#ffff00;">'cmd Kahwaji Maher'</span>!</div>
-                            </div>
-                            <div style="display: flex; align-items: center; border-top: 1px solid #333; padding-top: 4px;">
-                                <span style="color: #00ff00; font-weight: bold; margin-right: 4px;">C:\\MAHER95&gt;</span>
-                                <input type="text" id="cmd-input-field" style="flex: 1; background: transparent; border: none; outline: none; color: #00ff00; font-family: monospace; font-size: 0.75rem;" placeholder="type command..." onkeydown="handleCmdKeyDown(event)">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Window 2: Barista Game -->
-                    <div class="os-window" id="win-barista" style="display: none;">
-                        <div class="window-titlebar" onmousedown="dragOSWindow(event, 'win-barista')">
-                            <span class="window-title">🎮 بارستا ماهر</span>
-                            <div class="window-controls">
-                                <button class="win-btn" onclick="closeOSWindow('win-barista')">X</button>
-                            </div>
-                        </div>
-                        <div class="window-body" style="background:#f4f4f4; padding:6px;">
-                            <div id="barista-menu-view" style="display: block; text-align:center;">
-                                <p style="font-size:0.75rem; color:#555; margin-bottom:8px; line-height:1.4;">
-                                    محاكي بارستا ماهر: قم بتحضير المشروبات المطلوبة بالترتيب الصحيح لكسب النقاط. حضّر 5 طلبات صحيحة لتربح!
-                                </p>
-                                <button class="win95-btn" onclick="startBaristaGame()" style="width:100%; padding:6px; font-weight:bold;">ابدأ الطبخ! ☕🎮</button>
-                            </div>
-                            <div id="barista-game-view" style="display: none;">
-                                <div class="barista-order-bubble" id="barista-order-text">طلب الزبون: ...</div>
-                                <div style="display:flex; justify-content:space-between; font-size:0.75rem; margin-bottom:5px;">
-                                    <span>النقاط: <strong id="barista-points">0 / 5</strong></span>
-                                    <span>الوقت: <strong id="barista-time">45s</strong></span>
-                                </div>
-                                <div class="barista-progress-cup" id="barista-cup-display">كوب فارغ</div>
-                                <div class="barista-ingredients-grid">
-                                    <div class="ingredient-group-title">الأكواب:</div>
-                                    <button class="barista-btn" onclick="selectBaristaIngredient('cup', 'وسط')">🥤 وسط</button>
-                                    <button class="barista-btn" onclick="selectBaristaIngredient('cup', 'كبير')">🥤 كبير</button>
-                                    
-                                    <div class="ingredient-group-title">المشروبات:</div>
-                                    <button class="barista-btn" onclick="selectBaristaIngredient('drink', 'كلاسيك')">☕ كلاسيك</button>
-                                    <button class="barista-btn" onclick="selectBaristaIngredient('drink', 'برو')">☕ برو</button>
-                                    <button class="barista-btn" onclick="selectBaristaIngredient('drink', 'ماتشا')">🍵 ماتشا</button>
-                                    
-                                    <div class="ingredient-group-title">السكر والحليب:</div>
-                                    <button class="barista-btn" onclick="selectBaristaIngredient('sugar', 'بدون')">🍬 بدون</button>
-                                    <button class="barista-btn" onclick="selectBaristaIngredient('sugar', 'سكر وسط')">🍬 وسط</button>
-                                    <button class="barista-btn" onclick="selectBaristaIngredient('milk', 'milk')">🥛 حليب</button>
-                                    <button class="barista-btn" onclick="selectBaristaIngredient('milk', 'nomilk')">🥛 بدون حليب</button>
-                                </div>
-                                <div style="display:flex; gap:6px; margin-top:8px;">
-                                    <button class="win95-btn" onclick="submitBaristaOrder()" style="flex:1; background:#2e7d32; color:#fff;">تقديم 📤</button>
-                                    <button class="win95-btn" onclick="resetBaristaCup()" style="flex:1; background:#d9534f; color:#fff;">تفريغ 🗑️</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Window 3: Paint -->
-                    <div class="os-window" id="win-paint" style="display: none;">
-                        <div class="window-titlebar" onmousedown="dragOSWindow(event, 'win-paint')">
-                            <span class="window-title">🎨 لاتيه آرت</span>
-                            <div class="window-controls">
-                                <button class="win-btn" onclick="closeOSWindow('win-paint')">X</button>
-                            </div>
-                        </div>
-                        <div class="window-body" style="display:flex; flex-direction:column; align-items:center; padding:5px;">
-                            <div class="paint-canvas-container">
-                                <canvas id="paint-canvas" width="130" height="130"></canvas>
-                            </div>
-                            <div class="paint-palette">
-                                <div class="paint-color active" style="background:#3d2314;" onclick="setPaintColor('#3d2314', this)"></div>
-                                <div class="paint-color" style="background:#fdf6e2;" onclick="setPaintColor('#fdf6e2', this)"></div>
-                                <div class="paint-color" style="background:#b37d14;" onclick="setPaintColor('#b37d14', this)"></div>
-                                <div class="paint-color" style="background:#4c7c3c;" onclick="setPaintColor('#4c7c3c', this)"></div>
-                            </div>
-                            <button class="win95-btn" onclick="clearPaintCanvas()" style="width:100%; margin-top:6px; padding:3px;">مسح الكوب 🧹</button>
-                        </div>
-                    </div>
-
-                    <!-- Window 4: Radio -->
-                    <div class="os-window" id="win-radio" style="display: none;">
-                        <div class="window-titlebar" onmousedown="dragOSWindow(event, 'win-radio')">
-                            <span class="window-title">📻 راديو لوفي</span>
-                            <div class="window-controls">
-                                <button class="win-btn" onclick="closeOSWindow('win-radio')">X</button>
-                            </div>
-                        </div>
-                        <div class="window-body" style="padding:10px;">
-                            <div class="radio-display" id="radio-track-name">📻 راديو ماهر: مغلق 💤</div>
-                            <div class="radio-controls">
-                                <button class="win95-btn" onclick="toggleOSRadio()" style="padding:4px 10px; font-weight:bold;" id="btn-radio-play">تشغيل ▶</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Window 5: Notepad -->
-                    <div class="os-window" id="win-notepad" style="display: none;">
-                        <div class="window-titlebar" onmousedown="dragOSWindow(event, 'win-notepad')">
-                            <span class="window-title">📝 المفكرة</span>
-                            <div class="window-controls">
-                                <button class="win-btn" onclick="closeOSWindow('win-notepad')">X</button>
-                            </div>
-                        </div>
-                        <div class="window-body" style="background:#fff; color:#000; font-family:monospace; font-size:0.7rem; direction:rtl; text-align:right;">
-                            <strong>مذكرات المعلم ماهر:</strong><br>
-                            - لا تخبر أحداً بالشيفرات السرية للموقع!<br>
-                            🗝️ اكتب الكود في أي مكان بالموقع لتفعيله:<br>
-                            • <code>MAHERMATCHAFREE</code> : تصفير مؤشر الماتشا المجانية مجدداً.<br>
-                            • <code>FASTCAR</code> : تفعيل وضع السرعة الفائقة والحياة اللانهائية لسيارتك في مطاردة السارق.<br>
-                            • <code>BARISTAPASS</code> : الفوز فوراً بلعبة البارستا مجاناً كوب ماتشا.<br>
-                            • <code>cmd Kahwaji Maher</code> : تحويل المنيو إلى كمبيوتر قديم.<br>
-                        </div>
-                    </div>
-
-                    <!-- Taskbar -->
-                    <div class="os-taskbar">
-                        <button class="start-btn" id="os-start-btn" onclick="toggleStartMenu()">☕ ابدأ</button>
-                        <div class="taskbar-tabs" id="taskbar-tabs-container"></div>
-                        <div class="taskbar-clock" id="taskbar-clock-display">--:-- م</div>
-                    </div>
-
-                    <!-- Start Menu Dropdown -->
-                    <div class="start-menu" id="start-menu-dropdown">
-                        <div style="display: flex;">
-                            <div class="start-menu-sidebar">MAHER 95</div>
-                            <div style="flex-grow: 1;">
-                                <div class="start-menu-item" onclick="openOSWindow('win-event')">📁 لوحة الفعاليات</div>
-                                <div class="start-menu-item" onclick="openOSWindow('win-cmd')">🖥️ Terminal CMD</div>
-                                <div class="start-menu-item" onclick="openOSWindow('win-barista')">🎮 بارستا ماهر</div>
-                                <div class="start-menu-item" onclick="openOSWindow('win-paint')">🎨 لاتيه آرت</div>
-                                <div class="start-menu-item" onclick="openOSWindow('win-radio')">📻 راديو لوفي</div>
-                                <div class="start-menu-item" onclick="openOSWindow('win-notepad')">📝 المفكرة</div>
-                                <hr style="margin: 4px 0; border: none; border-top: 1px solid #808080;">
-                                <div class="start-menu-item" onclick="closeRetroModalFn()">🔌 إيقاف التشغيل</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
+            renderMacosDesktop();
+        }
+    }
+}
             // Init Clock and Event button
             updateOSClock();
             setInterval(updateOSClock, 30000);
@@ -3807,21 +3606,414 @@ function setupNeonParticles() {
     });
 }
 
+// ==========================================================
+// 🖥️ MAHER OS - macOS Desktop & Terminal System
+// ==========================================================
+
+function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+function renderMacosDesktop() {
+    if (retroEventModal) {
+        retroEventModal.classList.add('macos-modal-mode');
+    }
+    
+    const now = new Date();
+    const clockStr = now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' });
+
+    retroEventDynamicBody.innerHTML = `
+        <div class="macos-desktop-wrapper">
+            <!-- 1. Top Menu Bar -->
+            <div class="macos-menubar">
+                <div class="menubar-right-group">
+                    <span class="macos-apple-logo" title="MaherOS" onclick="openMacosApp('terminal')"><i class="fa-brands fa-apple"></i></span>
+                    <span style="font-weight: 800; color: #ffd700; font-size: 0.85rem;">MaherOS</span>
+                    <span class="menubar-item" onclick="openMacosApp('terminal')">الترمينال 💻</span>
+                    <span class="menubar-item" onclick="openMacosApp('folder-secret')">لا تفتحه ⚠️</span>
+                    <span class="menubar-item" onclick="openMacosApp('works')">أعمال ماهر 💼</span>
+                    <span class="menubar-item" onclick="openMacosApp('store')">المتجر ☕</span>
+                </div>
+                <div class="menubar-left-group">
+                    <span class="menubar-status-icon"><i class="fa-solid fa-wifi"></i></span>
+                    <span class="menubar-status-icon"><i class="fa-solid fa-battery-full"></i></span>
+                    <span class="menubar-status-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+                    <span class="macos-clock-display" id="mac-live-clock">${clockStr}</span>
+                    <button onclick="closeRetroModalFn()" style="background: rgba(255,255,255,0.15); border: none; color: #fff; padding: 2px 8px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.75rem;" title="خروج من الكمبيوتر">إغلاق ✖</button>
+                </div>
+            </div>
+
+            <!-- 2. Workspace Area & Desktop Icons -->
+            <div class="macos-workspace-area">
+                <div class="desktop-icons-container">
+                    <!-- Icon 1: Secret Folder -->
+                    <div class="mac-desktop-icon" onclick="openMacosApp('folder-secret')">
+                        <div class="mac-icon-badge badge-folder">
+                            <i class="fa-solid fa-folder-closed"></i>
+                            <span class="lock-overlay"><i class="fa-solid fa-lock"></i></span>
+                        </div>
+                        <span class="mac-icon-label">لا تفتحه ⚠️</span>
+                    </div>
+
+                    <!-- Icon 2: Terminal -->
+                    <div class="mac-desktop-icon" onclick="openMacosApp('terminal')">
+                        <div class="mac-icon-badge badge-term">
+                            <i class="fa-solid fa-terminal"></i>
+                        </div>
+                        <span class="mac-icon-label">الترمينال (الأوامر)</span>
+                    </div>
+
+                    <!-- Icon 3: Works & Portfolio -->
+                    <div class="mac-desktop-icon" onclick="openMacosApp('works')">
+                        <div class="mac-icon-badge badge-works">
+                            <i class="fa-solid fa-award"></i>
+                        </div>
+                        <span class="mac-icon-label">أعمال قهوجي ماهر</span>
+                    </div>
+
+                    <!-- Icon 4: Store & Menu -->
+                    <div class="mac-desktop-icon" onclick="openMacosApp('store')">
+                        <div class="mac-icon-badge badge-store">
+                            <i class="fa-solid fa-store"></i>
+                        </div>
+                        <span class="mac-icon-label">عروض المتجر ☕</span>
+                    </div>
+                </div>
+
+                <!-- App Windows Container -->
+
+                <!-- WINDOW 1: TERMINAL APP -->
+                <div class="mac-app-window active-window" id="mac-win-terminal">
+                    <div class="mac-window-titlebar">
+                        <div class="mac-traffic-dots">
+                            <span class="mac-dot mac-dot-close" onclick="closeMacosWindow('mac-win-terminal')"></span>
+                            <span class="mac-dot mac-dot-min" onclick="minimizeMacosWindow('mac-win-terminal')"></span>
+                            <span class="mac-dot mac-dot-max" onclick="maximizeMacosWindow('mac-win-terminal')"></span>
+                        </div>
+                        <div class="mac-window-title"><i class="fa-solid fa-terminal" style="color: #4af626;"></i> Terminal — maher@macbook-pro:~</div>
+                    </div>
+                    <div class="mac-terminal-body">
+                        <div class="terminal-scroll-area" id="terminal-output-area">
+                            <div class="term-green">Welcome to MaherOS Terminal v4.0 (macOS Sonoma / National Day 96 Edition)</div>
+                            <div class="term-dim">اكتب <b class="term-gold">help</b> أو <b class="term-gold">مساعدة</b> لعرض قائمة جميع الأوامر المتاحة.</div>
+                            <div class="term-dim">-------------------------------------------------------------</div>
+                        </div>
+                        <div class="term-input-row">
+                            <span class="term-prompt-label">maher@macbook-pro ~ %</span>
+                            <input type="text" id="mac-term-input" class="term-input-field" placeholder="اكتب الأمر هنا وإضغط Enter..." autocomplete="off" spellcheck="false" onkeydown="handleMacTerminalInput(event)">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- WINDOW 2: SECRET FOLDER "لا تفتحه" -->
+                <div class="mac-app-window" id="mac-win-folder-secret">
+                    <div class="mac-window-titlebar">
+                        <div class="mac-traffic-dots">
+                            <span class="mac-dot mac-dot-close" onclick="closeMacosWindow('mac-win-folder-secret')"></span>
+                            <span class="mac-dot mac-dot-min" onclick="minimizeMacosWindow('mac-win-folder-secret')"></span>
+                            <span class="mac-dot mac-dot-max" onclick="maximizeMacosWindow('mac-win-folder-secret')"></span>
+                        </div>
+                        <div class="mac-window-title"><i class="fa-solid fa-folder-open" style="color: #fda085;"></i> مجلد: لا تفتحه ⚠️</div>
+                    </div>
+                    <div class="mac-window-content">
+                        <div class="notes-folder-banner">
+                            <i class="fa-solid fa-user-secret"></i> 🕵️‍♂️ ملفات وملاحظات سرية - اضغط على أي ملاحظة لقراءتها!
+                        </div>
+                        <div class="mac-notes-grid">
+                            <!-- Note 1 -->
+                            <div class="mac-note-card" onclick="openMacosNoteDetail(1)">
+                                <div class="mac-note-header">
+                                    <span>🇸🇦 ملاحظة #1</span>
+                                    <span>📌</span>
+                                </div>
+                                <div class="mac-note-preview">اليوم الوطني 96</div>
+                                <div class="mac-note-action">انقر للقراءة 📖</div>
+                            </div>
+
+                            <!-- Note 2 -->
+                            <div class="mac-note-card" onclick="openMacosNoteDetail(2)">
+                                <div class="mac-note-header">
+                                    <span>🔥 ملاحظة #2</span>
+                                    <span>📌</span>
+                                </div>
+                                <div class="mac-note-preview">قهوجي ماهر يبغاك تعرف انو في عروض ما قد صارت</div>
+                                <div class="mac-note-action">انقر للقراءة 📖</div>
+                            </div>
+
+                            <!-- Note 3 -->
+                            <div class="mac-note-card" onclick="openMacosNoteDetail(3)">
+                                <div class="mac-note-header">
+                                    <span>📜 ملاحظة #3</span>
+                                    <span>📌</span>
+                                </div>
+                                <div class="mac-note-preview">سر الخلطة والقهوة الأصيلة...</div>
+                                <div class="mac-note-action">انقر للقراءة 📖</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- WINDOW 3: NOTE DETAIL READER -->
+                <div class="mac-app-window" id="mac-win-note-detail" style="max-width: 480px; height: 320px;">
+                    <div class="mac-window-titlebar">
+                        <div class="mac-traffic-dots">
+                            <span class="mac-dot mac-dot-close" onclick="closeMacosWindow('mac-win-note-detail')"></span>
+                        </div>
+                        <div class="mac-window-title" id="mac-note-title">📝 قراءة الملاحظة</div>
+                    </div>
+                    <div class="mac-window-content" style="padding: 12px;">
+                        <div class="note-full-view" id="mac-note-body-text">
+                            <!-- Injected dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- WINDOW 4: MAHER'S WORKS & PORTFOLIO -->
+                <div class="mac-app-window" id="mac-win-works">
+                    <div class="mac-window-titlebar">
+                        <div class="mac-traffic-dots">
+                            <span class="mac-dot mac-dot-close" onclick="closeMacosWindow('mac-win-works')"></span>
+                            <span class="mac-dot mac-dot-min" onclick="minimizeMacosWindow('mac-win-works')"></span>
+                            <span class="mac-dot mac-dot-max" onclick="maximizeMacosWindow('mac-win-works')"></span>
+                        </div>
+                        <div class="mac-window-title"><i class="fa-solid fa-award" style="color: #89f7fe;"></i> أعمال وإنجازات قهوجي ماهر 💼</div>
+                    </div>
+                    <div class="mac-window-content">
+                        <div style="text-align: center; margin-bottom: 16px; background: rgba(255,255,255,0.05); padding: 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                            <div style="font-size: 2.2rem; margin-bottom: 6px;">☕ 🏆</div>
+                            <h3 style="margin-bottom: 6px; color: #ffd700; font-size: 1.1rem;">قهوجي ماهر — معلم القهوة الأصيلة</h3>
+                            <p style="font-size: 0.82rem; color: #cbd5e1; line-height: 1.5;">أول مشروع إلكتروني متكامل يدمج بين تراث القهوة السعودية وتقنيات الأنظمة الحديثة.</p>
+                        </div>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            <div style="background: rgba(255,255,255,0.06); padding: 12px; border-radius: 10px; border-right: 4px solid #38bdf8;">
+                                <h4 style="color: #38bdf8; font-size: 0.9rem; margin-bottom: 4px;">🇸🇦 عروض اليوم الوطني 96</h4>
+                                <p style="font-size: 0.8rem; color: #94a3b8; line-height: 1.4;">إتاحة جميع المشروبات بـ 96 هللة وتوفير خصم 2 + 1 مجاناً للميلك شيك مع التوصيل السريع للمكاوية.</p>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.06); padding: 12px; border-radius: 10px; border-right: 4px solid #4af626;">
+                                <h4 style="color: #4af626; font-size: 0.9rem; margin-bottom: 4px;">🖥️ نظام التشغيل MaherOS الكامل</h4>
+                                <p style="font-size: 0.8rem; color: #94a3b8; line-height: 1.4;">بيئة كمبيوتر ماك تفاعلية تتيح لك تشغيل الأوامر البرمجية، قراءة الملفات السرية، وتصفح أعمال ماهر.</p>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.06); padding: 12px; border-radius: 10px; border-right: 4px solid #f093fb;">
+                                <h4 style="color: #f093fb; font-size: 0.9rem; margin-bottom: 4px;">📍 التوصيل المجاني الخاطف للمكاوية</h4>
+                                <p style="font-size: 0.8rem; color: #94a3b8; line-height: 1.4;">نظام التحديد الجغرافي التلقائي الذي يمنح التوصيل والتوصيل الخاطف المجاني لأهل مكة المكرمة.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- 3. Bottom Glass macOS Dock -->
+            <div class="macos-dock-container">
+                <div class="macos-dock-glass">
+                    <div class="dock-icon-item dock-term" title="الترمينال" onclick="openMacosApp('terminal')">
+                        <i class="fa-solid fa-terminal"></i>
+                    </div>
+                    <div class="dock-icon-item dock-folder" title="لا تفتحه ⚠️" onclick="openMacosApp('folder-secret')">
+                        <i class="fa-solid fa-folder-closed"></i>
+                    </div>
+                    <div class="dock-icon-item dock-works" title="أعمال ماهر" onclick="openMacosApp('works')">
+                        <i class="fa-solid fa-award"></i>
+                    </div>
+                    <div class="dock-icon-item dock-store" title="عروض المتجر" onclick="openMacosApp('store')">
+                        <i class="fa-solid fa-store"></i>
+                    </div>
+                    <div class="dock-divider"></div>
+                    <div class="dock-icon-item dock-trash" title="المهملات" onclick="openTrashFun()">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    setTimeout(() => {
+        const input = document.getElementById('mac-term-input');
+        if (input) input.focus();
+    }, 100);
+}
+
+function handleMacTerminalInput(event) {
+    if (event.key !== 'Enter') return;
+    const input = document.getElementById('mac-term-input');
+    if (!input) return;
+    const cmd = input.value.trim();
+    if (!cmd) return;
+    input.value = '';
+
+    const scrollArea = document.getElementById('terminal-output-area');
+    if (!scrollArea) return;
+
+    const userRow = document.createElement('div');
+    userRow.innerHTML = `<span class="term-cyan">maher@macbook-pro ~ %</span> <span style="color:#fff; font-weight:bold;">${escapeHtml(cmd)}</span>`;
+    scrollArea.appendChild(userRow);
+
+    const cleanCmd = cmd.toLowerCase().trim();
+    let responseHTML = '';
+
+    if (cleanCmd === 'help' || cleanCmd === 'مساعدة' || cleanCmd === 'الاوامر' || cleanCmd === 'الأوامر') {
+        responseHTML = `
+            <div class="term-gold">📋 قائمة الأوامر المتاحة في MaherOS Terminal:</div>
+            <div class="term-dim">-------------------------------------------------------------</div>
+            <div>🔹 <b class="term-cyan">help</b> / <b class="term-cyan">مساعدة</b> : عرض قائمة جميع الأوامر المتاحة.</div>
+            <div>🔹 <b class="term-cyan">store</b> / <b class="term-cyan">عرض المتجر</b> : الانتقال لمتجر المشروبات وعروض 96 هللة.</div>
+            <div>🔹 <b class="term-cyan">works</b> / <b class="term-cyan">عرض اعمال قهوجي ماهر</b> : عرض إنجازات وأعمال ماهر.</div>
+            <div>🔹 <b class="term-cyan">secret</b> / <b class="term-cyan">لا تفتحه</b> : فتح مجلد الملفات السرية (لا تفتحه ⚠️).</div>
+            <div>🔹 <b class="term-cyan">saudi96</b> / <b class="term-cyan">العروض</b> : تفاصيل عروض اليوم الوطني 96.</div>
+            <div>🔹 <b class="term-cyan">clear</b> / <b class="term-cyan">مسح</b> : مسح شاشة الترمينال.</div>
+            <div>🔹 <b class="term-cyan">date</b> / <b class="term-cyan">الوقت</b> : عرض الوقت والتاريخ الحقيقي.</div>
+            <div>🔹 <b class="term-cyan">about</b> / <b class="term-cyan">من نحن</b> : قصة المعلم قهوجي ماهر.</div>
+            <div class="term-dim">-------------------------------------------------------------</div>
+        `;
+    } else if (cleanCmd === 'store' || cleanCmd === 'المتجر' || cleanCmd === 'عرض المتجر' || cleanCmd === 'متجر') {
+        responseHTML = `<div class="term-green">🛒 جاري التوجيه إلى قائمة المشروبات وعروض اليوم الوطني 96...</div>`;
+        setTimeout(() => {
+            closeRetroModalFn();
+            const menuEl = document.getElementById('menu');
+            if (menuEl) menuEl.scrollIntoView({ behavior: 'smooth' });
+        }, 800);
+    } else if (cleanCmd === 'works' || cleanCmd === 'اعمال' || cleanCmd === 'عرض اعمال قهوجي ماهر' || cleanCmd === 'أعمال ماهر' || cleanCmd === 'اعمال ماهر') {
+        responseHTML = `<div class="term-green">💼 جاري فتح نافذة أعمال وإنجازات قهوجي ماهر...</div>`;
+        setTimeout(() => openMacosApp('works'), 400);
+    } else if (cleanCmd === 'secret' || cleanCmd === 'لا تفتحه' || cleanCmd === 'ملفات' || cleanCmd === 'مجلد') {
+        responseHTML = `<div class="term-red">⚠️ جاري فتح المجلد السري (لا تفتحه)...</div>`;
+        setTimeout(() => openMacosApp('folder-secret'), 400);
+    } else if (cleanCmd === 'saudi96' || cleanCmd === 'العروض' || cleanCmd === 'اليوم الوطني') {
+        responseHTML = `
+            <div class="term-gold">🇸🇦 تفاصيل عروض اليوم الوطني 96 من قهوجي ماهر:</div>
+            <div>• جميع المشروبات والحلويات بـ <b class="term-green">0.96 ريال (96 هللة)</b>!</div>
+            <div>• الكولد برو مستثنى بـ 6 ريال (⛔ مستثنى).</div>
+            <div>• الميلك شيك: اشتري 2 واحصل على الثالث مجاناً (🥤 2+1 مجاناً).</div>
+            <div>• توصيل خاطف مجاني لأهل مكة المكرمة.</div>
+        `;
+    } else if (cleanCmd === 'clear' || cleanCmd === 'مسح') {
+        scrollArea.innerHTML = `
+            <div class="term-green">Welcome to MaherOS Terminal v4.0</div>
+            <div class="term-dim">تم مسح الشاشة. اكتب <b class="term-gold">help</b> للأوامر.</div>
+        `;
+        return;
+    } else if (cleanCmd === 'date' || cleanCmd === 'الوقت' || cleanCmd === 'التاريخ') {
+        responseHTML = `<div class="term-cyan">🕒 الوقت الحالي: ${new Date().toLocaleString('ar-SA')}</div>`;
+    } else if (cleanCmd === 'about' || cleanCmd === 'من نحن' || cleanCmd === 'ماهر') {
+        responseHTML = `
+            <div class="term-gold">☕ قهوجي ماهر — معلم القهوة الأصيلة</div>
+            <div>المكان الأول لتحضير أجود أنواع القهوة المختصة بالنكهة الماهرة.</div>
+        `;
+    } else {
+        responseHTML = `<div class="term-red">❌ أمر غير معروف: "${escapeHtml(cmd)}". اكتب <b class="term-gold">help</b> أو <b class="term-gold">مساعدة</b> لرؤية الأوامر.</div>`;
+    }
+
+    const resDiv = document.createElement('div');
+    resDiv.innerHTML = responseHTML;
+    scrollArea.appendChild(resDiv);
+    scrollArea.scrollTop = scrollArea.scrollHeight;
+}
+
+function openMacosApp(appName) {
+    if (appName === 'store') {
+        closeRetroModalFn();
+        const menuEl = document.getElementById('menu');
+        if (menuEl) menuEl.scrollIntoView({ behavior: 'smooth' });
+        return;
+    }
+
+    document.querySelectorAll('.mac-app-window').forEach(win => {
+        win.classList.remove('active-window');
+    });
+
+    let targetId = '';
+    if (appName === 'terminal') targetId = 'mac-win-terminal';
+    else if (appName === 'folder-secret' || appName === 'do_not_open') targetId = 'mac-win-folder-secret';
+    else if (appName === 'works') targetId = 'mac-win-works';
+
+    const targetWin = document.getElementById(targetId);
+    if (targetWin) {
+        targetWin.classList.add('active-window');
+        if (appName === 'terminal') {
+            const input = document.getElementById('mac-term-input');
+            if (input) input.focus();
+        }
+    }
+}
+
+function closeMacosWindow(windowId) {
+    const win = document.getElementById(windowId);
+    if (win) {
+        win.classList.remove('active-window');
+    }
+}
+
+function minimizeMacosWindow(windowId) {
+    closeMacosWindow(windowId);
+}
+
+function maximizeMacosWindow(windowId) {
+    const win = document.getElementById(windowId);
+    if (win) {
+        win.style.width = '98%';
+        win.style.height = '90%';
+        win.style.maxWidth = 'none';
+    }
+}
+
+function openMacosNoteDetail(noteId) {
+    const titleEl = document.getElementById('mac-note-title');
+    const bodyEl = document.getElementById('mac-note-body-text');
+    if (!titleEl || !bodyEl) return;
+
+    if (noteId === 1) {
+        titleEl.innerHTML = '📝 ملاحظة #1 — اليوم الوطني 96';
+        bodyEl.textContent = 'اليوم الوطني 96';
+    } else if (noteId === 2) {
+        titleEl.innerHTML = '📝 ملاحظة #2 — عروض ما قد صارت!';
+        bodyEl.textContent = 'قهوجي ماهر يبغاك تعرف انو في عروض ما قد صارت';
+    } else if (noteId === 3) {
+        titleEl.innerHTML = '📝 ملاحظة #3 — سر الخلطة الماهرة';
+        bodyEl.textContent = '📜 السر الإلهامي لصناعة القهوة الماهرة الأصيلة:\n"القهوة الماهرة لا تُصنع بالصدفة.. تُصنع بالشغف والخلطة السرية!"\n\nتخفيضات اليوم الوطني 96 مفعّلة الآن والمنيو بالكامل بـ 96 هللة فقط! ☕🔥';
+    }
+
+    document.querySelectorAll('.mac-app-window').forEach(win => {
+        win.classList.remove('active-window');
+    });
+    const noteWin = document.getElementById('mac-win-note-detail');
+    if (noteWin) noteWin.classList.add('active-window');
+}
+
+function openTrashFun() {
+    if (typeof showToast === 'function') {
+        showToast('🗑️ سلة المهملات فارغة! قهوجي ماهر نظيف ومترتب دائماً 😊');
+    } else {
+        alert('🗑️ سلة المهملات فارغة! قهوجي ماهر نظيف ومترتب دائماً 😊');
+    }
+}
+
 // Retro Modal triggers
 if (retroCompBtn) {
     retroCompBtn.addEventListener('click', () => {
         checkCooldownState();
-        if (retroEventModal) retroEventModal.classList.add('open');
+        if (retroEventModal) {
+            retroEventModal.classList.add('open');
+            retroEventModal.classList.add('macos-modal-mode');
+        }
         if (retroModalOverlay) retroModalOverlay.classList.add('open');
     });
 }
 
 function closeRetroModalFn() {
-    if (retroEventModal) retroEventModal.classList.remove('open');
+    if (retroEventModal) {
+        retroEventModal.classList.remove('open');
+        retroEventModal.classList.remove('macos-modal-mode');
+    }
     if (retroModalOverlay) retroModalOverlay.classList.remove('open');
     stopCountdown();
     
-    // Stop clicker intervals if closing
     if (grindTimerInterval) {
         clearInterval(grindTimerInterval);
         grindGameActive = false;

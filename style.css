@@ -5556,6 +5556,445 @@ body.is-installed-app {
     align-items: center;
 }
 
+/* ==========================================================
+   🖥️ MAHER OS - macOS Sonoma/Sequoia Complete Desktop System
+   ========================================================== */
+
+/* Expand Modal container when macOS Desktop is active */
+.retro-modal.macos-modal-mode {
+    max-width: 96vw !important;
+    width: 900px !important;
+    height: 85vh !important;
+    max-height: 600px !important;
+    border-radius: 16px !important;
+    overflow: hidden !important;
+    box-shadow: 0 30px 70px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.2) !important;
+    border: none !important;
+    background: transparent !important;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.macos-desktop-wrapper {
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 20% 20%, #203a43 0%, #0f2027 40%, #2c5364 100%);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    font-family: var(--font-arabic), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    user-select: none;
+    direction: rtl;
+    overflow: hidden;
+    color: #fff;
+}
+
+/* Background Glowing Accents */
+.macos-desktop-wrapper::before {
+    content: '';
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(197, 168, 128, 0.3) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* 1. Top Menu Bar */
+.macos-menubar {
+    height: 32px;
+    background: rgba(15, 23, 42, 0.7);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 14px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    z-index: 100;
+}
+
+.menubar-right-group, .menubar-left-group {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.macos-apple-logo {
+    font-size: 1.05rem;
+    color: #fff;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.menubar-item {
+    cursor: pointer;
+    opacity: 0.9;
+    padding: 2px 8px;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.menubar-item:hover {
+    background: rgba(255, 255, 255, 0.2);
+    opacity: 1;
+}
+
+.menubar-status-icon {
+    font-size: 0.85rem;
+    opacity: 0.85;
+}
+
+.macos-clock-display {
+    font-size: 0.8rem;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+/* 2. Workspace Area */
+.macos-workspace-area {
+    flex: 1;
+    position: relative;
+    padding: 16px;
+    overflow: hidden;
+    z-index: 2;
+}
+
+/* Desktop Grid Icons */
+.desktop-icons-container {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    gap: 20px;
+    height: 100%;
+}
+
+.mac-desktop-icon {
+    width: 90px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 12px;
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.mac-desktop-icon:hover {
+    background: rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(10px);
+    transform: translateY(-3px) scale(1.05);
+}
+
+.mac-icon-badge {
+    width: 54px;
+    height: 54px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    position: relative;
+    border: 1px solid rgba(255,255,255,0.25);
+}
+
+.mac-icon-badge.badge-folder { background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); color: #fff; }
+.mac-icon-badge.badge-term { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: #4af626; }
+.mac-icon-badge.badge-works { background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%); color: #004e92; }
+.mac-icon-badge.badge-store { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: #fff; }
+
+.mac-icon-badge .lock-overlay {
+    position: absolute;
+    bottom: -2px;
+    left: -2px;
+    background: #e53e3e;
+    color: #fff;
+    font-size: 0.65rem;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #fff;
+}
+
+.mac-icon-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #fff;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.9);
+    text-align: center;
+    line-height: 1.2;
+}
+
+/* 3. macOS App Window */
+.mac-app-window {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.95);
+    width: 92%;
+    max-width: 600px;
+    height: 380px;
+    background: rgba(20, 26, 38, 0.94);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 10;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mac-app-window.active-window {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, -50%) scale(1);
+    z-index: 20;
+}
+
+.mac-window-titlebar {
+    height: 36px;
+    background: rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px;
+}
+
+.mac-traffic-dots {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.mac-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: filter 0.2s;
+}
+
+.mac-dot:hover { filter: brightness(1.2); }
+.mac-dot-close { background: #ff5f56; border: 1px solid #e0443e; }
+.mac-dot-min { background: #ffbd2e; border: 1px solid #dea123; }
+.mac-dot-max { background: #27c93f; border: 1px solid #1aab29; }
+
+.mac-window-title {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.9);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.mac-window-content {
+    flex: 1;
+    padding: 14px;
+    overflow-y: auto;
+    direction: rtl;
+    text-align: right;
+    color: #e2e8f0;
+}
+
+/* 4. Terminal App Specifics */
+.mac-terminal-body {
+    background: #090d16;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 0.82rem;
+    color: #4af626;
+    direction: ltr;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 12px;
+    overflow: hidden;
+}
+
+.terminal-scroll-area {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 8px;
+    line-height: 1.5;
+    word-break: break-word;
+}
+
+.term-gold { color: #ffd700; font-weight: bold; }
+.term-cyan { color: #38bdf8; }
+.term-green { color: #4af626; }
+.term-red { color: #f87171; }
+.term-dim { color: #94a3b8; }
+
+.term-input-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 8px;
+}
+
+.term-prompt-label {
+    color: #38bdf8;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.term-input-field {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 0.85rem;
+    caret-color: #4af626;
+}
+
+/* 5. Secret Folder Notes Grid */
+.notes-folder-banner {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    border-radius: 8px;
+    padding: 10px;
+    color: #fca5a5;
+    font-size: 0.82rem;
+    font-weight: bold;
+    margin-bottom: 14px;
+    text-align: center;
+}
+
+.mac-notes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+}
+
+.mac-note-card {
+    background: linear-gradient(135deg, #fef08a 0%, #fef9c3 100%);
+    color: #713f12;
+    border-radius: 10px;
+    padding: 12px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 110px;
+    position: relative;
+}
+
+.mac-note-card:hover {
+    transform: translateY(-4px) rotate(-1deg);
+    box-shadow: 0 10px 22px rgba(0,0,0,0.4);
+}
+
+.mac-note-header {
+    font-weight: 800;
+    font-size: 0.85rem;
+    border-bottom: 1px dashed rgba(113, 63, 18, 0.3);
+    padding-bottom: 4px;
+    margin-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.mac-note-preview {
+    font-size: 0.78rem;
+    line-height: 1.4;
+    font-weight: 600;
+}
+
+.mac-note-action {
+    font-size: 0.7rem;
+    font-weight: bold;
+    color: #854d0e;
+    margin-top: 8px;
+    text-align: left;
+}
+
+/* 6. Note Detail Modal Popup */
+.note-full-view {
+    background: #fef08a;
+    color: #422006;
+    border-radius: 10px;
+    padding: 18px;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    font-weight: 700;
+    white-space: pre-wrap;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+}
+
+/* 7. macOS Glass Dock */
+.macos-dock-container {
+    height: 56px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 50;
+}
+
+.macos-dock-glass {
+    background: rgba(255, 255, 255, 0.16);
+    backdrop-filter: blur(25px) saturate(200%);
+    -webkit-backdrop-filter: blur(25px) saturate(200%);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 20px;
+    padding: 4px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
+.dock-icon-item {
+    width: 42px;
+    height: 42px;
+    border-radius: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+}
+
+.dock-icon-item:hover {
+    transform: translateY(-10px) scale(1.3);
+}
+
+.dock-icon-item.dock-term { background: linear-gradient(135deg, #1e3c72, #2a5298); color: #4af626; }
+.dock-icon-item.dock-folder { background: linear-gradient(135deg, #f6d365, #fda085); color: #fff; }
+.dock-icon-item.dock-works { background: linear-gradient(135deg, #89f7fe, #66a6ff); color: #004e92; }
+.dock-icon-item.dock-store { background: linear-gradient(135deg, #f093fb, #f5576c); color: #fff; }
+.dock-icon-item.dock-trash { background: linear-gradient(135deg, #434343, #000000); color: #e2e8f0; }
+
+.dock-divider {
+    width: 1px;
+    height: 28px;
+    background: rgba(255, 255, 255, 0.25);
+}
+
 
 
 
