@@ -787,12 +787,67 @@ function triggerAlarm(message) {
 }
 
 // ==========================================================
-// 💬 REAL-TIME PUBLIC COMMENTS & SUGGESTIONS ENGINE (NO SERVER)
+// ==========================================================
+// 💬 REAL-TIME PUBLIC COMMENTS ENGINE (POWERED BY FIREBASE REALTIME DATABASE)
 // ==========================================================
 
+const firebaseConfig = {
+  apiKey: "AIzaSyBQvkd9qwRK18Sr1LlqxF2eoNc018BI1oo",
+  authDomain: "coffe1-d43af.firebaseapp.com",
+  databaseURL: "https://coffe1-d43af-default-rtdb.firebaseio.com",
+  projectId: "coffe1-d43af",
+  storageBucket: "coffe1-d43af.firebasestorage.app",
+  messagingSenderId: "1065418810670",
+  appId: "1:1065418810670:web:b7d3650445774230bc86bf",
+  measurementId: "G-H5ELZXW8WT"
+};
+
+let firebaseDb = null;
 let publicCommentsList = [];
-const COMMENTS_API_ENDPOINT = '/api/comments';
-const DIRECT_BIN_ENDPOINT = 'https://extendsclass.com/api/json-storage/bin/dfbfbef';
+let firebaseListenerAttached = false;
+
+function initFirebaseComments() {
+    try {
+        if (typeof firebase !== 'undefined') {
+            if (!firebase.apps || firebase.apps.length === 0) {
+                firebase.initializeApp(firebaseConfig);
+            }
+            firebaseDb = firebase.database();
+            
+            if (!firebaseListenerAttached) {
+                firebaseListenerAttached = true;
+                firebaseDb.ref('public_comments').on('value', (snapshot) => {
+                    const data = snapshot.val();
+                    const list = [];
+                    if (data) {
+                        Object.keys(data).forEach(key => {
+                            const item = data[key];
+                            if (item && typeof item === 'object') {
+                                item.id = key;
+                                list.push(item);
+                            }
+                        });
+                    }
+                    list.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+                    publicCommentsList = sanitizeComments(list);
+                    
+                    const loaderEl = document.getElementById('comments-loader');
+                    if (loaderEl) loaderEl.style.display = 'none';
+                    
+                    renderPublicCommentsFeed();
+                }, (err) => {
+                    console.warn('Firebase comments listener error:', err);
+                    const loaderEl = document.getElementById('comments-loader');
+                    if (loaderEl) loaderEl.style.display = 'none';
+                });
+            }
+            return true;
+        }
+    } catch(err) {
+        console.warn('Firebase init error:', err);
+    }
+    return false;
+}
 
 function sanitizeComments(list) {
     if (!Array.isArray(list)) return [];
@@ -802,7 +857,7 @@ function sanitizeComments(list) {
         const nameStr = String(c.name).trim();
         const textStr = String(c.text).trim();
         
-        // Remove mock comments
+        // Remove mock/sample comments
         if (c.id === 'c1' || c.id === 'c2' || c.id === 'c3') return false;
         if (nameStr.includes('أحمد العتيبي') || nameStr.includes('سارة الشمري') || nameStr.includes('فيصل مكة')) return false;
         if (textStr.includes('طعمها خرافي') || textStr.includes('الماتشا الباردة بطلة') || textStr.includes('أفضل قهوة في مكة')) return false;
@@ -811,57 +866,17 @@ function sanitizeComments(list) {
     });
 }
 
-async function loadPublicComments(isSilent = false) {
+function loadPublicComments(isSilent = false) {
     const feedContainer = document.getElementById('public-comments-feed');
-    const badgeEl = document.getElementById('comments-count-badge');
     const loaderEl = document.getElementById('comments-loader');
     if (!feedContainer) return;
 
-    if (loaderEl && !isSilent && publicCommentsList.length === 0) {
-        loaderEl.style.display = 'block';
+    if (!firebaseDb) {
+        initFirebaseComments();
     }
 
-    // Always clean local storage cache from mock comments first
-    try {
-        const cached = localStorage.getItem('maher_cached_comments');
-        if (cached) {
-            const parsed = JSON.parse(cached);
-            const cleaned = sanitizeComments(parsed);
-            if (cleaned.length !== parsed.length) {
-                localStorage.setItem('maher_cached_comments', JSON.stringify(cleaned));
-            }
-            if (publicCommentsList.length === 0) {
-                publicCommentsList = cleaned;
-            }
-        }
-    } catch(err) {}
-
-    try {
-        let response = await fetch(COMMENTS_API_ENDPOINT + '?_t=' + Date.now(), { cache: 'no-store' });
-        if (!response.ok) {
-            response = await fetch(DIRECT_BIN_ENDPOINT + '?_t=' + Date.now(), { cache: 'no-store' });
-        }
-        const data = await response.json();
-        if (data && Array.isArray(data.comments)) {
-            const remoteComments = sanitizeComments(data.comments);
-            
-            // Merge with local list using Map to prevent dropping any unsynced local comments
-            const map = new Map();
-            remoteComments.forEach(c => { if(c && c.id) map.set(c.id, c); });
-            publicCommentsList.forEach(c => { if(c && c.id) map.set(c.id, c); });
-            
-            let merged = Array.from(map.values());
-            merged.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
-            publicCommentsList = sanitizeComments(merged);
-
-            try {
-                localStorage.setItem('maher_cached_comments', JSON.stringify(publicCommentsList));
-            } catch(e) {}
-        }
-    } catch(e) {
-        console.warn('Comments API fetch error, using local cache fallback:', e);
-    } finally {
-        if (loaderEl) loaderEl.style.display = 'none';
+    if (loaderEl && !isSilent && publicCommentsList.length === 0) {
+        loaderEl.style.display = 'block';
     }
 
     renderPublicCommentsFeed();
@@ -916,6 +931,30 @@ function isMeyadName(name) {
            str.includes('miad');
 }
 
+function formatCommentDate(dateStr) {
+    if (!dateStr) return 'الآن';
+    try {
+        const d = new Date(dateStr);
+        if (isNaN(d.getTime())) return 'الآن';
+        const now = new Date();
+        const diffMs = now - d;
+        const diffSec = Math.floor(diffMs / 1000);
+        const diffMin = Math.floor(diffSec / 60);
+        const diffHours = Math.floor(diffMin / 60);
+        const diffDays = Math.floor(diffHours / 24);
+
+        if (diffSec < 45) return 'منذ لحظات';
+        if (diffMin < 60) return `منذ ${diffMin} دقيقة`;
+        if (diffHours < 24) return `منذ ${diffHours} ساعة`;
+        if (diffDays === 1) return 'أمس';
+        if (diffDays < 30) return `منذ ${diffDays} يوم`;
+        
+        return d.toLocaleDateString('ar-SA', { day: 'numeric', month: 'short' });
+    } catch(e) {
+        return 'الآن';
+    }
+}
+
 function renderPublicCommentsFeed() {
     const feedContainer = document.getElementById('public-comments-feed');
     const badgeEl = document.getElementById('comments-count-badge');
@@ -924,14 +963,14 @@ function renderPublicCommentsFeed() {
     publicCommentsList = sanitizeComments(publicCommentsList);
 
     if (badgeEl) {
-        badgeEl.textContent = `${publicCommentsList.length} تعليقات منشورة`;
+        badgeEl.textContent = `${publicCommentsList.length} تعليقات منشورة في السيرفر`;
     }
 
     if (publicCommentsList.length === 0) {
         feedContainer.innerHTML = `
             <div class="empty-comments-state">
                 <i class="fa-solid fa-comments"></i>
-                <p>لا توجد تعليقات منشورة بعد.. كن أول من يترك تعليقه ليراه الجميع! 🚀</p>
+                <p>لا توجد تعليقات منشورة بعد في السيرفر.. كن أول من يترك تعليقه ليراه الجميع! 🚀</p>
             </div>
         `;
         return;
@@ -980,7 +1019,7 @@ function renderPublicCommentsFeed() {
                                 <i class="fa-solid fa-thumbs-up"></i> إعجاب <span class="like-count" id="like-count-${c.id}">${likes}</span>
                             </button>
                             ${canDelete ? `
-                                <button type="button" class="btn-delete-comment" onclick="deletePublicComment('${c.id}')" title="حذف التعليق الخاص بك">
+                                <button type="button" class="btn-delete-comment" onclick="deletePublicComment('${c.id}')" title="حذف التعليق الخاص بك من السيرفر">
                                     <i class="fa-solid fa-trash-can"></i> حذف
                                 </button>
                             ` : ''}
@@ -1012,12 +1051,12 @@ function renderPublicCommentsFeed() {
                             <i class="fa-solid fa-thumbs-up"></i> إعجاب <span class="like-count" id="like-count-${c.id}">${likes}</span>
                         </button>
                         ${canDelete ? `
-                            <button type="button" class="btn-delete-comment" onclick="deletePublicComment('${c.id}')" title="حذف التعليق الخاص بك">
+                            <button type="button" class="btn-delete-comment" onclick="deletePublicComment('${c.id}')" title="حذف التعليق الخاص بك من السيرفر">
                                 <i class="fa-solid fa-trash-can"></i> حذف
                             </button>
                         ` : ''}
                     </div>
-                    <span class="public-badge-verified">✓ تعليق منشور عام</span>
+                    <span class="public-badge-verified">✓ تعليق حقيقي (سيرفر مباشر)</span>
                 </div>
             </div>
         `;
@@ -1037,8 +1076,9 @@ async function submitPublicComment(event) {
 
     if (!text) return;
 
+    const commentId = 'c_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
     const newComment = {
-        id: 'c_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7),
+        id: commentId,
         name: name || 'زائر',
         text: text,
         category: category,
@@ -1046,46 +1086,27 @@ async function submitPublicComment(event) {
         likes: 0
     };
 
-    saveMyCommentId(newComment.id);
+    saveMyCommentId(commentId);
 
     if (submitBtn) {
         submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري النشر العام...';
+        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري النشر إلى السيرفر...';
     }
 
-    publicCommentsList.unshift(newComment);
-    publicCommentsList = sanitizeComments(publicCommentsList);
     try {
-        localStorage.setItem('maher_cached_comments', JSON.stringify(publicCommentsList));
-    } catch(e) {}
-
-    renderPublicCommentsFeed();
-
-    try {
-        let response = await fetch(COMMENTS_API_ENDPOINT, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ newComment })
-        });
-
-        if (response.ok) {
-            const data = await response.json();
-            if (data && Array.isArray(data.comments)) {
-                publicCommentsList = sanitizeComments(data.comments);
-                try {
-                    localStorage.setItem('maher_cached_comments', JSON.stringify(publicCommentsList));
-                } catch(e) {}
-                renderPublicCommentsFeed();
-            }
-        } else {
-            await fetch(DIRECT_BIN_ENDPOINT, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ comments: publicCommentsList })
-            });
+        if (!firebaseDb) {
+            initFirebaseComments();
         }
-    } catch(e) {
-        console.warn('API update warning, saved locally:', e);
+        if (firebaseDb) {
+            await firebaseDb.ref('public_comments/' + commentId).set(newComment);
+        } else {
+            publicCommentsList.unshift(newComment);
+            renderPublicCommentsFeed();
+        }
+    } catch(err) {
+        console.error('Firebase save error:', err);
+        publicCommentsList.unshift(newComment);
+        renderPublicCommentsFeed();
     } finally {
         if (submitBtn) {
             submitBtn.disabled = false;
@@ -1098,82 +1119,57 @@ async function submitPublicComment(event) {
     if (isMeyadName(name)) {
         showToast('👑 أهلاً بكِ يا ميعاد! تم نشر تعليقك بصفتك الزبونة رقم #1 والأكثر طلباً في متجر ماهر 🏆✨');
     } else {
-        showToast('🎉 تم نشر تعليقك علناً في الموقع ليراها جميع الزوار!');
+        showToast('🎉 تم نشر تعليقك علناً في السيرفر ليراه جميع الزوار!');
     }
     if (typeof playSuccessSound === 'function') playSuccessSound();
 }
 
 async function deletePublicComment(commentId) {
-    if (!confirm('هل أنت تأكد من رغبتك في حذف هذا التعليق؟')) return;
+    if (!confirm('هل أنت تأكد من رغبتك في حذف هذا التعليق من السيرفر؟')) return;
 
-    // Remove locally
-    publicCommentsList = publicCommentsList.filter(c => c.id !== commentId);
-    removeMyCommentId(commentId);
     try {
-        localStorage.setItem('maher_cached_comments', JSON.stringify(publicCommentsList));
-    } catch(e) {}
-
-    renderPublicCommentsFeed();
-    showToast('🗑️ تم حذف التعليق بنجاح!');
-
-    // Sync deletion
-    try {
-        let response = await fetch(COMMENTS_API_ENDPOINT, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'delete', commentId: commentId })
-        });
-
-        if (!response.ok) {
-            await fetch(DIRECT_BIN_ENDPOINT, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ comments: publicCommentsList })
-            });
+        if (!firebaseDb) {
+            initFirebaseComments();
         }
-    } catch(e) {
-        console.warn('Delete sync error:', e);
+        if (firebaseDb) {
+            await firebaseDb.ref('public_comments/' + commentId).remove();
+        }
+        publicCommentsList = publicCommentsList.filter(c => c.id !== commentId);
+        removeMyCommentId(commentId);
+        renderPublicCommentsFeed();
+        showToast('🗑️ تم حذف التعليق بنجاح من السيرفر!');
+    } catch(err) {
+        console.error('Firebase delete error:', err);
+        showToast('❌ حدث خطأ أثناء حذف التعليق.');
     }
 }
-
-// Auto refresh public comments every 12 seconds
-setInterval(() => {
-    loadPublicComments(true);
-}, 12000);
 
 async function likePublicComment(commentId) {
     const comment = publicCommentsList.find(c => c.id === commentId);
     if (!comment) return;
 
-    comment.likes = (comment.likes || 0) + 1;
+    const newLikes = (comment.likes || 0) + 1;
+    comment.likes = newLikes;
+
     const countEl = document.getElementById(`like-count-${commentId}`);
     if (countEl) {
-        countEl.textContent = comment.likes;
+        countEl.textContent = newLikes;
         countEl.parentElement.classList.add('liked-pulse');
         setTimeout(() => countEl.parentElement.classList.remove('liked-pulse'), 400);
     }
 
     try {
-        fetch(COMMENTS_API_ENDPOINT, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'like', commentId })
-        });
-    } catch(e) {}
-}
-
-function formatCommentDate(dateStr) {
-    if (!dateStr) return 'قبل قليل';
-    try {
-        const d = new Date(dateStr);
-        const diffSecs = Math.floor((Date.now() - d.getTime()) / 1000);
-        if (diffSecs < 60) return 'الآن';
-        if (diffSecs < 3600) return `قبل ${Math.floor(diffSecs / 60)} دقيقة`;
-        if (diffSecs < 86400) return `قبل ${Math.floor(diffSecs / 3600)} ساعة`;
-        return d.toLocaleDateString('ar-SA', { day: 'numeric', month: 'short' });
-    } catch(e) {
-        return 'مؤخراً';
+        if (!firebaseDb) {
+            initFirebaseComments();
+        }
+        if (firebaseDb) {
+            await firebaseDb.ref('public_comments/' + commentId + '/likes').set(newLikes);
+        }
+    } catch(err) {
+        console.warn('Firebase like error:', err);
     }
+
+    showToast('❤️ شكراً لإعجابك بالتعليق!');
 }
 
 function escapeHTML(str) {
