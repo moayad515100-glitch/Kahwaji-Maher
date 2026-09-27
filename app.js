@@ -788,7 +788,7 @@ function triggerAlarm(message) {
 
 // ==========================================================
 // ==========================================================
-// 💬 REAL-TIME PUBLIC COMMENTS ENGINE (POWERED BY FIREBASE REALTIME DATABASE)
+// 💬 REAL-TIME PUBLIC COMMENTS ENGINE (FIREBASE + SERVER BACKEND)
 // ==========================================================
 
 const firebaseConfig = {
@@ -801,6 +801,9 @@ const firebaseConfig = {
   appId: "1:1065418810670:web:b7d3650445774230bc86bf",
   measurementId: "G-H5ELZXW8WT"
 };
+
+const FIREBASE_REST_URL = "https://coffe1-d43af-default-rtdb.firebaseio.com/public_comments.json";
+const BACKUP_SERVER_URL = "https://extendsclass.com/api/json-storage/bin/dfbfbef";
 
 let firebaseDb = null;
 let publicCommentsList = [];
@@ -818,8 +821,8 @@ function initFirebaseComments() {
                 firebaseListenerAttached = true;
                 firebaseDb.ref('public_comments').on('value', (snapshot) => {
                     const data = snapshot.val();
-                    const list = [];
                     if (data) {
+                        const list = [];
                         Object.keys(data).forEach(key => {
                             const item = data[key];
                             if (item && typeof item === 'object') {
@@ -827,26 +830,67 @@ function initFirebaseComments() {
                                 list.push(item);
                             }
                         });
+                        list.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+                        publicCommentsList = sanitizeComments(list);
+                        
+                        const loaderEl = document.getElementById('comments-loader');
+                        if (loaderEl) loaderEl.style.display = 'none';
+                        
+                        renderPublicCommentsFeed();
                     }
-                    list.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
-                    publicCommentsList = sanitizeComments(list);
-                    
-                    const loaderEl = document.getElementById('comments-loader');
-                    if (loaderEl) loaderEl.style.display = 'none';
-                    
-                    renderPublicCommentsFeed();
                 }, (err) => {
-                    console.warn('Firebase comments listener error:', err);
-                    const loaderEl = document.getElementById('comments-loader');
-                    if (loaderEl) loaderEl.style.display = 'none';
+                    console.warn('Firebase SDK listener notice:', err.message);
+                    fetchServerCommentsFallback();
                 });
             }
             return true;
         }
     } catch(err) {
-        console.warn('Firebase init error:', err);
+        console.warn('Firebase init notice:', err);
     }
+    fetchServerCommentsFallback();
     return false;
+}
+
+async function fetchServerCommentsFallback() {
+    try {
+        // Try Firebase REST first
+        let response = await fetch(FIREBASE_REST_URL + '?_t=' + Date.now(), { cache: 'no-store' });
+        if (response.ok) {
+            const data = await response.json();
+            if (data && typeof data === 'object' && !data.error) {
+                const list = [];
+                Object.keys(data).forEach(key => {
+                    const item = data[key];
+                    if (item && typeof item === 'object') {
+                        item.id = key;
+                        list.push(item);
+                    }
+                });
+                list.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+                publicCommentsList = sanitizeComments(list);
+                renderPublicCommentsFeed();
+                return;
+            }
+        }
+        
+        // Backup Server Storage Bin
+        let res2 = await fetch(BACKUP_SERVER_URL + '?_t=' + Date.now(), { cache: 'no-store' });
+        if (res2.ok) {
+            const data2 = await res2.json();
+            if (data2 && Array.isArray(data2.comments)) {
+                let merged = sanitizeComments(data2.comments);
+                merged.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+                publicCommentsList = merged;
+                renderPublicCommentsFeed();
+            }
+        }
+    } catch(e) {
+        console.warn('Comments fetch notice:', e);
+    } finally {
+        const loaderEl = document.getElementById('comments-loader');
+        if (loaderEl) loaderEl.style.display = 'none';
+    }
 }
 
 function sanitizeComments(list) {
@@ -871,12 +915,14 @@ function loadPublicComments(isSilent = false) {
     const loaderEl = document.getElementById('comments-loader');
     if (!feedContainer) return;
 
-    if (!firebaseDb) {
-        initFirebaseComments();
-    }
-
     if (loaderEl && !isSilent && publicCommentsList.length === 0) {
         loaderEl.style.display = 'block';
+    }
+
+    if (!firebaseDb) {
+        initFirebaseComments();
+    } else {
+        fetchServerCommentsFallback();
     }
 
     renderPublicCommentsFeed();
@@ -1093,25 +1139,38 @@ async function submitPublicComment(event) {
         submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري النشر إلى السيرفر...';
     }
 
+    publicCommentsList.unshift(newComment);
+    publicCommentsList = sanitizeComments(publicCommentsList);
+    renderPublicCommentsFeed();
+
+    // 1. Firebase SDK
     try {
-        if (!firebaseDb) {
-            initFirebaseComments();
-        }
         if (firebaseDb) {
             await firebaseDb.ref('public_comments/' + commentId).set(newComment);
-        } else {
-            publicCommentsList.unshift(newComment);
-            renderPublicCommentsFeed();
         }
-    } catch(err) {
-        console.error('Firebase save error:', err);
-        publicCommentsList.unshift(newComment);
-        renderPublicCommentsFeed();
-    } finally {
-        if (submitBtn) {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> نشر التعليق علناً للجميع 🚀';
-        }
+    } catch(err) {}
+
+    // 2. Firebase REST
+    try {
+        await fetch(`https://coffe1-d43af-default-rtdb.firebaseio.com/public_comments/${commentId}.json`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newComment)
+        });
+    } catch(e) {}
+
+    // 3. Backup Server Storage Sync
+    try {
+        await fetch(BACKUP_SERVER_URL, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ comments: publicCommentsList })
+        });
+    } catch(e) {}
+
+    if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> نشر التعليق علناً للجميع 🚀';
     }
 
     if (textInput) textInput.value = '';
@@ -1127,21 +1186,33 @@ async function submitPublicComment(event) {
 async function deletePublicComment(commentId) {
     if (!confirm('هل أنت تأكد من رغبتك في حذف هذا التعليق من السيرفر؟')) return;
 
+    publicCommentsList = publicCommentsList.filter(c => c.id !== commentId);
+    removeMyCommentId(commentId);
+    renderPublicCommentsFeed();
+    showToast('🗑️ تم حذف التعليق بنجاح من السيرفر!');
+
+    // Firebase SDK delete
     try {
-        if (!firebaseDb) {
-            initFirebaseComments();
-        }
         if (firebaseDb) {
             await firebaseDb.ref('public_comments/' + commentId).remove();
         }
-        publicCommentsList = publicCommentsList.filter(c => c.id !== commentId);
-        removeMyCommentId(commentId);
-        renderPublicCommentsFeed();
-        showToast('🗑️ تم حذف التعليق بنجاح من السيرفر!');
-    } catch(err) {
-        console.error('Firebase delete error:', err);
-        showToast('❌ حدث خطأ أثناء حذف التعليق.');
-    }
+    } catch(err) {}
+
+    // Firebase REST delete
+    try {
+        await fetch(`https://coffe1-d43af-default-rtdb.firebaseio.com/public_comments/${commentId}.json`, {
+            method: 'DELETE'
+        });
+    } catch(e) {}
+
+    // Backup Server sync
+    try {
+        await fetch(BACKUP_SERVER_URL, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ comments: publicCommentsList })
+        });
+    } catch(e) {}
 }
 
 async function likePublicComment(commentId) {
@@ -1159,18 +1230,34 @@ async function likePublicComment(commentId) {
     }
 
     try {
-        if (!firebaseDb) {
-            initFirebaseComments();
-        }
         if (firebaseDb) {
             await firebaseDb.ref('public_comments/' + commentId + '/likes').set(newLikes);
         }
-    } catch(err) {
-        console.warn('Firebase like error:', err);
-    }
+    } catch(err) {}
+
+    try {
+        await fetch(`https://coffe1-d43af-default-rtdb.firebaseio.com/public_comments/${commentId}/likes.json`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newLikes)
+        });
+    } catch(e) {}
+
+    try {
+        await fetch(BACKUP_SERVER_URL, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ comments: publicCommentsList })
+        });
+    } catch(e) {}
 
     showToast('❤️ شكراً لإعجابك بالتعليق!');
 }
+
+// Auto sync poll every 8 seconds
+setInterval(() => {
+    fetchServerCommentsFallback();
+}, 8000);
 
 function escapeHTML(str) {
     if (!str) return '';

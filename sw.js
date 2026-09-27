@@ -1,4 +1,4 @@
-const CACHE_NAME = 'maher-coffee-v7000-firebase-realtime';
+const CACHE_NAME = 'maher-coffee-v7100-hybrid-server';
 const ASSETS = [
   './',
   './index.html',
