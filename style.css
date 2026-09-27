@@ -5556,6 +5556,195 @@ body.is-installed-app {
     align-items: center;
 }
 
+/* ==========================================================
+   🎙️ VOICE RECORDING & AUDIO PLAYER STYLING
+   ========================================================== */
+.voice-recorder-section {
+    margin-bottom: 16px;
+    direction: rtl;
+    text-align: right;
+}
+
+.voice-recorder-box {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px dashed rgba(255, 215, 0, 0.4);
+    border-radius: 14px;
+    padding: 12px 16px;
+    margin-top: 6px;
+    transition: all 0.3s ease;
+}
+
+.voice-idle-state {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.btn-record-mic {
+    background: linear-gradient(135deg, #d4af37 0%, #aa7c11 100%);
+    color: #000;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 800;
+    font-size: 0.88rem;
+    font-family: var(--font-arabic);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-record-mic:hover {
+    transform: scale(1.04);
+    box-shadow: 0 6px 18px rgba(212, 175, 55, 0.5);
+}
+
+.voice-hint-text {
+    font-size: 0.78rem;
+    color: #a0aec0;
+}
+
+.voice-recording-state {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    background: rgba(229, 62, 62, 0.12);
+    border: 1px solid rgba(229, 62, 62, 0.4);
+    padding: 10px 14px;
+    border-radius: 12px;
+}
+
+.recording-indicator {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.rec-dot {
+    width: 12px;
+    height: 12px;
+    background: #ff3333;
+    border-radius: 50%;
+    animation: recPulse 1s infinite alternate;
+}
+
+@keyframes recPulse {
+    0% { opacity: 0.3; transform: scale(0.8); }
+    100% { opacity: 1; transform: scale(1.2); box-shadow: 0 0 10px #ff3333; }
+}
+
+.rec-time {
+    font-family: monospace;
+    font-weight: 800;
+    font-size: 1rem;
+    color: #ff5555;
+}
+
+.recording-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-stop-rec {
+    background: #e53e3e;
+    color: #fff;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 16px;
+    font-weight: 700;
+    font-size: 0.82rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-cancel-rec {
+    background: rgba(255,255,255,0.1);
+    color: #ccc;
+    border: 1px solid #666;
+    padding: 6px 12px;
+    border-radius: 16px;
+    font-size: 0.82rem;
+    cursor: pointer;
+}
+
+.voice-preview-state {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    background: rgba(212, 175, 55, 0.12);
+    border: 1px solid rgba(212, 175, 55, 0.35);
+    padding: 10px 14px;
+    border-radius: 12px;
+}
+
+.audio-player-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+}
+
+.audio-badge-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #ffd700;
+}
+
+.btn-remove-voice {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    padding: 6px 12px;
+    border-radius: 14px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* Comment Card Voice Player */
+.comment-voice-player-box {
+    background: rgba(0, 0, 0, 0.35);
+    border-radius: 12px;
+    padding: 10px 14px;
+    margin: 10px 0;
+    border-right: 4px solid #c5a880;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.meyad-voice-box {
+    border-right: 4px solid #ffd700 !important;
+    background: rgba(255, 215, 0, 0.12) !important;
+}
+
+.voice-player-header {
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: #ffd700;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.comment-audio-element {
+    width: 100%;
+    height: 38px;
+    border-radius: 8px;
+    outline: none;
+}
+
+
 
 
 

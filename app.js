@@ -809,6 +809,132 @@ let firebaseDb = null;
 let publicCommentsList = [];
 let firebaseListenerAttached = false;
 
+// Voice Message Recording State
+let mediaRecorder = null;
+let audioChunks = [];
+let voiceTimerInterval = null;
+let voiceRecordStartTime = 0;
+let currentRecordedAudioBase64 = null;
+
+async function startVoiceRecording() {
+    try {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            alert('متصفحك لا يدعم تسجيل الصوت أو يحتاج إلى اتصال آمن (HTTPS).');
+            return;
+        }
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        
+        let mimeType = 'audio/webm';
+        if (typeof MediaRecorder !== 'undefined' && MediaRecorder.isTypeSupported) {
+            if (!MediaRecorder.isTypeSupported('audio/webm')) {
+                if (MediaRecorder.isTypeSupported('audio/mp4')) {
+                    mimeType = 'audio/mp4';
+                } else if (MediaRecorder.isTypeSupported('audio/ogg')) {
+                    mimeType = 'audio/ogg';
+                } else {
+                    mimeType = '';
+                }
+            }
+        }
+        
+        mediaRecorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
+        audioChunks = [];
+
+        mediaRecorder.ondataavailable = (e) => {
+            if (e.data && e.data.size > 0) {
+                audioChunks.push(e.data);
+            }
+        };
+
+        mediaRecorder.onstop = () => {
+            stream.getTracks().forEach(track => track.stop());
+            const audioBlob = new Blob(audioChunks, { type: mediaRecorder ? mediaRecorder.mimeType : 'audio/webm' });
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                currentRecordedAudioBase64 = reader.result;
+                const recordingState = document.getElementById('voice-recording-state');
+                const previewState = document.getElementById('voice-preview-state');
+                const previewAudio = document.getElementById('voice-preview-audio');
+                const initialBtn = document.getElementById('btn-record-mic');
+
+                if (recordingState) recordingState.style.display = 'none';
+                if (initialBtn) initialBtn.style.display = 'none';
+                if (previewState) previewState.style.display = 'flex';
+                if (previewAudio) previewAudio.src = currentRecordedAudioBase64;
+            };
+            reader.readAsDataURL(audioBlob);
+        };
+
+        mediaRecorder.start();
+        voiceRecordStartTime = Date.now();
+        
+        const initialBtn = document.getElementById('btn-record-mic');
+        const recordingState = document.getElementById('voice-recording-state');
+        const previewState = document.getElementById('voice-preview-state');
+        const timerEl = document.getElementById('voice-timer');
+
+        if (initialBtn) initialBtn.style.display = 'none';
+        if (previewState) previewState.style.display = 'none';
+        if (recordingState) recordingState.style.display = 'flex';
+
+        if (voiceTimerInterval) clearInterval(voiceTimerInterval);
+        voiceTimerInterval = setInterval(() => {
+            const elapsed = Math.floor((Date.now() - voiceRecordStartTime) / 1000);
+            const mins = String(Math.floor(elapsed / 60)).padStart(2, '0');
+            const secs = String(elapsed % 60).padStart(2, '0');
+            if (timerEl) timerEl.textContent = `${mins}:${secs}`;
+
+            if (elapsed >= 40) {
+                stopVoiceRecording();
+            }
+        }, 500);
+
+    } catch(err) {
+        console.error('Mic access error:', err);
+        alert('تعذر الوصول للميكروفون. يرجى إعطاء الصلاحية في المتصفح لتسجيل الصوت.');
+    }
+}
+
+function stopVoiceRecording() {
+    if (voiceTimerInterval) {
+        clearInterval(voiceTimerInterval);
+        voiceTimerInterval = null;
+    }
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop();
+    }
+}
+
+function cancelVoiceRecording() {
+    if (voiceTimerInterval) {
+        clearInterval(voiceTimerInterval);
+        voiceTimerInterval = null;
+    }
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.onstop = null;
+        mediaRecorder.stop();
+    }
+    currentRecordedAudioBase64 = null;
+    resetVoiceUI();
+}
+
+function removeVoiceRecording() {
+    currentRecordedAudioBase64 = null;
+    resetVoiceUI();
+}
+
+function resetVoiceUI() {
+    const initialBtn = document.getElementById('btn-record-mic');
+    const recordingState = document.getElementById('voice-recording-state');
+    const previewState = document.getElementById('voice-preview-state');
+    const previewAudio = document.getElementById('voice-preview-audio');
+
+    if (initialBtn) initialBtn.style.display = 'inline-flex';
+    if (recordingState) recordingState.style.display = 'none';
+    if (previewState) previewState.style.display = 'none';
+    if (previewAudio) previewAudio.src = '';
+}
+
 function initFirebaseComments() {
     try {
         if (typeof firebase !== 'undefined') {
@@ -897,9 +1023,10 @@ function sanitizeComments(list) {
     if (!Array.isArray(list)) return [];
     return list.filter(c => {
         if (!c || typeof c !== 'object') return false;
-        if (!c.name || !c.text) return false;
+        if (!c.name) return false;
+        if (!c.text && !c.audioUrl) return false;
         const nameStr = String(c.name).trim();
-        const textStr = String(c.text).trim();
+        const textStr = String(c.text || '').trim();
         
         // Remove mock/sample comments
         if (c.id === 'c1' || c.id === 'c2' || c.id === 'c3') return false;
@@ -1037,6 +1164,15 @@ function renderPublicCommentsFeed() {
         const isMeyadVIP = isMeyadName(c.name);
         const canDelete = isMyComment(c.id);
 
+        const voicePlayerHTML = c.audioUrl ? `
+            <div class="comment-voice-player-box ${isMeyadVIP ? 'meyad-voice-box' : ''}">
+                <div style="font-size:0.85rem; font-weight:bold; color:${isMeyadVIP ? 'var(--primary-gold)' : 'var(--primary-color)'}; margin-bottom:6px; display:flex; align-items:center; gap:6px;">
+                    <i class="fa-solid fa-microphone"></i> ${isMeyadVIP ? 'رسالة صوتية ملكية من ميعاد 👑' : 'رسالة صوتية 🎙️'}
+                </div>
+                <audio controls src="${c.audioUrl}" style="width:100%; height:38px; outline:none; border-radius:12px;"></audio>
+            </div>
+        ` : '';
+
         if (isMeyadVIP) {
             return `
                 <div class="comment-card meyad-vip-card" id="comment-card-${c.id}">
@@ -1057,7 +1193,8 @@ function renderPublicCommentsFeed() {
                         </div>
                     </div>
                     <div class="comment-body-text meyad-text-glow">
-                        ${escapeHTML(c.text)}
+                        ${c.text ? escapeHTML(c.text) : ''}
+                        ${voicePlayerHTML}
                     </div>
                     <div class="comment-footer">
                         <div style="display: flex; align-items: center; gap: 8px;">
@@ -1089,7 +1226,8 @@ function renderPublicCommentsFeed() {
                     </div>
                 </div>
                 <div class="comment-body-text">
-                    ${escapeHTML(c.text)}
+                    ${c.text ? escapeHTML(c.text) : ''}
+                    ${voicePlayerHTML}
                 </div>
                 <div class="comment-footer">
                     <div style="display: flex; align-items: center; gap: 8px;">
@@ -1120,13 +1258,17 @@ async function submitPublicComment(event) {
     const category = typeSelect ? typeSelect.value : 'coffee';
     const text = textInput ? textInput.value.trim() : '';
 
-    if (!text) return;
+    if (!text && !currentRecordedAudioBase64) {
+        showToast('يرجى كتابة نص أو تسجيل رسالة صوتية لنشر التعليق! 🎙️');
+        return;
+    }
 
     const commentId = 'c_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
     const newComment = {
         id: commentId,
         name: name || 'زائر',
-        text: text,
+        text: text || '',
+        audioUrl: currentRecordedAudioBase64 || null,
         category: category,
         date: new Date().toISOString(),
         likes: 0
@@ -1142,6 +1284,9 @@ async function submitPublicComment(event) {
     publicCommentsList.unshift(newComment);
     publicCommentsList = sanitizeComments(publicCommentsList);
     renderPublicCommentsFeed();
+
+    // Reset recording UI and buffer
+    removeVoiceRecording();
 
     // 1. Firebase SDK
     try {

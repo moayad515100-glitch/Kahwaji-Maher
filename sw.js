@@ -1,4 +1,4 @@
-const CACHE_NAME = 'maher-coffee-v7100-hybrid-server';
+const CACHE_NAME = 'maher-coffee-v7200-voice-notes';
 const ASSETS = [
   './',
   './index.html',

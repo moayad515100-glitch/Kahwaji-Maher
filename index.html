@@ -18,7 +18,7 @@
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Stylesheet -->
-    <link rel="stylesheet" href="style.css?v=71.00">
+    <link rel="stylesheet" href="style.css?v=72.00">
     <!-- Leaflet.js for Map Picker -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -1224,7 +1224,49 @@
 
                         <div class="form-group">
                             <label for="suggestion-text">نص التعليق أو الاقتراح العام:</label>
-                            <textarea id="suggestion-text" rows="4" placeholder="اكتب تعليقك أو اقتراحك هنا ليظهر لجميع زوار الموقع فوراً..." required></textarea>
+                            <textarea id="suggestion-text" rows="3" placeholder="اكتب تعليقك أو اقتراحك هنا (أو يمكنك تسجيل صوتك بالأسفل)..."></textarea>
+                        </div>
+
+                        <!-- Voice Message Recorder Widget -->
+                        <div class="form-group voice-recorder-section">
+                            <label>🎙️ إرسال تسجيل / بصمة صوتية (اختياري):</label>
+                            <div class="voice-recorder-box" id="voice-recorder-box">
+                                <!-- Idle State -->
+                                <div class="voice-idle-state" id="voice-idle-state">
+                                    <button type="button" class="btn-record-mic" id="btn-start-record" onclick="startVoiceRecording()">
+                                        <i class="fa-solid fa-microphone"></i> تسجيل رسالة صوتية 🎙️
+                                    </button>
+                                    <span class="voice-hint-text">انقر للبدء بالتسجيل بصوتك (حتى 40 ثانية)</span>
+                                </div>
+
+                                <!-- Recording Active State -->
+                                <div class="voice-recording-state" id="voice-recording-state" style="display: none;">
+                                    <div class="recording-indicator">
+                                        <span class="rec-dot"></span>
+                                        <span class="rec-time" id="voice-timer">00:00</span>
+                                        <span class="voice-hint-text" style="color: #ff8888;">جاري التسجيل... 🎙️</span>
+                                    </div>
+                                    <div class="recording-actions">
+                                        <button type="button" class="btn-stop-rec" onclick="stopVoiceRecording()">
+                                            <i class="fa-solid fa-stop"></i> حفظ ⏹️
+                                        </button>
+                                        <button type="button" class="btn-cancel-rec" onclick="cancelVoiceRecording()">
+                                            إلغاء ✖
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Recorded Preview State -->
+                                <div class="voice-preview-state" id="voice-preview-state" style="display: none;">
+                                    <div class="audio-player-wrapper">
+                                        <span class="audio-badge-label"><i class="fa-solid fa-circle-play"></i> التسجيل الصوتي جاهز للإرسال:</span>
+                                        <audio id="voice-audio-preview" controls></audio>
+                                    </div>
+                                    <button type="button" class="btn-remove-voice" onclick="removeVoiceRecording()" title="إعادة التسجيل">
+                                        <i class="fa-solid fa-rotate-right"></i> إعادة 🔄
+                                    </button>
+                                </div>
+                            </div>
                         </div>
 
                         <button type="submit" class="btn btn-primary btn-submit-comment" id="btn-submit-comment-el">
@@ -1454,7 +1496,7 @@
             }
         } catch(e) {}
     </script>
-    <script src="app.js?v=71.00"></script>
+    <script src="app.js?v=72.00"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
