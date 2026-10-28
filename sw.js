@@ -1,11 +1,11 @@
-const CACHE_NAME = 'maher-coffee-v7200-voice-notes';
+const CACHE_NAME = 'maher-coffee-v7300-normal';
 const ASSETS = [
   './',
   './index.html',
   './app.js',
   './style.css',
   './manifest.json',
-  './saudi96-logo.jpg',
+  './5960730354593238429.jpg',
   './qahwaji-logo.glb',
   './icon-192.png',
   './icon-512.png',

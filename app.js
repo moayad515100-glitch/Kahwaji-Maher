@@ -16,8 +16,8 @@
 //   'grind_challenge': "Coffee Grind Speed" clicker game (click fast to win)
 //   'neon_magic'     : "Magic Glowing Coffee" neon theme (glow, mouse trails)
 // ==========================================================
-let ACTIVE_EVENT = 'saudi_96'; 
-let ACTIVE_EVENT_TIMESTAMP = 1789919163535; 
+let ACTIVE_EVENT = 'none'; 
+let ACTIVE_EVENT_TIMESTAMP = 1793205195000; 
 
 // 🇸🇦 SAUDI NATIONAL DAY 96 TIMESTAMPS
 // Launch Time: Tomorrow 3:00 PM Saudi Time (2026-09-21 15:00:00 GMT+3)
@@ -30,7 +30,7 @@ function isSaudi96Prelaunch() {
 }
 
 function isSaudi96Active() {
-    return true; // Event & 96 Halalah prices active immediately!
+    return false; // Event ended
 }
 
 function isSaudi96Finished() {
@@ -41,7 +41,7 @@ function isSaudi96Finished() {
 try {
     const savedEvent = localStorage.getItem('maher_active_event');
     const savedTime = parseInt(localStorage.getItem('maher_active_event_time') || '0', 10);
-    if (savedEvent && savedEvent !== 'saudi_96' && savedTime < 1790000000000) {
+    if (savedEvent && savedTime < 1793205195000) {
         localStorage.removeItem('maher_active_event');
         localStorage.removeItem('maher_active_event_time');
     } else if (savedEvent && savedTime > ACTIVE_EVENT_TIMESTAMP) {
